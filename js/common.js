@@ -2,8 +2,8 @@
 
 // --- SUPABASE CONFIGURATION ---
 // Insert your live URL and Anon Key here from the Supabase Dashboard (Settings > API)
-const SUPABASE_URL = 'https://qxqxgoczgtqedfywzetd.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4cXhnb2N6Z3RxZWRmeXd6ZXRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNzE3OTMsImV4cCI6MjA5Njc0Nzc5M30.UNnihB2OM5eyYLoegbSuLp35zD30YNeKwQnHMP5WeqQ';
+const SUPABASE_URL = 'https://fvvdmrogquycehyncslp.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2dmRtcm9ncXV5Y2VoeW5jc2xwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDQ3NTUsImV4cCI6MjA5NjgyMDc1NX0.a8PSwryUl589P7OkTZNdrik-f-1iLsTtxdhM9fKYM24';
 
 // --- 1. Data Initialization (Local Storage Mock Database - Offline Fallback Mode Only) ---
 const defaultBlogs = [
@@ -93,10 +93,10 @@ function loadScript(src) {
 }
 
 async function initSupabase() {
-    const isConfigured = SUPABASE_URL && SUPABASE_ANON_KEY && 
-                         SUPABASE_URL !== 'YOUR_SUPABASE_URL' && 
-                         SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
-    
+    const isConfigured = SUPABASE_URL && SUPABASE_ANON_KEY &&
+        SUPABASE_URL !== 'YOUR_SUPABASE_URL' &&
+        SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+
     if (!isConfigured) {
         console.log("DiginixIT: Supabase credentials not set. Running in offline localStorage mode.");
         window.useSupabase = false;
@@ -106,7 +106,7 @@ async function initSupabase() {
     try {
         // Load Supabase Client SDK from JSDelivr
         await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
-        
+
         if (typeof supabase !== 'undefined') {
             window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             window.useSupabase = true;
@@ -123,18 +123,18 @@ async function initSupabase() {
 window.backendReady = initSupabase();
 
 // --- 3. Unified API Client Wrapper ---
-window.apiCall = async function(action, data = null) {
+window.apiCall = async function (action, data = null) {
     await window.backendReady;
-    
+
     if (!window.useSupabase) {
         return apiCallLocalStorageFallback(action, data);
     }
-    
+
     try {
         switch (action) {
             case 'ping':
                 return { success: true, message: "Database active" };
-                
+
             case 'get_blogs': {
                 const { data: blogs, error } = await window.supabase
                     .from('blogs')
@@ -143,7 +143,7 @@ window.apiCall = async function(action, data = null) {
                 if (error) throw error;
                 return blogs || [];
             }
-            
+
             case 'save_blog': {
                 const blogData = {
                     title: data.title,
@@ -170,7 +170,7 @@ window.apiCall = async function(action, data = null) {
                 }
                 return { success: true };
             }
-            
+
             case 'delete_blog': {
                 const { error } = await window.supabase
                     .from('blogs')
@@ -179,7 +179,7 @@ window.apiCall = async function(action, data = null) {
                 if (error) throw error;
                 return { success: true };
             }
-            
+
             case 'get_users': {
                 const { data: users, error } = await window.supabase
                     .from('users')
@@ -188,7 +188,7 @@ window.apiCall = async function(action, data = null) {
                 if (error) throw error;
                 return users || [];
             }
-            
+
             case 'update_user_status': {
                 const { data: user, error: fetchError } = await window.supabase
                     .from('users')
@@ -196,9 +196,9 @@ window.apiCall = async function(action, data = null) {
                     .eq('email', data.email)
                     .single();
                 if (fetchError || !user) throw new Error("User not found");
-                
+
                 const newStatus = user.status === 'Blocked' ? 'Active' : 'Blocked';
-                
+
                 const { error: updateError } = await window.supabase
                     .from('users')
                     .update({ status: newStatus })
@@ -206,7 +206,7 @@ window.apiCall = async function(action, data = null) {
                 if (updateError) throw updateError;
                 return { success: true, status: newStatus };
             }
-            
+
             case 'delete_user': {
                 const { error } = await window.supabase
                     .from('users')
@@ -215,7 +215,7 @@ window.apiCall = async function(action, data = null) {
                 if (error) throw error;
                 return { success: true };
             }
-            
+
             case 'get_settings': {
                 const { data: rows, error } = await window.supabase
                     .from('settings')
@@ -231,7 +231,7 @@ window.apiCall = async function(action, data = null) {
                 });
                 return settings;
             }
-            
+
             case 'save_settings': {
                 const rows = [
                     { key_name: 'siteName', value_text: data.siteName },
@@ -244,7 +244,7 @@ window.apiCall = async function(action, data = null) {
                 if (error) throw error;
                 return { success: true };
             }
-            
+
             case 'get_stats': {
                 const { data: rows, error } = await window.supabase
                     .from('stats')
@@ -270,7 +270,7 @@ window.apiCall = async function(action, data = null) {
                         revenue: "$0",
                         activeUsers: String(realUserCount),
                         executions: "0",
-                        revenueHistory: [0,0,0,0,0,0]
+                        revenueHistory: [0, 0, 0, 0, 0, 0]
                     };
                 }
                 const dbStats = rows[0];
@@ -281,7 +281,7 @@ window.apiCall = async function(action, data = null) {
                     revenueHistory: (dbStats.revenuehistory || dbStats.revenueHistory || '0,0,0,0,0,0').split(',').map(Number)
                 };
             }
-            
+
             case 'save_stats': {
                 const histStr = data.revenueHistory.join(',');
                 const row = {
@@ -290,13 +290,13 @@ window.apiCall = async function(action, data = null) {
                     executions: data.executions,
                     revenuehistory: histStr
                 };
-                
+
                 const { data: existing, error: existError } = await window.supabase
                     .from('stats')
                     .select('id')
                     .limit(1);
                 if (existError) throw existError;
-                
+
                 let error;
                 if (existing && existing.length > 0) {
                     const { error: updateError } = await window.supabase
@@ -313,11 +313,11 @@ window.apiCall = async function(action, data = null) {
                 if (error) throw error;
                 return { success: true };
             }
-            
+
             case 'submit_contact':
                 // Handled directly via Netlify form actions POST
                 return { success: true };
-                
+
             case 'login': {
                 const { data: user, error } = await window.supabase
                     .from('users')
@@ -335,7 +335,7 @@ window.apiCall = async function(action, data = null) {
                 delete user.password;
                 return { success: true, user: user };
             }
-            
+
             case 'register': {
                 const { data: existing, error: existError } = await window.supabase
                     .from('users')
@@ -346,7 +346,7 @@ window.apiCall = async function(action, data = null) {
                 if (existing) {
                     return { success: false, error: "An account with this email address already exists." };
                 }
-                
+
                 const newUser = {
                     name: data.name,
                     email: data.email,
@@ -355,16 +355,16 @@ window.apiCall = async function(action, data = null) {
                     date: new Date().toISOString().split('T')[0],
                     status: 'Active'
                 };
-                
+
                 const { error: insertError } = await window.supabase
                     .from('users')
                     .insert(newUser);
                 if (insertError) throw insertError;
-                
+
                 delete newUser.password;
                 return { success: true, user: newUser };
             }
-            
+
             case 'update_profile': {
                 const updateData = { name: data.name };
                 if (data.password) {
@@ -375,7 +375,7 @@ window.apiCall = async function(action, data = null) {
                     .update(updateData)
                     .eq('email', data.email);
                 if (updateError) throw updateError;
-                
+
                 const { data: user, error: fetchError } = await window.supabase
                     .from('users')
                     .select('name, email, date, plan, status')
@@ -384,14 +384,14 @@ window.apiCall = async function(action, data = null) {
                 if (fetchError) throw fetchError;
                 return { success: true, user: user };
             }
-            
+
             case 'update_subscription': {
                 const { error: updateError } = await window.supabase
                     .from('users')
                     .update({ plan: data.plan })
                     .eq('email', data.email);
                 if (updateError) throw updateError;
-                
+
                 const { data: user, error: fetchError } = await window.supabase
                     .from('users')
                     .select('name, email, date, plan, status')
@@ -400,7 +400,7 @@ window.apiCall = async function(action, data = null) {
                 if (fetchError) throw fetchError;
                 return { success: true, user: user };
             }
-            
+
             default:
                 return { success: false, error: "Unknown action" };
         }
