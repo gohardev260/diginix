@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Admin Console</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-surface min-h-screen">
+
+    <div class="noise"></div>
+
+    <!-- Security Check (Redirect if not authenticated) -->
+    <script>
+        if (localStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.replace('admin_login.html');
+        }
+    </script>
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-border fixed w-full top-0 z-50 py-4 px-6 md:px-12 flex justify-between items-center h-20">
+        <div class="flex items-center space-x-4">
+            <span class="text-2xl font-bold tracking-tighter text-primary site-logo-text">DIGINIXIT.</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-red-500 bg-red-50 px-2.5 py-1 rounded-full border border-red-100">Console v1.0</span>
+        </div>
+        <div class="flex items-center space-x-6">
+            <a href="index.html" target="_blank" class="text-xs text-secondary hover:text-primary font-medium transition-colors">Open Client Site &nearr;</a>
+            <button onclick="handleAdminSignOut()" class="text-xs font-medium hover:text-red-500 transition-colors">Terminate Session</button>
+        </div>
+    </nav>
+
+    <!-- Layout Container -->
+    <div class="flex pt-20 h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <div class="w-64 bg-white border-r border-border hidden md:flex flex-col justify-between p-6">
+            <div class="space-y-6">
+                <div class="flex items-center space-x-3 bg-surface border border-border p-4 rounded-2xl">
+                    <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">A</div>
+                    <div>
+                        <div class="font-bold text-sm">System Admin</div>
+                        <div class="text-[10px] text-secondary">Secured Token</div>
+                    </div>
+                </div>
+                
+                <div class="space-y-1">
+                    <button class="w-full flex items-center text-sm px-4 py-3 rounded-lg bg-primary text-white font-medium hover:bg-black transition-colors admin-tab-btn" data-tab="analytics">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 mr-3"></i> Analytics
+                    </button>
+                    <button class="w-full flex items-center text-sm px-4 py-3 rounded-lg text-secondary hover:bg-surface hover:text-primary transition-colors admin-tab-btn font-medium" data-tab="blog">
+                        <i data-lucide="book-open" class="w-4 h-4 mr-3"></i> Blog Manager
+                    </button>
+                    <button class="w-full flex items-center text-sm px-4 py-3 rounded-lg text-secondary hover:bg-surface hover:text-primary transition-colors admin-tab-btn font-medium" data-tab="users">
+                        <i data-lucide="users" class="w-4 h-4 mr-3"></i> User Portal
+                    </button>
+                    <button class="w-full flex items-center text-sm px-4 py-3 rounded-lg text-secondary hover:bg-surface hover:text-primary transition-colors admin-tab-btn font-medium" data-tab="settings">
+                        <i data-lucide="settings" class="w-4 h-4 mr-3"></i> Global Settings
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-[10px] text-secondary text-center border-t border-border pt-4">
+                Node ID: DIGINIXIT-W10
+            </div>
+        </div>
+
+        <!-- Main Dashboard Viewport -->
+        <div class="flex-1 p-6 md:p-10 overflow-y-auto hide-scrollbar pb-24 h-full">
+            
+            <!-- Mobile Tab Quick Filters (Shown only on small screens) -->
+            <div class="flex md:hidden gap-2 overflow-x-auto pb-4 mb-6 border-b border-border" id="mobile-tabs-container">
+                <button class="px-4 py-2 bg-primary text-white text-xs font-bold rounded-full whitespace-nowrap mobile-tab-btn" data-tab="analytics">Analytics</button>
+                <button class="px-4 py-2 bg-white text-secondary text-xs font-bold rounded-full whitespace-nowrap border border-border mobile-tab-btn" data-tab="blog">Blogs</button>
+                <button class="px-4 py-2 bg-white text-secondary text-xs font-bold rounded-full whitespace-nowrap border border-border mobile-tab-btn" data-tab="users">Users</button>
+                <button class="px-4 py-2 bg-white text-secondary text-xs font-bold rounded-full whitespace-nowrap border border-border mobile-tab-btn" data-tab="settings">Settings</button>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB: ANALYTICS                             -->
+            <!-- ========================================== -->
+            <div id="tab-analytics" class="admin-tab-content active space-y-8">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Platform Analytics</h2>
+                    <p class="text-secondary text-sm mt-1">Realtime usage diagnostics and business metrics.</p>
+                </div>
+
+                <!-- Stats Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
+                        <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Total Revenue</div>
+                        <div class="text-3xl font-bold" id="stat-revenue">$124,500</div>
+                        <div class="text-[10px] text-green-500 font-bold" id="stat-revenue-change">+14.5% from last month</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
+                        <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Active Users</div>
+                        <div class="text-3xl font-bold" id="stat-users">8,241</div>
+                        <div class="text-[10px] text-green-500 font-bold" id="stat-users-change">+5.2% from last month</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
+                        <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Tool Executions</div>
+                        <div class="text-3xl font-bold" id="stat-executions">142.3K</div>
+                        <div class="text-[10px] text-green-500 font-bold" id="stat-executions-change">+22.1% from last month</div>
+                    </div>
+                </div>
+
+                <!-- Chart & Controller -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Chart -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-border h-[400px]">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-sm">Monthly Revenue Performance</h3>
+                            <span class="text-xs text-secondary">Q1-Q2 (USD)</span>
+                        </div>
+                        <div class="h-[300px]">
+                            <canvas id="adminRevenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Controller -->
+                    <div class="bg-white p-6 rounded-2xl border border-border space-y-4">
+                        <h3 class="font-bold text-sm">Update Analytics Data</h3>
+                        <form onsubmit="handleStatsUpdate(event)" class="space-y-3">
+                            <div>
+                                <label class="text-[10px] font-bold text-secondary block mb-1">Total Revenue ($)</label>
+                                <input type="text" id="input-revenue" class="premium-input text-xs py-2 px-3" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-secondary block mb-1">Active Users</label>
+                                <input type="number" id="input-users" class="premium-input text-xs py-2 px-3" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-secondary block mb-1">Tool Executions</label>
+                                <input type="text" id="input-executions" class="premium-input text-xs py-2 px-3" required>
+                            </div>
+                            <div class="border-t border-border pt-3">
+                                <label class="text-[10px] font-bold text-secondary block mb-2">Monthly Revenue Points (Chart)</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input type="number" id="chart-jan" placeholder="Jan" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-feb" placeholder="Feb" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-mar" placeholder="Mar" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-apr" placeholder="Apr" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-may" placeholder="May" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-jun" placeholder="Jun" class="premium-input text-xs p-2 text-center" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white text-xs py-3 rounded-xl font-bold hover:bg-black transition-colors mt-2">Apply Metrics</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB: BLOG MANAGER                          -->
+            <!-- ========================================== -->
+            <div id="tab-blog" class="admin-tab-content space-y-8">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Blog Manager</h2>
+                        <p class="text-secondary text-sm mt-1">Publish, edit, and curate insights content.</p>
+                    </div>
+                    <button onclick="toggleBlogModal(true)" class="bg-primary text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-black transition-transform duration-300 hover:scale-105">Add Article</button>
+                </div>
+
+                <!-- Blog Table -->
+                <div class="bg-white rounded-2xl border border-border overflow-hidden">
+                    <div class="responsive-table-container">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-surface text-secondary border-b border-border">
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Article Title</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Category</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Author</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Date</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blog-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB: USERS PORTAL                          -->
+            <!-- ========================================== -->
+            <div id="tab-users" class="admin-tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">User Portal</h2>
+                    <p class="text-secondary text-sm mt-1">Manage registered users, tier levels and access privileges.</p>
+                </div>
+
+                <!-- Users Table -->
+                <div class="bg-white rounded-2xl border border-border overflow-hidden">
+                    <div class="responsive-table-container">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-surface text-secondary border-b border-border">
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Client Name</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Email Address</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Joined Date</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Tier Plan</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Access Status</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB: SETTINGS                              -->
+            <!-- ========================================== -->
+            <div id="tab-settings" class="admin-tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Global Settings</h2>
+                    <p class="text-secondary text-sm mt-1">System parameters and brand controls.</p>
+                </div>
+
+                <div class="max-w-2xl bg-white p-8 rounded-2xl border border-border space-y-6">
+                    <form onsubmit="handleSettingsUpdate(event)" class="space-y-4">
+                        <div>
+                            <label class="text-xs font-bold text-secondary block mb-1">Agency Brand Name (Navbar Text)</label>
+                            <input type="text" id="settings-sitename" class="premium-input" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-secondary block mb-1">Administrative Contact Email</label>
+                            <input type="email" id="settings-email" class="premium-input" required>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-surface rounded-xl border border-border">
+                            <div>
+                                <h4 class="font-bold text-sm text-primary">Global Maintenance Mode</h4>
+                                <p class="text-xs text-secondary mt-1">Lock down client-facing pages behind notice screen.</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="settings-maintenance" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors mt-6">Apply Configuration</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Blog Editor Slide-over Panel (Hidden by default) -->
+    <div id="blog-editor-panel" class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex justify-end opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-lg h-full p-6 md:p-8 transform translate-x-full transition-transform duration-300 overflow-y-auto" id="blog-editor-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="blog-editor-title" class="text-2xl font-bold">Write New Article</h3>
+                <button onclick="toggleBlogModal(false)" class="p-2 hover:bg-surface rounded-full transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            
+            <form onsubmit="handleBlogSave(event)" class="space-y-4">
+                <input type="hidden" id="edit-post-id">
+                <div>
+                    <label class="text-xs font-bold text-secondary block mb-1">Article Title</label>
+                    <input type="text" id="blog-title" class="premium-input text-sm p-3" required placeholder="e.g. Navigating Web Animations">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-secondary block mb-1">Category</label>
+                        <select id="blog-category" class="premium-input text-sm p-3 bg-white cursor-pointer">
+                            <option value="Tech">Tech</option>
+                            <option value="Design">Design</option>
+                            <option value="SEO">SEO</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-secondary block mb-1">Author Name</label>
+                        <input type="text" id="blog-author" class="premium-input text-sm p-3" required placeholder="e.g. Alex Rivers">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-secondary block mb-1">Featured Image URL</label>
+                    <input type="url" id="blog-image" class="premium-input text-sm p-3" required placeholder="https://images.unsplash.com/photo-...">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-secondary block mb-1">Excerpt Summary</label>
+                    <textarea id="blog-summary" class="premium-input text-sm p-3 h-20" required placeholder="Short summary displayed on grid cards..."></textarea>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-secondary block mb-1">Article Content (markdown format or paragraphs)</label>
+                    <textarea id="blog-content" class="premium-input text-sm p-3 h-48 font-light" required placeholder="Full body contents of the blog post..."></textarea>
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors">Save & Publish Insights</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/common.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

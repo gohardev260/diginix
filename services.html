@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Premium Services</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="index.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-services">Services</a>
+                <a href="tools.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-tools">Tools</a>
+                <a href="pricing.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-pricing">Pricing</a>
+                <a href="blog.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-contact">Contact</a>
+            </div>
+
+            <!-- Desktop Auth / CTA -->
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block" id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Mobile Navbar Controls -->
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-primary focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-bold tracking-tight">
+            <a href="index.html" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-secondary transition-colors">Services</a>
+            <a href="tools.html" class="mobile-nav-link hover:text-secondary transition-colors">Tools</a>
+            <a href="pricing.html" class="mobile-nav-link hover:text-secondary transition-colors">Pricing</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-secondary transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-secondary transition-colors">Contact</a>
+        </div>
+        
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors" id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-5xl mx-auto text-center mb-20">
+            <span class="text-xs uppercase tracking-widest text-secondary font-bold bg-surface px-4 py-2 border border-border rounded-full">Our Capabilities</span>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter mt-6 mb-8">Bespoke Digital Solutions.</h1>
+            <p class="text-xl text-secondary max-w-2xl mx-auto leading-relaxed">
+                We craft state-of-the-art visual systems and robust web infrastructure for brands seeking elite digital distinction.
+            </p>
+        </div>
+
+        <div class="max-w-7xl mx-auto space-y-32">
+            <!-- Service 1: Website Development -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="space-y-6">
+                    <div class="w-12 h-12 bg-surface border border-border rounded-xl flex items-center justify-center">
+                        <i data-lucide="layout" class="w-6 h-6 text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Website Development</h2>
+                    <p class="text-lg text-secondary leading-relaxed">
+                        We build custom, high-performance web products utilizing modern frameworks and raw animations. No templates, no builders. We code from the ground up to ensure extreme speed, dynamic reactivity, and flawless accessibility.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> Next.js, React, Node Integration</li>
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> Micro-Frontend Architecture</li>
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> WebGL & Cinematic Interactions</li>
+                    </ul>
+                </div>
+                <div class="bg-card border border-border rounded-3xl p-8 h-[350px] flex items-center justify-center relative overflow-hidden group">
+                    <div class="w-40 h-40 bg-white border border-border rounded-2xl flex flex-col justify-between p-6 shadow-xl relative z-10 group-hover:-translate-y-2 transition-transform duration-300">
+                        <i data-lucide="code" class="w-8 h-8 text-black"></i>
+                        <span class="text-xs font-bold text-gray-400">clean_code.js</span>
+                    </div>
+                    <div class="absolute w-[200px] h-[200px] border border-dashed border-gray-200 rounded-full animate-[spin_40s_linear_infinite]"></div>
+                </div>
+            </div>
+
+            <!-- Service 2: UX/UI Design -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="order-last md:order-first bg-card border border-border rounded-3xl p-8 h-[350px] flex items-center justify-center relative overflow-hidden group">
+                    <div class="w-40 h-40 bg-white border border-border rounded-2xl flex flex-col justify-between p-6 shadow-xl relative z-10 group-hover:scale-105 transition-transform duration-300">
+                        <i data-lucide="palette" class="w-8 h-8 text-black"></i>
+                        <span class="text-xs font-bold text-gray-400">design_tokens.json</span>
+                    </div>
+                    <div class="absolute w-[300px] h-[300px] border border-gray-200 rounded-full animate-pulse"></div>
+                </div>
+                <div class="space-y-6">
+                    <div class="w-12 h-12 bg-surface border border-border rounded-xl flex items-center justify-center">
+                        <i data-lucide="pen-tool" class="w-6 h-6 text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">UX/UI Design</h2>
+                    <p class="text-lg text-secondary leading-relaxed">
+                        Design is not how it looks, but how it works. We engineer harmonious typography scales, HSL tailored color schemes, and robust interface patterns that provide users with intuitive flows and rewarding interactions.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> Extensive UX Mapping & Research</li>
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> High-Fidelity Interactive Prototypes</li>
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> Cross-Platform Systems</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Service 3: Technical SEO -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="space-y-6">
+                    <div class="w-12 h-12 bg-surface border border-border rounded-xl flex items-center justify-center">
+                        <i data-lucide="search" class="w-6 h-6 text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Technical SEO</h2>
+                    <p class="text-lg text-secondary leading-relaxed">
+                        We optimize the fundamental structural layers of your site to guarantee flawless parsing by crawl bots. By minimizing layout shifts, optimizing core web vitals, and rendering perfect semantic hierarchy, we secure top-tier organic positioning.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> Perfect 100/100 Core Web Vitals</li>
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> JSON-LD Schema Implementations</li>
+                        <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> Comprehensive Crawl Diagnostics</li>
+                    </ul>
+                </div>
+                <div class="bg-card border border-border rounded-3xl p-8 h-[350px] flex items-center justify-center relative overflow-hidden group">
+                    <div class="w-40 h-40 bg-white border border-border rounded-2xl flex flex-col justify-between p-6 shadow-xl relative z-10 group-hover:rotate-6 transition-transform duration-300">
+                        <i data-lucide="line-chart" class="w-8 h-8 text-black"></i>
+                        <span class="text-xs font-bold text-gray-400">rankings_report.pdf</span>
+                    </div>
+                    <div class="absolute w-[250px] h-[250px] border border-dashed border-gray-200 rounded-full animate-[spin_60s_linear_infinite]"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-border bg-surface px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
+            <div class="font-bold tracking-tighter site-logo-text md:mb-0">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:mb-0">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="services.html" class="hover:text-primary transition-colors">Services</a>
+                <a href="tools.html" class="hover:text-primary transition-colors">Tools</a>
+                <a href="pricing.html" class="hover:text-primary transition-colors">Pricing</a>
+                <a href="blog.html" class="hover:text-primary transition-colors">Blog</a>
+                <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js"></script>
+</body>
+</html>

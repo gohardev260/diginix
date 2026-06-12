@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Elite Digital Agency</title>
+
+    <!-- Fonts: Inter for that clean, Swiss/Apple feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS for rapid structural styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration and App Logic are loaded inside script.js -->
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- UI Overlays -->
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="index.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-services">Services</a>
+                <a href="tools.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-tools">Tools</a>
+                <a href="pricing.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-pricing">Pricing</a>
+                <a href="blog.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-contact">Contact</a>
+            </div>
+
+            <!-- Desktop Auth / CTA -->
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors"
+                    id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup"
+                        class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block"
+                        id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Mobile Navbar Controls -->
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-primary focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div id="mobile-menu"
+        class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-bold tracking-tight">
+            <a href="index.html" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-secondary transition-colors">Services</a>
+            <a href="tools.html" class="mobile-nav-link hover:text-secondary transition-colors">Tools</a>
+            <a href="pricing.html" class="mobile-nav-link hover:text-secondary transition-colors">Pricing</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-secondary transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-secondary transition-colors">Contact</a>
+        </div>
+
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin"
+                class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors"
+                id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup"
+                class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors"
+                id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main id="main-content">
+
+        <!-- ========================================== -->
+        <!-- VIEW: HOME (Landing Page)                  -->
+        <!-- ========================================== -->
+        <div id="view-home" class="view-section active">
+
+            <!-- Hero Section -->
+            <section class="relative h-screen flex flex-col justify-center items-center overflow-hidden pt-20">
+                <!-- Three.js Canvas Container -->
+                <div id="canvas-container" class="absolute inset-0 z-0 opacity-40"></div>
+
+                <div class="z-10 text-center max-w-5xl px-6">
+                    <div class="overflow-hidden mb-2">
+                        <h1
+                            class="hero-title text-5xl sm:text-7xl md:text-8xl lg:text-[9rem] font-bold tracking-tighter leading-none text-primary">
+                            DIGINIXIT</h1>
+                    </div>
+                    <div class="overflow-hidden mb-10">
+                        <p class="hero-subtitle text-lg sm:text-xl md:text-2xl lg:text-3xl text-secondary font-light">We
+                            Design, Build and Grow Digital Products.</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 hero-btns opacity-0">
+                        <div class="magnetic-wrap w-full sm:w-auto flex justify-center">
+                            <a href="contact.html"
+                                class="bg-primary text-white w-full max-w-[280px] sm:w-auto text-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:scale-105 transition-transform duration-300 shadow-xl inline-block">Book
+                                a Consultation</a>
+                        </div>
+                        <div class="magnetic-wrap w-full sm:w-auto flex justify-center">
+                            <a href="services.html"
+                                class="bg-surface border border-border text-primary w-full max-w-[280px] sm:w-auto text-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:bg-gray-50 transition-colors inline-block">Explore
+                                Services</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div
+                    class="flex absolute bottom-10 left-1/2 transform -translate-x-1/2 flex-col items-center opacity-50 hero-btns">
+                    <span class="text-xs tracking-widest uppercase mb-2">Scroll</span>
+                    <div class="w-[1px] h-12 bg-primary overflow-hidden">
+                        <div
+                            class="w-full h-full bg-white transform -translate-y-full animate-[scrollDown_1.5s_ease-in-out_infinite]">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Clients Section -->
+            <section class="py-20 border-y border-border bg-surface overflow-hidden">
+                <div class="max-w-7xl mx-auto px-6 md:px-12 mb-12 text-center gsap-fade-up">
+                    <span
+                        class="text-xs uppercase tracking-widest text-secondary font-bold bg-white px-4 py-2 border border-border rounded-full">Our
+                        Partners</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mt-6">Trusted by industry leaders worldwide
+                    </h2>
+                </div>
+                <div class="relative flex marquee-content items-center">
+                    <!-- Repeated logos for infinite effect -->
+                    <div
+                        class="flex flex-shrink-0 items-center justify-around gap-12 md:gap-24 px-4 text-2xl font-bold tracking-tighter min-w-full">
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9h3.56v11.45zM5.34 7.43c-1.14 0-2.06-.92-2.06-2.06 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.06-2.06 2.06zm15.11 13.02h-3.56v-5.6c0-1.34-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95v5.7H9.33V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">LinkedIn</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-9 w-auto fill-current" viewBox="0 0 76 65" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M37.5 0L75 65H0L37.5 0Z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Vercel</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18.8 9.35l-5.68-5.67a1.69 1.69 0 0 0-2.4 0L5.04 9.35a1.69 1.69 0 0 0 0 2.4l5.68 5.67a1.69 1.69 0 0 0 2.4 0l5.68-5.67a1.69 1.69 0 0 0 0-2.4zm-6.8 6.72l-4.3-4.3 4.3-4.3 4.3 4.3-4.3 4.3z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Netlify</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M13.962 11.107c-2.408-.544-3.528-1.026-3.528-2.023 0-.825.795-1.31 2.052-1.31 2.66 0 4.195.96 4.908 1.487l1.32-3.14c-.958-.696-2.883-1.425-5.328-1.425-4.148 0-7.07 2.146-7.07 5.672 0 5.485 5.068 6.446 7.848 7.07 2.593.58 3.528 1.153 3.528 2.213 0 .977-.925 1.46-2.32 1.46-3.085 0-5.112-1.218-5.918-1.89l-1.365 3.14c1.173.916 3.655 1.785 6.368 1.785 4.61 0 8.016-2.142 8.016-5.83 0-5.834-5.02-6.702-7.82-7.31z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Stripe</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Figma</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">OpenAI</span>
+                        </div>
+                    </div>
+                    <div
+                        class="flex flex-shrink-0 items-center justify-around gap-12 md:gap-24 px-4 text-2xl font-bold tracking-tighter min-w-full">
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9h3.56v11.45zM5.34 7.43c-1.14 0-2.06-.92-2.06-2.06 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.06-2.06 2.06zm15.11 13.02h-3.56v-5.6c0-1.34-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95v5.7H9.33V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">LinkedIn</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-9 w-auto fill-current" viewBox="0 0 76 65" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M37.5 0L75 65H0L37.5 0Z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Vercel</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18.8 9.35l-5.68-5.67a1.69 1.69 0 0 0-2.4 0L5.04 9.35a1.69 1.69 0 0 0 0 2.4l5.68 5.67a1.69 1.69 0 0 0 2.4 0l5.68-5.67a1.69 1.69 0 0 0 0-2.4zm-6.8 6.72l-4.3-4.3 4.3-4.3 4.3 4.3-4.3 4.3z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Netlify</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M13.962 11.107c-2.408-.544-3.528-1.026-3.528-2.023 0-.825.795-1.31 2.052-1.31 2.66 0 4.195.96 4.908 1.487l1.32-3.14c-.958-.696-2.883-1.425-5.328-1.425-4.148 0-7.07 2.146-7.07 5.672 0 5.485 5.068 6.446 7.848 7.07 2.593.58 3.528 1.153 3.528 2.213 0 .977-.925 1.46-2.32 1.46-3.085 0-5.112-1.218-5.918-1.89l-1.365 3.14c1.173.916 3.655 1.785 6.368 1.785 4.61 0 8.016-2.142 8.016-5.83 0-5.834-5.02-6.702-7.82-7.31z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Stripe</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">Figma</span>
+                        </div>
+                        <div
+                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
+                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" />
+                            </svg>
+                            <span class="text-2xl font-bold tracking-tight">OpenAI</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section (Editorial Layout) -->
+            <section class="pt-32 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="gsap-fade-up">
+                        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-8">Engineering the
+                            future of the web.</h2>
+                        <p class="text-xl text-secondary leading-relaxed mb-6">
+                            We design and build bespoke, high-performance digital products tailored to your goals. Our
+                            elite collective of engineers and designers focuses on scalability, visual excellence, and
+                            seamless user experiences.
+                        </p>
+                        <a href="services.html"
+                            class="inline-flex items-center text-primary font-medium border-b border-primary pb-1 hover:text-secondary transition-colors">
+                            Our Philosophy <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                        </a>
+                    </div>
+                    <div
+                        class="relative h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden gsap-fade-up">
+                        <!-- 3D Rotating Globe Container -->
+                        <div id="globe-container" class="absolute inset-0 w-full h-full" style="filter: grayscale(100%) contrast(1.15);"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer / CTA -->
+            <footer class="pt-12 pb-32 px-6 text-center max-w-4xl mx-auto">
+                <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter mb-8 gsap-fade-up">Ready to
+                    build?</h2>
+                <p class="text-xl text-secondary mb-12 gsap-fade-up">Join industry leaders who trust DiginixIT for their
+                    digital infrastructure.</p>
+                <div class="magnetic-wrap gsap-fade-up w-full sm:w-auto flex justify-center">
+                    <a href="contact.html"
+                        class="bg-primary text-white w-full max-w-[280px] sm:w-auto text-center px-6 py-4 sm:px-10 sm:py-5 rounded-full text-lg sm:text-xl font-medium hover:bg-black transition-colors shadow-2xl inline-block">Book
+                        a Consultation</a>
+                </div>
+            </footer>
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/common.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

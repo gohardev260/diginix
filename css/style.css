@@ -1,0 +1,115 @@
+/* Base & Resets */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #FFFFFF;
+    color: #111111;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Lenis Smooth Scroll Recommended CSS */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+
+
+/* Cinematic Noise Overlay (Editorial feel) */
+.noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Utilities */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.magnetic-wrap { display: inline-block; }
+
+/* Glass Navbar */
+.glass-nav {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(229, 229, 229, 0.5);
+}
+
+/* Marquee Animation */
+.marquee-content {
+    display: flex;
+    animation: marquee 20s linear infinite;
+    width: max-content;
+}
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* View Transitions */
+.view-section {
+    display: none;
+    opacity: 0;
+}
+.view-section.active {
+    display: block;
+    opacity: 1; /* Fixes the initial content loading issue */
+}
+
+/* Premium Input Styles */
+.premium-input {
+    width: 100%;
+    background: #FAFAFA;
+    border: 1px solid #E5E5E5;
+    padding: 1rem;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+.premium-input:focus { border-color: #111111; }
+
+/* Mobile Menu Drawer */
+#mobile-menu {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#mobile-menu.active {
+    transform: translateX(0);
+}
+
+/* Active Nav States */
+.nav-item-link.active-nav-link {
+    color: #111111;
+    font-weight: 600;
+}
+
+/* Admin Styles */
+.admin-tab-content {
+    display: none;
+}
+.admin-tab-content.active {
+    display: block;
+}
+
+/* Blog Styles */
+.blog-card-img {
+    transition: transform 0.5s ease;
+}
+.blog-card:hover .blog-card-img {
+    transform: scale(1.03);
+}
+
+/* Table Responsive Utilities */
+.responsive-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}

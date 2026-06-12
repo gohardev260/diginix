@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Connect With Us</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-surface min-h-screen flex flex-col justify-between">
+
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="index.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-services">Services</a>
+                <a href="tools.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-tools">Tools</a>
+                <a href="pricing.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-pricing">Pricing</a>
+                <a href="blog.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-contact">Contact</a>
+            </div>
+
+            <!-- Desktop Auth / CTA -->
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block" id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Mobile Navbar Controls -->
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-primary focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-bold tracking-tight">
+            <a href="index.html" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-secondary transition-colors">Services</a>
+            <a href="tools.html" class="mobile-nav-link hover:text-secondary transition-colors">Tools</a>
+            <a href="pricing.html" class="mobile-nav-link hover:text-secondary transition-colors">Pricing</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-secondary transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-secondary transition-colors">Contact</a>
+        </div>
+        
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors" id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20 px-6 flex-1">
+        <div class="max-w-7xl mx-auto space-y-16">
+            
+            <!-- Page Header -->
+            <div class="max-w-4xl">
+                <span class="text-xs uppercase tracking-widest text-secondary font-bold bg-white px-4 py-2 border border-border rounded-full">Get In Touch</span>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mt-6 mb-6">Let's build something beautiful.</h1>
+                <p class="text-xl text-secondary leading-relaxed max-w-2xl">
+                    Ready to initiate a custom development project or require technical tools support? Send us a direct inquiry.
+                </p>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                
+                <!-- Left: Form -->
+                <div class="bg-white p-8 md:p-10 rounded-3xl border border-border shadow-sm">
+                    <h2 class="text-2xl font-bold mb-6">Send an Inquiry</h2>
+                    <form onsubmit="handleContactSubmit(event)" class="space-y-4" data-netlify="true" name="contact">
+                        <input type="hidden" name="form-name" value="contact">
+                        <div>
+                            <label class="text-xs font-bold text-secondary block mb-1">Your Full Name</label>
+                            <input type="text" id="contact-name" name="name" class="premium-input" placeholder="Sarah Connor" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-secondary block mb-1">Email Address</label>
+                            <input type="email" id="contact-email" name="email" class="premium-input" placeholder="sarah@connor.com" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-secondary block mb-1">Subject</label>
+                            <input type="text" id="contact-subject" name="subject" class="premium-input" placeholder="e.g. Design Consulting" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-secondary block mb-1">Inquiry Message</label>
+                            <textarea id="contact-message" name="message" class="premium-input h-32" placeholder="Tell us details about your project or questions..." required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors mt-2">Transmit Message</button>
+                    </form>
+                </div>
+
+                <!-- Right: Information Cards -->
+                <div class="space-y-6">
+                    <div class="bg-white p-8 rounded-3xl border border-border space-y-4">
+                        <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
+                            <i data-lucide="mail" class="w-5 h-5 text-primary"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Inquiry Channels</h3>
+                        <p class="text-secondary text-sm leading-relaxed">For project submissions, quotes, or general inquiries, email us directly at:</p>
+                        <a href="#" id="contact-display-email" class="text-primary font-bold hover:underline">contact@diginix.com</a>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-border space-y-4">
+                        <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-primary"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Global Studio</h3>
+                        <p class="text-secondary text-sm leading-relaxed">Our collective works asynchronously worldwide, with engineering hubs located at:</p>
+                        <div class="text-sm font-medium text-primary">
+                            Faisalabad, Punjab, Pakistan
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-border space-y-4">
+                        <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
+                            <i data-lucide="phone" class="w-5 h-5 text-primary"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Voice Line</h3>
+                        <p class="text-secondary text-sm leading-relaxed">Direct support lines for active Enterprise Pro partners:</p>
+                        <div class="text-sm font-medium text-primary">+92 300 7960300</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-border bg-white px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
+            <div class="font-bold tracking-tighter site-logo-text md:mb-0">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:mb-0">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="services.html" class="hover:text-primary transition-colors">Services</a>
+                <a href="tools.html" class="hover:text-primary transition-colors">Tools</a>
+                <a href="pricing.html" class="hover:text-primary transition-colors">Pricing</a>
+                <a href="blog.html" class="hover:text-primary transition-colors">Blog</a>
+            </div>
+            <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js"></script>
+    <script>
+        async function loadSettingsContact() {
+            await window.backendReady;
+            const settings = await window.apiCall('get_settings');
+            if (settings && settings.contactEmail) {
+                const mailLink = document.getElementById('contact-display-email');
+                if (mailLink) {
+                    mailLink.innerText = settings.contactEmail;
+                    mailLink.href = `mailto:${settings.contactEmail}`;
+                }
+            }
+        }
+
+        window.handleContactSubmit = async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const name = document.getElementById('contact-name').value.trim();
+            const subject = document.getElementById('contact-subject').value.trim();
+
+            const formData = new FormData(form);
+            const searchParams = new URLSearchParams(formData).toString();
+
+            try {
+                const response = await fetch("/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: searchParams
+                });
+
+                if (response.ok) {
+                    alert(`Thank you, ${name}! Your inquiry concerning "${subject}" has been successfully transmitted to our team.`);
+                    form.reset();
+                } else {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+            } catch (err) {
+                alert('Failed to submit inquiry: ' + err.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.backendReady;
+            await loadSettingsContact();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Admin Portal Secure Access</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-black text-white h-screen flex flex-col justify-between p-8">
+
+    <div class="noise"></div>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center max-w-7xl w-full mx-auto relative z-10">
+        <a href="index.html" class="text-2xl font-bold tracking-tighter text-white">DIGINIXIT.</a>
+        <a href="index.html" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Client Website &rarr;</a>
+    </header>
+
+    <!-- Content Panel -->
+    <main class="max-w-md w-full mx-auto relative z-10 my-auto">
+        <div class="space-y-8 bg-neutral-900 border border-neutral-800 p-8 md:p-10 rounded-3xl shadow-2xl">
+            <div class="text-center">
+                <span class="text-[9px] uppercase tracking-widest text-red-500 font-bold bg-red-950/50 px-3 py-1 border border-red-900 rounded-full">Secure Staff Area</span>
+                <h1 class="text-3xl font-bold mt-4">Admin Access</h1>
+                <p class="text-gray-400 text-xs mt-2">Enter credentials to establish terminal session.</p>
+            </div>
+
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">Admin Email</label>
+                    <input type="email" id="admin-user" class="w-full bg-neutral-950 border border-neutral-800 p-4 rounded-xl text-white outline-none focus:border-white transition-colors text-sm" placeholder="e.g. admin@diginix.com" required>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">Password</label>
+                    <input type="password" id="admin-pass" class="w-full bg-neutral-950 border border-neutral-800 p-4 rounded-xl text-white outline-none focus:border-white transition-colors text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-white text-black py-4 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-sm">Authenticate Session</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-neutral-600 relative z-10">
+        Authentication logs are monitored &bull; Security Level B5
+    </footer>
+
+    <!-- Script -->
+    <script src="js/common.js"></script>
+    <script>
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('admin-user').value.trim();
+            const pass = document.getElementById('admin-pass').value;
+
+            await window.backendReady;
+            if (!window.useSupabase) {
+                alert('Database connection not established. Admin sign-in is disabled in offline mode. Please configure Supabase URL and Anon Key in common.js.');
+                return;
+            }
+
+            const { data, error } = await window.supabase.auth.signInWithPassword({
+                email: email,
+                password: pass
+            });
+
+            if (error) {
+                alert('Access Denied. ' + error.message);
+            } else {
+                localStorage.setItem('adminLoggedIn', 'true');
+                alert('Session authenticated successfully. Welcome to DiginixIT Console.');
+                window.location.href = 'admin.html';
+            }
+        }
+    </script>
+</body>
+</html>
