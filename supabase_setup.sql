@@ -44,7 +44,8 @@ CREATE TABLE public.stats (
     revenue TEXT NOT NULL,
     activeUsers TEXT NOT NULL,
     executions TEXT NOT NULL,
-    revenueHistory TEXT NOT NULL
+    revenueHistory TEXT NOT NULL,
+    visits BIGINT DEFAULT 0
 );
 
 -- 3. SEED INITIAL VALUES
@@ -61,8 +62,8 @@ INSERT INTO public.settings (key_name, value_text) VALUES
 ON CONFLICT (key_name) DO UPDATE SET value_text = EXCLUDED.value_text;
 
 -- Seed stats
-INSERT INTO public.stats (revenue, activeUsers, executions, revenueHistory) VALUES 
-('$0', '0', '0', '0,0,0,0,0,0');
+INSERT INTO public.stats (revenue, activeUsers, executions, revenueHistory, visits) VALUES 
+('$0', '0', '0', '0,0,0,0,0,0', 0);
 
 -- 4. ROW LEVEL SECURITY (RLS) POLICIES
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
@@ -87,3 +88,21 @@ CREATE POLICY "Allow select on users" ON public.users FOR SELECT USING (true);
 CREATE POLICY "Allow insert on users" ON public.users FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow update on users" ON public.users FOR UPDATE USING (true) WITH CHECK (true);
 CREATE POLICY "Allow delete on users" ON public.users FOR DELETE TO authenticated USING (true);
+
+-- 5. FUNCTION TO INCREMENT VISITS
+-- Secure function to allow public/anon users to increment page visits
+CREATE OR REPLACE FUNCTION public.increment_visits()
+RETURNS void AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM public.stats) THEN
+        UPDATE public.stats
+        SET visits = COALESCE(visits, 0) + 1;
+    ELSE
+        INSERT INTO public.stats (revenue, activeUsers, executions, revenueHistory, visits)
+        VALUES ('$0', '0', '0', '0,0,0,0,0,0', 1);
+    END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant execution to anon and authenticated roles
+GRANT EXECUTE ON FUNCTION public.increment_visits() TO anon, authenticated;

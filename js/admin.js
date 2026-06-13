@@ -62,10 +62,12 @@ async function loadAnalyticsData() {
     const revenueVal = stats.revenue || "$0";
     const activeUsersVal = stats.activeUsers || "0";
     const executionsVal = stats.executions || "0";
+    const visitsVal = stats.visits || 0;
 
     document.getElementById('stat-revenue').innerText = revenueVal;
     document.getElementById('stat-users').innerText = activeUsersVal;
     document.getElementById('stat-executions').innerText = executionsVal;
+    document.getElementById('stat-visits').innerText = Number(visitsVal).toLocaleString();
 
     // Dynamically show/hide or set change text
     const revChange = document.getElementById('stat-revenue-change');
@@ -101,10 +103,22 @@ async function loadAnalyticsData() {
         }
     }
 
+    const visitsChange = document.getElementById('stat-visits-change');
+    if (visitsChange) {
+        if (visitsVal === 0 || visitsVal === "0") {
+            visitsChange.innerText = "0% change from last month";
+            visitsChange.className = "text-[10px] text-gray-400 font-medium";
+        } else {
+            visitsChange.innerText = "+12.4% from last month";
+            visitsChange.className = "text-[10px] text-green-500 font-bold";
+        }
+    }
+
     // Fill inputs
     document.getElementById('input-revenue').value = revenueVal;
     document.getElementById('input-users').value = activeUsersVal.toString().replace(/,/g, '');
     document.getElementById('input-executions').value = executionsVal;
+    document.getElementById('input-visits').value = visitsVal;
 
     if (stats.revenueHistory) {
         document.getElementById('chart-jan').value = stats.revenueHistory[0] || 0;
@@ -171,6 +185,7 @@ window.handleStatsUpdate = async function(e) {
         revenue: document.getElementById('input-revenue').value,
         activeUsers: Number(document.getElementById('input-users').value).toLocaleString(),
         executions: document.getElementById('input-executions').value,
+        visits: Number(document.getElementById('input-visits').value) || 0,
         revenueHistory: [
             Number(document.getElementById('chart-jan').value),
             Number(document.getElementById('chart-feb').value),

@@ -59,6 +59,7 @@ const defaultStats = {
     revenue: "$124,500",
     activeUsers: "8,241",
     executions: "142.3K",
+    visits: 25421,
     revenueHistory: [42000, 58000, 65000, 89000, 105000, 124500]
 };
 
@@ -278,6 +279,7 @@ window.apiCall = async function (action, data = null) {
                         revenue: "$0",
                         activeUsers: String(realUserCount),
                         executions: "0",
+                        visits: 0,
                         revenueHistory: [0, 0, 0, 0, 0, 0]
                     };
                 }
@@ -286,6 +288,7 @@ window.apiCall = async function (action, data = null) {
                     revenue: dbStats.revenue,
                     activeUsers: String(realUserCount || dbStats.activeusers || dbStats.activeUsers || 0),
                     executions: dbStats.executions,
+                    visits: dbStats.visits || 0,
                     revenueHistory: (dbStats.revenuehistory || dbStats.revenueHistory || '0,0,0,0,0,0').split(',').map(Number)
                 };
             }
@@ -296,6 +299,7 @@ window.apiCall = async function (action, data = null) {
                     revenue: data.revenue,
                     activeusers: data.activeUsers,
                     executions: data.executions,
+                    visits: data.visits || 0,
                     revenuehistory: histStr
                 };
 
@@ -409,6 +413,12 @@ window.apiCall = async function (action, data = null) {
                 return { success: true, user: user };
             }
 
+            case 'increment_visit': {
+                const { error } = await window.supabase.rpc('increment_visits');
+                if (error) throw error;
+                return { success: true };
+            }
+
             default:
                 return { success: false, error: "Unknown action" };
         }
@@ -483,6 +493,11 @@ function apiCallLocalStorageFallback(action, data) {
                 break;
             case 'save_stats':
                 localStorage.setItem('stats', JSON.stringify(data));
+                resolve({ success: true });
+                break;
+            case 'increment_visit':
+                stats.visits = (Number(stats.visits) || 0) + 1;
+                localStorage.setItem('stats', JSON.stringify(stats));
                 resolve({ success: true });
                 break;
             case 'submit_contact':
@@ -702,5 +717,17 @@ document.addEventListener('DOMContentLoaded', () => {
     (async () => {
         await window.backendReady;
         await applySiteSettings();
+        
+        // Count visit once per session for public client pages
+        const path = window.location.pathname.toLowerCase();
+        const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
+        if (isClientPage && !sessionStorage.getItem('website_visited')) {
+            sessionStorage.setItem('website_visited', 'true');
+            try {
+                await window.apiCall('increment_visit');
+            } catch (e) {
+                console.error("Failed to record website visit:", e);
+            }
+        }
     })();
 });
