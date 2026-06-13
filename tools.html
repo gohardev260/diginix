@@ -4,29 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | Agency Tools</title>
-    
-    <!-- Fonts -->
+    <meta name="description" content="Access DiginixIT's agency tool suite, featuring advanced modules for technical SEO audits, CSS and HTML minification, contrast ratio checking, and typography scaling.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diginixit.com/tools.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diginixit.com/tools.html">
+    <meta property="og:title" content="DiginixIT | Agency Tools">
+    <meta property="og:description" content="Access DiginixIT's agency tool suite, featuring advanced modules for technical SEO audits, CSS and HTML minification, contrast ratio checking, and typography scaling.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://diginixit.com/tools.html">
+    <meta name="twitter:title" content="DiginixIT | Agency Tools">
+    <meta name="twitter:description" content="Access DiginixIT's agency tool suite, featuring advanced modules for technical SEO audits, CSS and HTML minification, contrast ratio checking, and typography scaling.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind Configuration Inline (Avoid CLS & style shifts) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/script.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        black: '#000000',
+                        white: '#FFFFFF',
+                        surface: '#FAFAFA',
+                        card: '#F5F5F5',
+                        primary: '#111111',
+                        secondary: '#666666',
+                        border: '#E5E5E5'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
 
-    <!-- Core Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Core Libraries (Deferred to prevent rendering blocks) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Structured Data (Breadcrumb Schema) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://diginixit.com/"
+        },{
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Tools",
+            "item": "https://diginixit.com/tools.html"
+        }]
+    }
+    </script>
 </head>
 <body class="bg-surface">
 
     <div class="noise"></div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
             
@@ -86,7 +144,7 @@
                 </div>
                 <div class="relative w-full md:w-80">
                     <i data-lucide="search" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                    <input type="text" id="tools-search-input" placeholder="Search tools..." class="w-full pl-11 pr-4 py-3 bg-white border border-border rounded-full text-sm focus:outline-none focus:border-primary transition-colors">
+                    <input type="text" id="tools-search-input" aria-label="Search tools" placeholder="Search tools..." class="w-full pl-11 pr-4 py-3 bg-white border border-border rounded-full text-sm focus:outline-none focus:border-primary transition-colors">
                 </div>
             </div>
 
@@ -158,7 +216,8 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/common.js"></script>
-    <script src="js/tools.js"></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/tools.js" defer></script>
 </body>
 </html>

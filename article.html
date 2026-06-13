@@ -3,23 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiginixIT | Read Insight</title>
-    
-    <!-- Fonts -->
+    <title id="meta-title-tag">DiginixIT | Read Insight</title>
+    <meta name="description" id="meta-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" id="canonical-link" href="https://diginixit.com/blog.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="og-url-tag" content="https://diginixit.com/blog.html">
+    <meta property="og:title" id="og-title-tag" content="DiginixIT | Read Insight">
+    <meta property="og:description" id="og-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
+    <meta property="og:image" id="og-image-tag" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" id="twitter-url-tag" content="https://diginixit.com/blog.html">
+    <meta name="twitter:title" id="twitter-title-tag" content="DiginixIT | Read Insight">
+    <meta name="twitter:description" id="twitter-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
+    <meta name="twitter:image" id="twitter-image-tag" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind Configuration Inline (Avoid CLS & style shifts) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/script.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        black: '#000000',
+                        white: '#FFFFFF',
+                        surface: '#FAFAFA',
+                        card: '#F5F5F5',
+                        primary: '#111111',
+                        secondary: '#666666',
+                        border: '#E5E5E5'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
 
-    <!-- Core Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Core Libraries (Deferred to prevent rendering blocks) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Structured Data (Breadcrumb Schema) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://diginixit.com/"
+        },{
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://diginixit.com/blog.html"
+        },{
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Article",
+            "item": "https://diginixit.com/article.html"
+        }]
+    }
+    </script>
 </head>
 <body class="bg-surface">
 
@@ -29,7 +92,7 @@
     <div id="reading-progress" class="fixed top-0 left-0 h-1 bg-black z-[110] w-0 transition-all duration-75"></div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
             
@@ -198,7 +261,8 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/common.js"></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
 
     <!-- Page Loading and Rendering JS -->
     <script>
@@ -220,8 +284,73 @@
                 return;
             }
 
-            // Set Title & Meta tags
+            // Set Title & Meta tags dynamically for SEO & Social Cards
+            const currentUrl = `https://diginixit.com/article.html?id=${post.id}`;
+            const postImage = post.image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200';
+            
             document.title = `DiginixIT | ${post.title}`;
+            
+            const metaTitle = document.getElementById('meta-title-tag');
+            if (metaTitle) metaTitle.innerText = `DiginixIT | ${post.title}`;
+            
+            const metaDesc = document.getElementById('meta-desc-tag');
+            if (metaDesc) metaDesc.content = post.summary;
+
+            const canonical = document.getElementById('canonical-link');
+            if (canonical) canonical.href = currentUrl;
+
+            // Open Graph Override
+            const ogUrl = document.getElementById('og-url-tag');
+            if (ogUrl) ogUrl.content = currentUrl;
+            const ogTitle = document.getElementById('og-title-tag');
+            if (ogTitle) ogTitle.content = post.title;
+            const ogDesc = document.getElementById('og-desc-tag');
+            if (ogDesc) ogDesc.content = post.summary;
+            const ogImage = document.getElementById('og-image-tag');
+            if (ogImage) ogImage.content = postImage;
+
+            // Twitter Card Override
+            const twitterUrl = document.getElementById('twitter-url-tag');
+            if (twitterUrl) twitterUrl.content = currentUrl;
+            const twitterTitle = document.getElementById('twitter-title-tag');
+            if (twitterTitle) twitterTitle.content = post.title;
+            const twitterDesc = document.getElementById('twitter-desc-tag');
+            if (twitterDesc) twitterDesc.content = post.summary;
+            const twitterImage = document.getElementById('twitter-image-tag');
+            if (twitterImage) twitterImage.content = postImage;
+
+            // Inject Dynamic JSON-LD Article Schema
+            try {
+                const schema = {
+                    "@context": "https://schema.org",
+                    "@type": "Article",
+                    "headline": post.title,
+                    "description": post.summary,
+                    "image": [postImage],
+                    "datePublished": post.date,
+                    "dateModified": post.date,
+                    "author": [{
+                        "@type": "Person",
+                        "name": post.author || "DiginixIT Staff",
+                        "url": "https://diginixit.com/blog.html"
+                    }],
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "DiginixIT",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200"
+                        }
+                    }
+                };
+                const schemaScript = document.createElement('script');
+                schemaScript.type = 'application/ld+json';
+                schemaScript.text = JSON.stringify(schema);
+                document.head.appendChild(schemaScript);
+            } catch (e) {
+                console.error("Failed to inject article schema:", e);
+            }
+
             document.getElementById('article-title').innerText = post.title;
             
             // Set Categories

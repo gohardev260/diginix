@@ -4,15 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | Admin Portal Secure Access</title>
-    
-    <!-- Fonts -->
+    <meta name="description" content="Secure staff authentication portal for the DiginixIT administration terminal session.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://diginixit.com/admin_login.html">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind Configuration Inline (Avoid CLS & style shifts) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/script.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        black: '#000000',
+                        white: '#FFFFFF',
+                        surface: '#FAFAFA',
+                        card: '#F5F5F5',
+                        primary: '#111111',
+                        secondary: '#666666',
+                        border: '#E5E5E5'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
@@ -38,11 +62,11 @@
 
             <form onsubmit="handleAdminLogin(event)" class="space-y-4">
                 <div>
-                    <label class="text-xs font-bold text-gray-400 block mb-1">Admin Email</label>
+                    <label for="admin-user" class="text-xs font-bold text-gray-400 block mb-1">Admin Email</label>
                     <input type="email" id="admin-user" class="w-full bg-neutral-950 border border-neutral-800 p-4 rounded-xl text-white outline-none focus:border-white transition-colors text-sm" placeholder="e.g. admin@diginix.com" required>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-400 block mb-1">Password</label>
+                    <label for="admin-pass" class="text-xs font-bold text-gray-400 block mb-1">Password</label>
                     <input type="password" id="admin-pass" class="w-full bg-neutral-950 border border-neutral-800 p-4 rounded-xl text-white outline-none focus:border-white transition-colors text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
                 </div>
                 <div class="pt-2">
@@ -58,7 +82,8 @@
     </footer>
 
     <!-- Script -->
-    <script src="js/common.js"></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
     <script>
         async function handleAdminLogin(e) {
             e.preventDefault();

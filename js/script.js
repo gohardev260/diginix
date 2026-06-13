@@ -1,81 +1,83 @@
-// Tailwind CSS Custom Configuration
-if (typeof tailwind !== 'undefined') {
-    tailwind.config = {
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    black: '#000000',
-                    white: '#FFFFFF',
-                    surface: '#FAFAFA',
-                    card: '#F5F5F5',
-                    primary: '#111111',
-                    secondary: '#666666',
-                    border: '#E5E5E5'
-                },
-                letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
-            }
-        }
-    };
+// Initialize all features once DOM is fully parsed
+function initAll() {
+    if (window.initialized) return;
+    window.initialized = true;
+    
+    // Initialize Icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Initialize Magnetic Buttons
+    initMagneticButtons();
+
+    // Initialize Smooth Scroll
+    initSmoothScroll();
 }
 
-// Initialize Icons
-if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+} else {
+    initAll();
 }
 
 // Magnetic Buttons
-const magnets = document.querySelectorAll('.magnetic-wrap');
-magnets.forEach(magnet => {
-    if (magnet.children.length > 0) {
-        const btn = magnet.children[0];
-        magnet.addEventListener('mousemove', (e) => {
-            const rect = magnet.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
+function initMagneticButtons() {
+    const magnets = document.querySelectorAll('.magnetic-wrap');
+    magnets.forEach(magnet => {
+        if (magnet.children.length > 0) {
+            const btn = magnet.children[0];
+            magnet.addEventListener('mousemove', (e) => {
+                const rect = magnet.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
 
-            if (typeof gsap !== 'undefined') {
-                gsap.to(btn, {
-                    x: x * 0.3,
-                    y: y * 0.3,
-                    duration: 0.3,
-                    ease: "power2.out"
-                });
-            }
-        });
-        magnet.addEventListener('mouseleave', () => {
-            if (typeof gsap !== 'undefined') {
-                gsap.to(btn, {
-                    x: 0,
-                    y: 0,
-                    duration: 0.5,
-                    ease: "elastic.out(1, 0.3)"
-                });
-            }
-        });
-    }
-});
-
-// --- Lenis Smooth Scrolling Setup ---
-let lenis;
-if (typeof Lenis !== 'undefined') {
-    lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Apple-like ease
-        direction: 'vertical',
-        gestureDirection: 'vertical',
-        smooth: true,
-        mouseMultiplier: 1,
-        smoothTouch: false,
-        touchMultiplier: 2,
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(btn, {
+                        x: x * 0.3,
+                        y: y * 0.3,
+                        duration: 0.3,
+                        ease: "power2.out"
+                    });
+                }
+            });
+            magnet.addEventListener('mouseleave', () => {
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(btn, {
+                        x: 0,
+                        y: 0,
+                        duration: 0.5,
+                        ease: "elastic.out(1, 0.3)"
+                    });
+                }
+            });
+        }
     });
+}
 
-    function raf(time) {
-        lenis.raf(time);
+// Lenis Smooth Scrolling Setup
+let lenis;
+function initSmoothScroll() {
+    if (typeof Lenis !== 'undefined') {
+        lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Apple-like ease
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
         requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
 }
+
 
 // --- Three.js Cinematic Background ---
 function initThreeJS() {
@@ -268,16 +270,25 @@ function initNetworkAnimation() {
 }
 
 // Wait for DOM to init scripts
-window.addEventListener('load', () => {
+function initAllAnimations() {
+    if (window.animationsInitialized) return;
+    window.animationsInitialized = true;
     initThreeJS();
     initNetworkAnimation();
     initHomeAnimations();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAllAnimations);
+} else {
+    initAllAnimations();
+}
 
 // --- GSAP Animations ---
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
+
 
 function initHomeAnimations() {
     if (typeof gsap === 'undefined') return;

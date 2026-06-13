@@ -4,20 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | Admin Console</title>
+    <meta name="description" content="Private administration panel console for managing DiginixIT analytics, blog insights, and user database.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://diginixit.com/admin.html">
 
-    <!-- Fonts -->
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind Configuration Inline (Avoid CLS & style shifts) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/script.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        black: '#000000',
+                        white: '#FFFFFF',
+                        surface: '#FAFAFA',
+                        card: '#F5F5F5',
+                        primary: '#111111',
+                        secondary: '#666666',
+                        border: '#E5E5E5'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
 
-    <!-- Core Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Core Libraries (Deferred to prevent rendering blocks) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
@@ -34,7 +59,7 @@
     </script>
 
     <!-- Navbar -->
-    <nav class="bg-white border-b border-border fixed w-full top-0 z-50 py-4 px-6 md:px-12 flex justify-between items-center h-20">
+    <nav class="bg-white border-b border-border fixed w-full top-0 z-50 py-4 px-6 md:px-12 flex justify-between items-center h-20" aria-label="Admin Console Navigation">
         <div class="flex items-center space-x-4">
             <span class="text-2xl font-bold tracking-tighter text-primary site-logo-text">DIGINIXIT.</span>
             <span class="text-xs font-bold uppercase tracking-widest text-red-500 bg-red-50 px-2.5 py-1 rounded-full border border-red-100">Console v1.0</span>
@@ -136,26 +161,26 @@
                         <h3 class="font-bold text-sm">Update Analytics Data</h3>
                         <form onsubmit="handleStatsUpdate(event)" class="space-y-3">
                             <div>
-                                <label class="text-[10px] font-bold text-secondary block mb-1">Total Revenue ($)</label>
+                                <label for="input-revenue" class="text-[10px] font-bold text-secondary block mb-1">Total Revenue ($)</label>
                                 <input type="text" id="input-revenue" class="premium-input text-xs py-2 px-3" required>
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-secondary block mb-1">Active Users</label>
+                                <label for="input-users" class="text-[10px] font-bold text-secondary block mb-1">Active Users</label>
                                 <input type="number" id="input-users" class="premium-input text-xs py-2 px-3" required>
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-secondary block mb-1">Tool Executions</label>
+                                <label for="input-executions" class="text-[10px] font-bold text-secondary block mb-1">Tool Executions</label>
                                 <input type="text" id="input-executions" class="premium-input text-xs py-2 px-3" required>
                             </div>
                             <div class="border-t border-border pt-3">
                                 <label class="text-[10px] font-bold text-secondary block mb-2">Monthly Revenue Points (Chart)</label>
                                 <div class="grid grid-cols-3 gap-2">
-                                    <input type="number" id="chart-jan" placeholder="Jan" class="premium-input text-xs p-2 text-center" required>
-                                    <input type="number" id="chart-feb" placeholder="Feb" class="premium-input text-xs p-2 text-center" required>
-                                    <input type="number" id="chart-mar" placeholder="Mar" class="premium-input text-xs p-2 text-center" required>
-                                    <input type="number" id="chart-apr" placeholder="Apr" class="premium-input text-xs p-2 text-center" required>
-                                    <input type="number" id="chart-may" placeholder="May" class="premium-input text-xs p-2 text-center" required>
-                                    <input type="number" id="chart-jun" placeholder="Jun" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-jan" aria-label="January Revenue" placeholder="Jan" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-feb" aria-label="February Revenue" placeholder="Feb" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-mar" aria-label="March Revenue" placeholder="Mar" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-apr" aria-label="April Revenue" placeholder="Apr" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-may" aria-label="May Revenue" placeholder="May" class="premium-input text-xs p-2 text-center" required>
+                                    <input type="number" id="chart-jun" aria-label="June Revenue" placeholder="Jun" class="premium-input text-xs p-2 text-center" required>
                                 </div>
                             </div>
                             <button type="submit" class="w-full bg-primary text-white text-xs py-3 rounded-xl font-bold hover:bg-black transition-colors mt-2">Apply Metrics</button>
@@ -240,27 +265,27 @@
                 <div class="max-w-2xl bg-white p-8 rounded-2xl border border-border space-y-6">
                     <form onsubmit="handleSettingsUpdate(event)" class="space-y-4">
                         <div>
-                            <label class="text-xs font-bold text-secondary block mb-1">Agency Brand Name (Navbar Text)</label>
+                            <label for="settings-sitename" class="text-xs font-bold text-secondary block mb-1">Agency Brand Name (Navbar Text)</label>
                             <input type="text" id="settings-sitename" class="premium-input" required>
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-secondary block mb-1">Administrative Contact Email</label>
+                            <label for="settings-email" class="text-xs font-bold text-secondary block mb-1">Administrative Contact Email</label>
                             <input type="email" id="settings-email" class="premium-input" required>
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-secondary block mb-1">Administrative Contact Phone Number</label>
+                            <label for="settings-phone" class="text-xs font-bold text-secondary block mb-1">Administrative Contact Phone Number</label>
                             <input type="text" id="settings-phone" class="premium-input" placeholder="+92 300 7960300">
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-secondary block mb-1">LinkedIn Profile/Company URL</label>
+                            <label for="settings-linkedin" class="text-xs font-bold text-secondary block mb-1">LinkedIn Profile/Company URL</label>
                             <input type="url" id="settings-linkedin" class="premium-input" placeholder="https://linkedin.com/company/diginix">
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-secondary block mb-1">Instagram Profile URL</label>
+                            <label for="settings-instagram" class="text-xs font-bold text-secondary block mb-1">Instagram Profile URL</label>
                             <input type="url" id="settings-instagram" class="premium-input" placeholder="https://instagram.com/diginix">
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-secondary block mb-1">Twitter/X Profile URL</label>
+                            <label for="settings-twitter" class="text-xs font-bold text-secondary block mb-1">Twitter/X Profile URL</label>
                             <input type="url" id="settings-twitter" class="premium-input" placeholder="https://twitter.com/diginix">
                         </div>
                         <div class="flex items-center justify-between p-4 bg-surface rounded-xl border border-border">
@@ -292,12 +317,12 @@
             <form onsubmit="handleBlogSave(event)" class="space-y-4">
                 <input type="hidden" id="edit-post-id">
                 <div>
-                    <label class="text-xs font-bold text-secondary block mb-1">Article Title</label>
+                    <label for="blog-title" class="text-xs font-bold text-secondary block mb-1">Article Title</label>
                     <input type="text" id="blog-title" class="premium-input text-sm p-3" required placeholder="e.g. Navigating Web Animations">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-xs font-bold text-secondary block mb-1">Category</label>
+                        <label for="blog-category" class="text-xs font-bold text-secondary block mb-1">Category</label>
                         <select id="blog-category" class="premium-input text-sm p-3 bg-white cursor-pointer">
                             <option value="Tech">Tech</option>
                             <option value="Design">Design</option>
@@ -305,20 +330,20 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-secondary block mb-1">Author Name</label>
+                        <label for="blog-author" class="text-xs font-bold text-secondary block mb-1">Author Name</label>
                         <input type="text" id="blog-author" class="premium-input text-sm p-3" required placeholder="e.g. Alex Rivers">
                     </div>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-secondary block mb-1">Featured Image URL</label>
+                    <label for="blog-image" class="text-xs font-bold text-secondary block mb-1">Featured Image URL</label>
                     <input type="url" id="blog-image" class="premium-input text-sm p-3" required placeholder="https://images.unsplash.com/photo-...">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-secondary block mb-1">Excerpt Summary</label>
+                    <label for="blog-summary" class="text-xs font-bold text-secondary block mb-1">Excerpt Summary</label>
                     <textarea id="blog-summary" class="premium-input text-sm p-3 h-20" required placeholder="Short summary displayed on grid cards..."></textarea>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-secondary block mb-1">Article Content (markdown format or paragraphs)</label>
+                    <label for="blog-content" class="text-xs font-bold text-secondary block mb-1">Article Content (markdown format or paragraphs)</label>
                     <textarea id="blog-content" class="premium-input text-sm p-3 h-48 font-light" required placeholder="Full body contents of the blog post..."></textarea>
                 </div>
                 <div class="pt-4">
@@ -329,7 +354,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/common.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/admin.js" defer></script>
 </body>
 </html>

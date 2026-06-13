@@ -155,14 +155,14 @@ function setupToolInterface(tool, container) {
         container.innerHTML = `
             <div class="space-y-4">
                 <p class="text-sm text-secondary">Compress your raw CSS files instantly.</p>
-                <textarea id="css-input" class="premium-input h-32 text-xs font-mono" placeholder="body {\n  background: #ffffff;\n  color: #000000;\n}"></textarea>
+                <textarea id="css-input" aria-label="CSS input code" class="premium-input h-32 text-xs font-mono" placeholder="body {\n  background: #ffffff;\n  color: #000000;\n}"></textarea>
                 <button onclick="runCssMinifier()" class="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-black transition-colors">Minify CSS</button>
                 <div id="css-output-container" class="hidden space-y-2">
                     <div class="flex justify-between items-center text-xs text-secondary">
                         <span>Minified Output</span>
                         <button onclick="copyToClipboard('css-output')" class="hover:text-primary">Copy Code</button>
                     </div>
-                    <textarea id="css-output" readonly class="premium-input h-20 text-xs font-mono bg-surface cursor-text"></textarea>
+                    <textarea id="css-output" aria-label="CSS minified output" readonly class="premium-input h-20 text-xs font-mono bg-surface cursor-text"></textarea>
                 </div>
             </div>
         `;
@@ -171,15 +171,21 @@ function setupToolInterface(tool, container) {
         container.innerHTML = `
             <div class="space-y-4">
                 <p class="text-sm text-secondary">Enter your SEO details to generate meta tags.</p>
-                <input type="text" id="meta-title" class="premium-input" placeholder="Page Title (e.g. DiginixIT)">
-                <textarea id="meta-desc" class="premium-input h-20" placeholder="Meta Description (e.g. Premium web layouts)"></textarea>
+                <div>
+                    <label for="meta-title" class="text-xs font-bold text-secondary block mb-1">Page Title</label>
+                    <input type="text" id="meta-title" class="premium-input" placeholder="Page Title (e.g. DiginixIT)">
+                </div>
+                <div>
+                    <label for="meta-desc" class="text-xs font-bold text-secondary block mb-1">Meta Description</label>
+                    <textarea id="meta-desc" class="premium-input h-20" placeholder="Meta Description (e.g. Premium web layouts)"></textarea>
+                </div>
                 <button onclick="runMetaGenerator()" class="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-black transition-colors">Generate Meta Tags</button>
                 <div id="meta-output-container" class="hidden space-y-2">
                     <div class="flex justify-between items-center text-xs text-secondary">
                         <span>Generated HTML</span>
                         <button onclick="copyToClipboard('meta-output')" class="hover:text-primary">Copy tags</button>
                     </div>
-                    <textarea id="meta-output" readonly class="premium-input h-24 text-xs font-mono bg-surface cursor-text"></textarea>
+                    <textarea id="meta-output" aria-label="Generated HTML output" readonly class="premium-input h-24 text-xs font-mono bg-surface cursor-text"></textarea>
                 </div>
             </div>
         `;
@@ -190,11 +196,11 @@ function setupToolInterface(tool, container) {
                 <p class="text-sm text-secondary">Compare text and background color to check WCAG compliance.</p>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-xs text-secondary block mb-1">Text Color</label>
+                        <label for="contrast-color-1" class="text-xs text-secondary block mb-1">Text Color</label>
                         <input type="color" id="contrast-color-1" value="#111111" class="w-full h-12 rounded-xl cursor-pointer bg-white p-1 border border-border" oninput="runContrastCheck()">
                     </div>
                     <div>
-                        <label class="text-xs text-secondary block mb-1">Background Color</label>
+                        <label for="contrast-color-2" class="text-xs text-secondary block mb-1">Background Color</label>
                         <input type="color" id="contrast-color-2" value="#ffffff" class="w-full h-12 rounded-xl cursor-pointer bg-white p-1 border border-border" oninput="runContrastCheck()">
                     </div>
                 </div>
@@ -212,7 +218,7 @@ function setupToolInterface(tool, container) {
         container.innerHTML = `
             <div class="space-y-4">
                 <p class="text-sm text-secondary">Enter parameters to run the analysis.</p>
-                <input type="text" id="mock-input" class="premium-input" placeholder="Enter target URL or parameters...">
+                <input type="text" id="mock-input" aria-label="Mock Input Parameters" class="premium-input" placeholder="Enter target URL or parameters...">
                 <button onclick="runMockAnalysis()" class="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-black transition-colors" id="btn-run-mock">Run Analysis</button>
                 <div id="mock-loader" class="hidden flex justify-center items-center py-8">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

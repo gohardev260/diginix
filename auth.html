@@ -4,19 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | Authentication Portal</title>
-    
-    <!-- Fonts -->
+    <meta name="description" content="Sign in or register for a DiginixIT user account to access premium developer tools, contrast ratio checkers, HTML/CSS minifiers, and custom SaaS dashboards.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diginixit.com/auth.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diginixit.com/auth.html">
+    <meta property="og:title" content="DiginixIT | Authentication Portal">
+    <meta property="og:description" content="Sign in or register for a DiginixIT user account to access premium developer tools, contrast ratio checkers, HTML/CSS minifiers, and custom SaaS dashboards.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://diginixit.com/auth.html">
+    <meta name="twitter:title" content="DiginixIT | Authentication Portal">
+    <meta name="twitter:description" content="Sign in or register for a DiginixIT user account to access premium developer tools, contrast ratio checkers, HTML/CSS minifiers, and custom SaaS dashboards.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind Configuration Inline (Avoid CLS & style shifts) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/script.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        black: '#000000',
+                        white: '#FFFFFF',
+                        surface: '#FAFAFA',
+                        card: '#F5F5F5',
+                        primary: '#111111',
+                        secondary: '#666666',
+                        border: '#E5E5E5'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
 
-    <!-- Core Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Core Libraries (Deferred to prevent rendering blocks) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
@@ -64,15 +103,15 @@
                 <!-- Form -->
                 <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
                     <div id="field-name" class="hidden">
-                        <label class="text-xs font-bold text-secondary block mb-1">Full Name</label>
+                        <label for="auth-name" class="text-xs font-bold text-secondary block mb-1">Full Name</label>
                         <input type="text" id="auth-name" class="premium-input" placeholder="Sarah Connor">
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-secondary block mb-1">Email Address</label>
+                        <label for="auth-email" class="text-xs font-bold text-secondary block mb-1">Email Address</label>
                         <input type="email" id="auth-email" class="premium-input" placeholder="sarah@connor.com" required>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-secondary block mb-1">Password</label>
+                        <label for="auth-password" class="text-xs font-bold text-secondary block mb-1">Password</label>
                         <input type="password" id="auth-password" class="premium-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="4">
                     </div>
                     <input type="hidden" id="auth-plan" value="Community">
@@ -91,7 +130,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/common.js"></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
     <script>
         let mode = 'signin';
 

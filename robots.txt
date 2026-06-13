@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin_login.html
+Disallow: /profile.html
+
+Sitemap: https://diginixit.com/sitemap.xml
