@@ -752,12 +752,13 @@ document.addEventListener('DOMContentLoaded', () => {
         await window.backendReady;
         await applySiteSettings();
         
-        // Count visit every time a logged-in user visits a public client page
+        // Count visit once per session for logged-in users when they visit public client pages
         const path = window.location.pathname.toLowerCase();
         const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
         if (isClientPage) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-            if (currentUser && currentUser.email) {
+            if (currentUser && currentUser.email && !sessionStorage.getItem('user_visit_tracked')) {
+                sessionStorage.setItem('user_visit_tracked', 'true');
                 try {
                     await window.apiCall('increment_user_visit', { email: currentUser.email });
                 } catch (e) {
