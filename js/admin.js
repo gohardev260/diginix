@@ -62,10 +62,12 @@ async function loadAnalyticsData() {
     const revenueVal = stats.revenue || "$0";
     const activeUsersVal = stats.activeUsers || "0";
     const executionsVal = stats.executions || "0";
+    const visitsVal = stats.visits || 0;
 
     document.getElementById('stat-revenue').innerText = revenueVal;
     document.getElementById('stat-users').innerText = activeUsersVal;
     document.getElementById('stat-executions').innerText = executionsVal;
+    document.getElementById('stat-visits').innerText = Number(visitsVal).toLocaleString();
 
     // Dynamically show/hide or set change text
     const revChange = document.getElementById('stat-revenue-change');
@@ -98,6 +100,17 @@ async function loadAnalyticsData() {
         } else {
             execsChange.innerText = "+22.1% from last month";
             execsChange.className = "text-[10px] text-green-500 font-bold";
+        }
+    }
+
+    const visitsChange = document.getElementById('stat-visits-change');
+    if (visitsChange) {
+        if (visitsVal === 0 || visitsVal === "0") {
+            visitsChange.innerText = "0% change from last month";
+            visitsChange.className = "text-[10px] text-gray-400 font-medium";
+        } else {
+            visitsChange.innerText = "+12.4% from last month";
+            visitsChange.className = "text-[10px] text-green-500 font-bold";
         }
     }
 

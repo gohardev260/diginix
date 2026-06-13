@@ -273,11 +273,25 @@ window.apiCall = async function (action, data = null) {
                     console.warn("Failed to count users dynamically:", e);
                 }
 
+                // Dynamically retrieve the sum of all visits in the users table
+                let totalVisitsCount = 0;
+                try {
+                    const { data: usersData, error: sumError } = await window.supabase
+                        .from('users')
+                        .select('visits');
+                    if (!sumError && usersData) {
+                        totalVisitsCount = usersData.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
+                    }
+                } catch (e) {
+                    console.warn("Failed to compute total visits dynamically:", e);
+                }
+
                 if (!rows || rows.length === 0) {
                     return {
                         revenue: "$0",
                         activeUsers: String(realUserCount),
                         executions: "0",
+                        visits: totalVisitsCount,
                         revenueHistory: [0, 0, 0, 0, 0, 0]
                     };
                 }
@@ -286,6 +300,7 @@ window.apiCall = async function (action, data = null) {
                     revenue: dbStats.revenue,
                     activeUsers: String(realUserCount || dbStats.activeusers || dbStats.activeUsers || 0),
                     executions: dbStats.executions,
+                    visits: totalVisitsCount,
                     revenueHistory: (dbStats.revenuehistory || dbStats.revenueHistory || '0,0,0,0,0,0').split(',').map(Number)
                 };
             }
@@ -496,9 +511,14 @@ function apiCallLocalStorageFallback(action, data) {
                 localStorage.setItem('settings', JSON.stringify(data));
                 resolve({ success: true });
                 break;
-            case 'get_stats':
-                resolve(stats);
+            case 'get_stats': {
+                const totalVisitsCount = users.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
+                resolve({
+                    ...stats,
+                    visits: totalVisitsCount
+                });
                 break;
+            }
             case 'save_stats':
                 localStorage.setItem('stats', JSON.stringify(data));
                 resolve({ success: true });
