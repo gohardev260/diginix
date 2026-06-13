@@ -583,7 +583,7 @@ async function applySiteSettings() {
                 document.title = settings.siteName.replace('.', '') + ' |' + currentSuffix;
             }
         }
-        
+
         // Update sidebar social links dynamically
         const lnLink = document.getElementById('sidebar-social-linkedin');
         if (lnLink) {
@@ -689,15 +689,18 @@ window.addEventListener('scroll', () => {
 });
 
 // Run shared initialization on load
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     initLocalStorage();
     injectSocialSidebar();
-    await window.backendReady;
-    await applySiteSettings();
     updateNavbarAuth();
     initMobileMenu();
     highlightActiveNav();
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
+    // Perform database-dependent site adjustments in the background once ready
+    (async () => {
+        await window.backendReady;
+        await applySiteSettings();
+    })();
 });

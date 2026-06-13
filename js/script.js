@@ -1,24 +1,27 @@
-// Initialize all features once DOM is fully parsed
-function initAll() {
-    if (window.initialized) return;
-    window.initialized = true;
-    
-    // Initialize Icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
-    // Initialize Magnetic Buttons
-    initMagneticButtons();
-
-    // Initialize Smooth Scroll
-    initSmoothScroll();
+// Tailwind CSS Custom Configuration
+if (typeof tailwind !== 'undefined') {
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    black: '#000000',
+                    white: '#FFFFFF',
+                    surface: '#FAFAFA',
+                    card: '#F5F5F5',
+                    primary: '#111111',
+                    secondary: '#666666',
+                    border: '#E5E5E5'
+                },
+                letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+            }
+        }
+    };
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAll);
-} else {
-    initAll();
+// Initialize Icons
+if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
 }
 
 // Magnetic Buttons
@@ -31,7 +34,7 @@ function initMagneticButtons() {
                 const rect = magnet.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
                 const y = e.clientY - rect.top - rect.height / 2;
-
+                
                 if (typeof gsap !== 'undefined') {
                     gsap.to(btn, {
                         x: x * 0.3,
@@ -55,7 +58,7 @@ function initMagneticButtons() {
     });
 }
 
-// Lenis Smooth Scrolling Setup
+// --- Lenis Smooth Scrolling Setup ---
 let lenis;
 function initSmoothScroll() {
     if (typeof Lenis !== 'undefined') {
@@ -78,14 +81,13 @@ function initSmoothScroll() {
     }
 }
 
-
 // --- Three.js Cinematic Background ---
 function initThreeJS() {
     const container = document.getElementById('canvas-container');
     if (!container || typeof THREE === 'undefined') return;
 
     const scene = new THREE.Scene();
-
+    
     // Camera
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 30;
@@ -106,7 +108,7 @@ function initThreeJS() {
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
+    
     const material = new THREE.PointsMaterial({
         size: 0.1,
         color: 0x111111, // Dark particles on white background
@@ -132,7 +134,7 @@ function initThreeJS() {
 
     // Animation Loop
     const clock = new THREE.Clock();
-
+    
     function animate() {
         requestAnimationFrame(animate);
         const elapsedTime = clock.getElapsedTime();
@@ -144,7 +146,7 @@ function initThreeJS() {
         // Mouse follow easing
         targetX = mouseX * 0.001;
         targetY = mouseY * 0.001;
-
+        
         particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
         particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
 
@@ -164,7 +166,7 @@ function initThreeJS() {
 function initNetworkAnimation() {
     const container = document.getElementById('network-visual-container');
     const svg = container ? container.querySelector('.network-svg') : null;
-    if (!container || !svg) return;
+    if (!container || !svg || typeof gsap === 'undefined') return;
 
     // Build repeating GSAP Timeline
     const tl = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
@@ -175,31 +177,31 @@ function initNetworkAnimation() {
 
     // Generation 0: Root Node lights up in black
     tl.to(".gen-0-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out" })
-      .to(".gen-0-node", { scale: 1, duration: 0.2, ease: "power2.inOut" });
+        .to(".gen-0-node", { scale: 1, duration: 0.2, ease: "power2.inOut" });
 
     // Generation 1: Lines draw and nodes light up
     tl.to(".gen-1-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut" }, "-=0.1")
-      .to(".gen-1-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.1 })
-      .to(".gen-1-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.1 }, "-=0.2");
+        .to(".gen-1-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.1 })
+        .to(".gen-1-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.1 }, "-=0.2");
 
     // Generation 2: Lines draw and nodes light up
     tl.to(".gen-2-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut", stagger: 0.05 }, "-=0.1")
-      .to(".gen-2-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.05 })
-      .to(".gen-2-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.05 }, "-=0.2");
+        .to(".gen-2-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.05 })
+        .to(".gen-2-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.05 }, "-=0.2");
 
     // Generation 3: Lines draw and nodes light up
     tl.to(".gen-3-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut", stagger: 0.03 }, "-=0.1")
-      .to(".gen-3-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.03 })
-      .to(".gen-3-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.03 }, "-=0.2");
+        .to(".gen-3-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.03 })
+        .to(".gen-3-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.03 }, "-=0.2");
 
     // Generation 4: Lines draw and nodes light up
     tl.to(".gen-4-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut", stagger: 0.02 }, "-=0.1")
-      .to(".gen-4-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.02 })
-      .to(".gen-4-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.02 }, "-=0.2");
+        .to(".gen-4-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.02 })
+        .to(".gen-4-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.02 }, "-=0.2");
 
     // Fade out elements slowly to reset/loop
     tl.to(".network-node", { fill: "#e5e5e5", duration: 0.8, ease: "power2.inOut", delay: 1.5 })
-      .to(".network-line", { stroke: "#e5e5e5", strokeWidth: 1.5, duration: 0.8, ease: "power2.inOut" }, "-=0.8");
+        .to(".network-line", { stroke: "#e5e5e5", strokeWidth: 1.5, duration: 0.8, ease: "power2.inOut" }, "-=0.8");
 
     // Parallax tilt on mousemove
     container.addEventListener('mousemove', (e) => {
@@ -269,46 +271,30 @@ function initNetworkAnimation() {
     });
 }
 
-// Wait for DOM to init scripts
-function initAllAnimations() {
-    if (window.animationsInitialized) return;
-    window.animationsInitialized = true;
-    initThreeJS();
-    initNetworkAnimation();
-    initHomeAnimations();
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAllAnimations);
-} else {
-    initAllAnimations();
-}
-
 // --- GSAP Animations ---
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
-
 
 function initHomeAnimations() {
     if (typeof gsap === 'undefined') return;
 
     // Hero text reveal
     if (document.querySelector(".hero-title")) {
-        gsap.fromTo(".hero-title",
-            { y: 150, opacity: 0 },
+        gsap.fromTo(".hero-title", 
+            { y: 150, opacity: 0 }, 
             { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", delay: 0.2 }
         );
     }
     if (document.querySelector(".hero-subtitle")) {
-        gsap.fromTo(".hero-subtitle",
-            { y: 50, opacity: 0 },
+        gsap.fromTo(".hero-subtitle", 
+            { y: 50, opacity: 0 }, 
             { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", delay: 0.4 }
         );
     }
     if (document.querySelector(".hero-btns")) {
-        gsap.fromTo(".hero-btns",
-            { y: 20, opacity: 0 },
+        gsap.fromTo(".hero-btns", 
+            { y: 20, opacity: 0 }, 
             { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.8 }
         );
     }
@@ -316,18 +302,45 @@ function initHomeAnimations() {
     // Scroll animations for sections
     const fadeUps = document.querySelectorAll('.gsap-fade-up');
     fadeUps.forEach(elem => {
-        gsap.fromTo(elem,
-            { y: 50, opacity: 0 },
-            {
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: elem,
-                    start: "top 85%",
+        if (typeof ScrollTrigger !== 'undefined') {
+            gsap.fromTo(elem, 
+                { y: 50, opacity: 0 },
+                { 
+                    y: 0, 
+                    opacity: 1, 
+                    duration: 1, 
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: "top 85%",
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            // Immediate fallback animation if ScrollTrigger is not loaded on this page
+            gsap.fromTo(elem, 
+                { y: 50, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+            );
+        }
     });
 }
+
+// Initialize all features once DOM is fully parsed (DOMContentLoaded)
+function initAll() {
+    initMagneticButtons();
+    initSmoothScroll();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+} else {
+    initAll();
+}
+
+// Run Three.js visual assets on window load when layout is computed
+window.addEventListener('load', () => {
+    initThreeJS();
+    initNetworkAnimation();
+    initHomeAnimations();
+});
