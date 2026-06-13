@@ -367,16 +367,24 @@ async function loadSettingsData() {
     const settings = await window.apiCall('get_settings') || {};
     document.getElementById('settings-sitename').value = settings.siteName || 'DIGINIXIT.';
     document.getElementById('settings-email').value = settings.contactEmail || 'contact@diginix.com';
+    document.getElementById('settings-phone').value = settings.contactPhone || '';
     document.getElementById('settings-maintenance').checked = settings.maintenanceMode || false;
+    document.getElementById('settings-linkedin').value = settings.linkedin || '';
+    document.getElementById('settings-instagram').value = settings.instagram || '';
+    document.getElementById('settings-twitter').value = settings.twitter || '';
 }
 
 window.handleSettingsUpdate = async function(e) {
     e.preventDefault();
     const siteName = document.getElementById('settings-sitename').value.trim();
     const contactEmail = document.getElementById('settings-email').value.trim();
+    const contactPhone = document.getElementById('settings-phone').value.trim();
     const maintenanceMode = document.getElementById('settings-maintenance').checked;
+    const linkedin = document.getElementById('settings-linkedin').value.trim();
+    const instagram = document.getElementById('settings-instagram').value.trim();
+    const twitter = document.getElementById('settings-twitter').value.trim();
 
-    const newSettings = { siteName, contactEmail, maintenanceMode };
+    const newSettings = { siteName, contactEmail, contactPhone, maintenanceMode, linkedin, instagram, twitter };
     
     await window.backendReady;
     const res = await window.apiCall('save_settings', newSettings);

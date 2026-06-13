@@ -48,7 +48,11 @@ const defaultUsers = [
 const defaultSettings = {
     siteName: "DIGINIXIT.",
     contactEmail: "contact@diginix.com",
-    maintenanceMode: false
+    contactPhone: "+92 300 7960300",
+    maintenanceMode: false,
+    linkedin: "https://linkedin.com/",
+    instagram: "https://instagram.com/",
+    twitter: "https://twitter.com/"
 };
 
 const defaultStats = {
@@ -236,7 +240,11 @@ window.apiCall = async function (action, data = null) {
                 const rows = [
                     { key_name: 'siteName', value_text: data.siteName },
                     { key_name: 'contactEmail', value_text: data.contactEmail },
-                    { key_name: 'maintenanceMode', value_text: data.maintenanceMode ? 'true' : 'false' }
+                    { key_name: 'contactPhone', value_text: data.contactPhone || '' },
+                    { key_name: 'maintenanceMode', value_text: data.maintenanceMode ? 'true' : 'false' },
+                    { key_name: 'linkedin', value_text: data.linkedin || '' },
+                    { key_name: 'instagram', value_text: data.instagram || '' },
+                    { key_name: 'twitter', value_text: data.twitter || '' }
                 ];
                 const { error } = await window.supabase
                     .from('settings')
@@ -539,17 +547,58 @@ function apiCallLocalStorageFallback(action, data) {
     });
 }
 
+// --- 4.5. Floating Social Sidebar Injection ---
+function injectSocialSidebar() {
+    // Check if sidebar already exists (prevent duplicate injection)
+    if (document.getElementById('social-sidebar')) return;
+
+    const sidebar = document.createElement('div');
+    sidebar.id = 'social-sidebar';
+    sidebar.className = 'social-sidebar';
+    sidebar.innerHTML = `
+        <div class="social-sidebar-handle" title="Follow Us">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <div class="social-sidebar-divider"></div>
+        <div class="social-sidebar-links">
+            <a id="sidebar-social-linkedin" href="#" target="_blank" title="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+            <a id="sidebar-social-instagram" href="#" target="_blank" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+            <a id="sidebar-social-twitter" href="#" target="_blank" title="Twitter/X"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        </div>
+    `;
+    document.body.appendChild(sidebar);
+}
+
 // --- 5. Site Settings Synced Site-Wide ---
 async function applySiteSettings() {
     const settings = await window.apiCall('get_settings');
-    if (settings && settings.siteName) {
-        const brandEls = document.querySelectorAll('.site-logo-text');
-        brandEls.forEach(el => {
-            el.innerText = settings.siteName;
-        });
-        if (document.title.includes('DiginixIT |') || document.title.includes('DIGINIXIT')) {
-            const currentSuffix = document.title.split('|')[1] || '';
-            document.title = settings.siteName.replace('.', '') + ' |' + currentSuffix;
+    if (settings) {
+        if (settings.siteName) {
+            const brandEls = document.querySelectorAll('.site-logo-text');
+            brandEls.forEach(el => {
+                el.innerText = settings.siteName;
+            });
+            if (document.title.includes('DiginixIT |') || document.title.includes('DIGINIXIT')) {
+                const currentSuffix = document.title.split('|')[1] || '';
+                document.title = settings.siteName.replace('.', '') + ' |' + currentSuffix;
+            }
+        }
+        
+        // Update sidebar social links dynamically
+        const lnLink = document.getElementById('sidebar-social-linkedin');
+        if (lnLink) {
+            lnLink.href = settings.linkedin || 'https://linkedin.com/';
+            lnLink.style.display = 'inline-flex';
+        }
+        const igLink = document.getElementById('sidebar-social-instagram');
+        if (igLink) {
+            igLink.href = settings.instagram || 'https://instagram.com/';
+            igLink.style.display = 'inline-flex';
+        }
+        const twLink = document.getElementById('sidebar-social-twitter');
+        if (twLink) {
+            twLink.href = settings.twitter || 'https://twitter.com/';
+            twLink.style.display = 'inline-flex';
         }
     }
 }
@@ -615,6 +664,7 @@ function highlightActiveNav() {
         'tools.html': 'nav-tools',
         'pricing.html': 'nav-pricing',
         'blog.html': 'nav-blog',
+        'article.html': 'nav-blog',
         'profile.html': 'nav-profile',
         'contact.html': 'nav-contact'
     };
@@ -641,6 +691,7 @@ window.addEventListener('scroll', () => {
 // Run shared initialization on load
 document.addEventListener('DOMContentLoaded', async () => {
     initLocalStorage();
+    injectSocialSidebar();
     await window.backendReady;
     await applySiteSettings();
     updateNavbarAuth();

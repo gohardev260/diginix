@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Read Insight</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-surface">
+
+    <div class="noise"></div>
+
+    <!-- Reading Progress Pinned to Top -->
+    <div id="reading-progress" class="fixed top-0 left-0 h-1 bg-black z-[110] w-0 transition-all duration-75"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="index.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-services">Services</a>
+                <a href="tools.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-tools">Tools</a>
+                <a href="pricing.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-pricing">Pricing</a>
+                <a href="blog.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-contact">Contact</a>
+            </div>
+
+            <!-- Desktop Auth / CTA -->
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block" id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Mobile Navbar Controls -->
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-primary focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-bold tracking-tight">
+            <a href="index.html" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-secondary transition-colors">Services</a>
+            <a href="tools.html" class="mobile-nav-link hover:text-secondary transition-colors">Tools</a>
+            <a href="pricing.html" class="mobile-nav-link hover:text-secondary transition-colors">Pricing</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-secondary transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-secondary transition-colors">Contact</a>
+        </div>
+        
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors" id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-5xl mx-auto" id="main-article-view">
+            
+            <!-- Breadcrumbs -->
+            <div class="mb-8 flex items-center space-x-2 text-xs font-semibold text-secondary uppercase tracking-widest">
+                <a href="blog.html" class="hover:text-primary transition-colors flex items-center gap-1 group">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform"></i>
+                    Back to Insights
+                </a>
+                <span>/</span>
+                <span id="article-category-breadcrumb" class="text-primary font-bold">Tech</span>
+            </div>
+
+            <!-- Article Header Section -->
+            <div class="space-y-6 mb-12">
+                <div>
+                    <span id="article-category-pill" class="bg-white px-4 py-2 border border-border rounded-full text-xs font-bold uppercase tracking-widest text-primary inline-block">Tech</span>
+                </div>
+                <h1 id="article-title" class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight text-primary">
+                    Loading article...
+                </h1>
+                <div class="flex items-center space-x-3 text-sm text-secondary">
+                    <span id="article-author-meta" class="font-semibold text-primary">By DiginixIT</span>
+                    <span>&bull;</span>
+                    <span id="article-date-meta">2026-06-01</span>
+                    <span>&bull;</span>
+                    <span id="article-readtime" class="font-light">-- min read</span>
+                </div>
+            </div>
+
+            <!-- Hero Image -->
+            <div class="w-full h-[250px] sm:h-[380px] md:h-[480px] overflow-hidden rounded-3xl border border-border mb-16 relative">
+                <img id="article-image" src="" alt="Insight Hero" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Grid Structure for Readability -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 items-start">
+                
+                <!-- Left Sidebar (Metadata & Sharing Tools) -->
+                <div class="lg:col-span-1 lg:sticky lg:top-24 space-y-8 bg-white border border-border p-6 rounded-3xl">
+                    <!-- Author Section -->
+                    <div class="space-y-3">
+                        <div class="text-[10px] uppercase tracking-wider text-secondary font-bold">Author</div>
+                        <div class="flex items-center space-x-3">
+                            <div id="author-initials" class="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center font-bold text-sm text-primary">
+                                DI
+                            </div>
+                            <div>
+                                <div id="article-author" class="font-bold text-sm text-primary">DiginixIT</div>
+                                <div class="text-xs text-secondary">Research & Analysis</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Publish Date -->
+                    <div class="space-y-1">
+                        <div class="text-[10px] uppercase tracking-wider text-secondary font-bold">Published</div>
+                        <div id="article-date" class="text-sm font-medium text-primary">2026-06-01</div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="text-[10px] uppercase tracking-wider text-secondary font-bold">Share Article</div>
+                        <div class="flex space-x-3">
+                            <a href="#" id="share-twitter" target="_blank" class="p-2 hover:bg-surface border border-border hover:border-primary rounded-full transition-all text-secondary hover:text-primary flex items-center justify-center w-9 h-9" title="Share on Twitter/X">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            </a>
+                            <a href="#" id="share-linkedin" target="_blank" class="p-2 hover:bg-surface border border-border hover:border-primary rounded-full transition-all text-secondary hover:text-primary flex items-center justify-center w-9 h-9" title="Share on LinkedIn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                            </a>
+                            <button id="share-copy" class="p-2 hover:bg-surface border border-border hover:border-primary rounded-full transition-all text-secondary hover:text-primary flex items-center justify-center w-9 h-9 relative" title="Copy Link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                <span id="copy-toast" class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2.5 py-1 bg-primary text-white text-[10px] font-semibold rounded opacity-0 pointer-events-none transition-opacity duration-200 whitespace-nowrap">Link Copied!</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (Article content paragraphs) -->
+                <div class="lg:col-span-3 space-y-6">
+                    <article id="article-content" class="text-secondary text-base sm:text-lg leading-relaxed font-light space-y-6">
+                        <!-- Content Paragraphs Populated Dynamically -->
+                    </article>
+                </div>
+            </div>
+
+            <!-- Related Articles -->
+            <div class="border-t border-border mt-20 pt-16">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-secondary font-bold bg-white px-4 py-2 border border-border rounded-full">Explore more</span>
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-4">Related Insights</h2>
+                    </div>
+                    <a href="blog.html" class="text-xs font-semibold text-primary hover:underline flex items-center gap-1 group">
+                        View all insights
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                <div id="related-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Dynamically populated related blogs -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-border bg-white px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
+            <div class="font-bold tracking-tighter site-logo-text md:mb-0">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:mb-0">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="services.html" class="hover:text-primary transition-colors">Services</a>
+                <a href="tools.html" class="hover:text-primary transition-colors">Tools</a>
+                <a href="pricing.html" class="hover:text-primary transition-colors">Pricing</a>
+                <a href="blog.html" class="hover:text-primary transition-colors">Blog</a>
+                <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js"></script>
+
+    <!-- Page Loading and Rendering JS -->
+    <script>
+        async function loadArticleDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const articleId = params.get('id');
+
+            if (!articleId) {
+                renderNotFound("No article ID was provided.");
+                return;
+            }
+
+            await window.backendReady;
+            const blogs = await window.apiCall('get_blogs') || [];
+            const post = blogs.find(b => String(b.id) === String(articleId));
+
+            if (!post) {
+                renderNotFound("The requested article could not be found.");
+                return;
+            }
+
+            // Set Title & Meta tags
+            document.title = `DiginixIT | ${post.title}`;
+            document.getElementById('article-title').innerText = post.title;
+            
+            // Set Categories
+            document.getElementById('article-category-breadcrumb').innerText = post.category;
+            const catPill = document.getElementById('article-category-pill');
+            catPill.innerText = post.category;
+            
+            // Set Hero Image
+            const heroImg = document.getElementById('article-image');
+            heroImg.src = post.image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800';
+            heroImg.alt = post.title;
+
+            // Date & Author details
+            document.getElementById('article-date').innerText = post.date;
+            document.getElementById('article-date-meta').innerText = post.date;
+            
+            document.getElementById('article-author').innerText = post.author;
+            document.getElementById('article-author-meta').innerText = `By ${post.author}`;
+
+            // Author initials
+            if (post.author) {
+                const initials = post.author.split(' ').map(name => name[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('author-initials').innerText = initials;
+            }
+
+            // Calculate Reading Time (avg 200 words per minute)
+            const words = post.content ? post.content.split(/\s+/).length : 0;
+            const readingTime = Math.max(1, Math.ceil(words / 200));
+            document.getElementById('article-readtime').innerText = `${readingTime} min read`;
+
+            // Split and map article paragraphs
+            const contentsContainer = document.getElementById('article-content');
+            if (post.content) {
+                const paragraphs = post.content.split('\n\n');
+                contentsContainer.innerHTML = paragraphs.map((p, idx) => {
+                    // Make first paragraph feel editorial & large
+                    if (idx === 0) {
+                        return `<p class="text-lg md:text-xl font-normal text-primary leading-relaxed mb-6">${p}</p>`;
+                    }
+                    return `<p class="mb-6 font-light text-secondary leading-relaxed">${p}</p>`;
+                }).join('');
+            } else {
+                contentsContainer.innerHTML = `<p class="font-light text-secondary italic">No content available for this article.</p>`;
+            }
+
+            // Initialize Share Toolbar links
+            const shareUrl = window.location.href;
+            document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`;
+            document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+
+            // Copy to Clipboard Action
+            const copyBtn = document.getElementById('share-copy');
+            const copyToast = document.getElementById('copy-toast');
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    copyToast.classList.remove('opacity-0');
+                    copyToast.classList.add('opacity-100');
+                    setTimeout(() => {
+                        copyToast.classList.remove('opacity-100');
+                        copyToast.classList.add('opacity-0');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy link: ', err);
+                });
+            });
+
+            // Reading scroll progress bar logic
+            window.addEventListener('scroll', () => {
+                const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                if (height > 0) {
+                    const scrolled = (winScroll / height) * 100;
+                    document.getElementById('reading-progress').style.width = scrolled + "%";
+                }
+            });
+
+            // Populate Related Articles
+            renderRelatedArticles(blogs, post);
+
+            // Trigger lucide icon creation
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // GSAP Entry Animation
+            if (typeof gsap !== 'undefined') {
+                gsap.from("#article-title", { y: 30, opacity: 0, duration: 0.8, ease: "power3.out" });
+                gsap.from("#article-image", { scale: 0.98, opacity: 0, duration: 1, delay: 0.2, ease: "power2.out" });
+                gsap.from(".lg\\:col-span-1", { y: 20, opacity: 0, duration: 0.8, delay: 0.4, ease: "power3.out" });
+                gsap.from(".lg\\:col-span-3", { y: 25, opacity: 0, duration: 0.8, delay: 0.5, ease: "power3.out" });
+            }
+        }
+
+        function renderNotFound(message) {
+            document.getElementById('main-article-view').innerHTML = `
+                <div class="max-w-md mx-auto text-center py-20 bg-white border border-border rounded-3xl p-8 shadow-sm my-12">
+                    <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold mb-2 text-primary">Article Not Found</h1>
+                    <p class="text-secondary text-sm mb-8 leading-relaxed">${message}</p>
+                    <a href="blog.html" class="inline-flex bg-primary text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-black transition-colors">
+                        Back to Insights Blog
+                    </a>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function renderRelatedArticles(allBlogs, currentPost) {
+            const relatedContainer = document.getElementById('related-grid');
+            if (!relatedContainer) return;
+
+            const filterList = allBlogs.filter(b => String(b.id) !== String(currentPost.id));
+
+            // Select related posts (same category first, then fallback to others)
+            let matchingCategory = filterList.filter(b => b.category === currentPost.category);
+            let otherCategories = filterList.filter(b => b.category !== currentPost.category);
+            
+            let relatedBlogs = [...matchingCategory, ...otherCategories].slice(0, 3);
+
+            if (relatedBlogs.length === 0) {
+                relatedContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-secondary text-sm font-light">
+                        No other insights published yet.
+                    </div>
+                `;
+            } else {
+                relatedContainer.innerHTML = relatedBlogs.map(item => `
+                    <a href="article.html?id=${item.id}" class="blog-card bg-white border border-border rounded-3xl overflow-hidden hover:border-primary transition-colors group flex flex-col justify-between">
+                        <div>
+                            <div class="h-44 overflow-hidden relative">
+                                <img src="${item.image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800'}" alt="${item.title}" class="blog-card-img w-full h-full object-cover">
+                                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${item.category}</span>
+                            </div>
+                            <div class="p-6 space-y-2">
+                                <div class="text-[10px] text-secondary font-medium">${item.date}</div>
+                                <h3 class="font-bold text-base leading-snug group-hover:text-secondary transition-colors line-clamp-2">${item.title}</h3>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0 flex justify-between items-center text-xs font-semibold text-primary">
+                            <span>Read Article</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+                `).join('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadArticleDetail();
+        });
+    </script>
+</body>
+</html>

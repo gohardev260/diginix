@@ -33,7 +33,7 @@ magnets.forEach(magnet => {
             const rect = magnet.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
-            
+
             if (typeof gsap !== 'undefined') {
                 gsap.to(btn, {
                     x: x * 0.3,
@@ -83,7 +83,7 @@ function initThreeJS() {
     if (!container || typeof THREE === 'undefined') return;
 
     const scene = new THREE.Scene();
-    
+
     // Camera
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 30;
@@ -104,7 +104,7 @@ function initThreeJS() {
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    
+
     const material = new THREE.PointsMaterial({
         size: 0.1,
         color: 0x111111, // Dark particles on white background
@@ -130,7 +130,7 @@ function initThreeJS() {
 
     // Animation Loop
     const clock = new THREE.Clock();
-    
+
     function animate() {
         requestAnimationFrame(animate);
         const elapsedTime = clock.getElapsedTime();
@@ -142,7 +142,7 @@ function initThreeJS() {
         // Mouse follow easing
         targetX = mouseX * 0.001;
         targetY = mouseY * 0.001;
-        
+
         particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
         particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
 
@@ -158,173 +158,119 @@ function initThreeJS() {
     });
 }
 
-// --- Three.js Rotating Globe inside About Section ---
-function initRotatingGlobe() {
-    const container = document.getElementById('globe-container');
-    if (!container || typeof THREE === 'undefined') return;
+// --- Growing Network Tree Visualizer Timeline ---
+function initNetworkAnimation() {
+    const container = document.getElementById('network-visual-container');
+    const svg = container ? container.querySelector('.network-svg') : null;
+    if (!container || !svg) return;
 
-    // Grab hand styling cues to signify interaction availability
-    container.style.cursor = 'grab';
-    container.addEventListener('mousedown', () => { container.style.cursor = 'grabbing'; });
-    container.addEventListener('mouseup', () => { container.style.cursor = 'grab'; });
+    // Build repeating GSAP Timeline
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
 
-    const width = container.clientWidth || 400;
-    const height = container.clientHeight || 500;
+    // Set initial states: faint gray nodes and lines, nodes centered
+    gsap.set(".network-node", { fill: "#e5e5e5", scale: 1, transformOrigin: "center" });
+    gsap.set(".network-line", { stroke: "#e5e5e5", strokeWidth: 1.5 });
 
-    const scene = new THREE.Scene();
+    // Generation 0: Root Node lights up in black
+    tl.to(".gen-0-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out" })
+      .to(".gen-0-node", { scale: 1, duration: 0.2, ease: "power2.inOut" });
 
-    const initialAspect = width / height;
-    const camera = new THREE.PerspectiveCamera(45, initialAspect, 0.1, 1000);
-    camera.position.z = 14 / Math.min(1, initialAspect);
+    // Generation 1: Lines draw and nodes light up
+    tl.to(".gen-1-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut" }, "-=0.1")
+      .to(".gen-1-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.1 })
+      .to(".gen-1-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.1 }, "-=0.2");
 
-    // Lights (Required for textured mesh reflection)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
-    scene.add(ambientLight);
+    // Generation 2: Lines draw and nodes light up
+    tl.to(".gen-2-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut", stagger: 0.05 }, "-=0.1")
+      .to(".gen-2-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.05 })
+      .to(".gen-2-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.05 }, "-=0.2");
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-    directionalLight.position.set(5, 3, 5);
-    scene.add(directionalLight);
+    // Generation 3: Lines draw and nodes light up
+    tl.to(".gen-3-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut", stagger: 0.03 }, "-=0.1")
+      .to(".gen-3-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.03 })
+      .to(".gen-3-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.03 }, "-=0.2");
 
-    // Renderer
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    container.appendChild(renderer.domElement);
+    // Generation 4: Lines draw and nodes light up
+    tl.to(".gen-4-line", { stroke: "#111111", strokeWidth: 2, duration: 0.4, ease: "power1.inOut", stagger: 0.02 }, "-=0.1")
+      .to(".gen-4-node", { fill: "#111111", scale: 1.3, duration: 0.4, ease: "power2.out", stagger: 0.02 })
+      .to(".gen-4-node", { scale: 1, duration: 0.2, ease: "power2.inOut", stagger: 0.02 }, "-=0.2");
 
-    // Globe Group
-    const globeGroup = new THREE.Group();
-    scene.add(globeGroup);
+    // Fade out elements slowly to reset/loop
+    tl.to(".network-node", { fill: "#e5e5e5", duration: 0.8, ease: "power2.inOut", delay: 1.5 })
+      .to(".network-line", { stroke: "#e5e5e5", strokeWidth: 1.5, duration: 0.8, ease: "power2.inOut" }, "-=0.8");
 
-    // Load Earth Texture Map with local wireframe backup loader
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load(
-        'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
-        (texture) => {
-            const geometry = new THREE.SphereGeometry(4, 32, 32);
-            const material = new THREE.MeshPhongMaterial({
-                map: texture,
-                shininess: 12
+    // Parallax tilt on mousemove
+    container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+        // Max drift angles: 20 degrees
+        const rotateX = y * 20;
+        const rotateY = x * -20;
+
+        if (typeof gsap !== 'undefined') {
+            gsap.to(svg, {
+                rotateX: rotateX,
+                rotateY: rotateY,
+                duration: 0.8,
+                ease: "power2.out",
+                overwrite: "auto"
             });
-            const globeMesh = new THREE.Mesh(geometry, material);
-            globeGroup.add(globeMesh);
-        },
-        undefined,
-        (error) => {
-            console.warn("DiginixIT: Failed to load online Earth texture map. Loading offline wireframe fallback:", error);
-            const geometry = new THREE.SphereGeometry(4, 24, 24);
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x111111,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.15
-            });
-            const globeMesh = new THREE.Mesh(geometry, material);
-            globeGroup.add(globeMesh);
         }
-    );
-
-    // Interactive drag coordinates tracking
-    let isDragging = false;
-    let previousMousePosition = { x: 0, y: 0 };
-
-    container.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        previousMousePosition = {
-            x: e.clientX,
-            y: e.clientY
-        };
     });
 
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-
-        const deltaMove = {
-            x: e.clientX - previousMousePosition.x,
-            y: e.clientY - previousMousePosition.y
-        };
-
-        // Smooth rotation modification
-        globeGroup.rotation.y += deltaMove.x * 0.006;
-        globeGroup.rotation.x += deltaMove.y * 0.006;
-
-        previousMousePosition = {
-            x: e.clientX,
-            y: e.clientY
-        };
+    container.addEventListener('mouseleave', () => {
+        if (typeof gsap !== 'undefined') {
+            gsap.to(svg, {
+                rotateX: 0,
+                rotateY: 0,
+                duration: 1.2,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+        }
     });
 
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
-
-    // Touch Support for Mobile Dragging
-    container.addEventListener('touchstart', (e) => {
+    // Touch support for mobile parallax
+    container.addEventListener('touchmove', (e) => {
         if (e.touches.length === 1) {
-            isDragging = true;
-            previousMousePosition = {
-                x: e.touches[0].clientX,
-                y: e.touches[0].clientY
-            };
+            const rect = container.getBoundingClientRect();
+            const x = (e.touches[0].clientX - rect.left) / rect.width - 0.5;
+            const y = (e.touches[0].clientY - rect.top) / rect.height - 0.5;
+
+            const rotateX = y * 15;
+            const rotateY = x * -15;
+
+            if (typeof gsap !== 'undefined') {
+                gsap.to(svg, {
+                    rotateX: rotateX,
+                    rotateY: rotateY,
+                    duration: 0.8,
+                    ease: "power2.out",
+                    overwrite: "auto"
+                });
+            }
+        }
+    }, { passive: true });
+
+    container.addEventListener('touchend', () => {
+        if (typeof gsap !== 'undefined') {
+            gsap.to(svg, {
+                rotateX: 0,
+                rotateY: 0,
+                duration: 1.2,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
         }
     });
-
-    document.addEventListener('touchmove', (e) => {
-        if (isDragging && e.touches.length === 1) {
-            const clientX = e.touches[0].clientX;
-            const clientY = e.touches[0].clientY;
-
-            const deltaMove = {
-                x: clientX - previousMousePosition.x,
-                y: clientY - previousMousePosition.y
-            };
-
-            globeGroup.rotation.y += deltaMove.x * 0.006;
-            globeGroup.rotation.x += deltaMove.y * 0.006;
-
-            previousMousePosition = {
-                x: clientX,
-                y: clientY
-            };
-        }
-    });
-
-    document.addEventListener('touchend', () => {
-        isDragging = false;
-    });
-
-    // Animation Loop
-    function animate() {
-        requestAnimationFrame(animate);
-
-        // Resume slow idle spin when user is not actively dragging it
-        if (!isDragging) {
-            globeGroup.rotation.y += 0.0015;
-            globeGroup.rotation.x += 0.0002;
-        }
-
-        renderer.render(scene, camera);
-    }
-    animate();
-
-    // Resize observer to scale the globe context correctly
-    const resizeObserver = new ResizeObserver(entries => {
-        for (let entry of entries) {
-            const w = entry.contentRect.width;
-            const h = entry.contentRect.height;
-            const aspect = w / h;
-            camera.aspect = aspect;
-            camera.position.z = 14 / Math.min(1, aspect);
-            camera.updateProjectionMatrix();
-            renderer.setSize(w, h);
-        }
-    });
-    resizeObserver.observe(container);
 }
 
 // Wait for DOM to init scripts
 window.addEventListener('load', () => {
     initThreeJS();
-    initRotatingGlobe();
+    initNetworkAnimation();
     initHomeAnimations();
 });
 
@@ -338,20 +284,20 @@ function initHomeAnimations() {
 
     // Hero text reveal
     if (document.querySelector(".hero-title")) {
-        gsap.fromTo(".hero-title", 
-            { y: 150, opacity: 0 }, 
+        gsap.fromTo(".hero-title",
+            { y: 150, opacity: 0 },
             { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", delay: 0.2 }
         );
     }
     if (document.querySelector(".hero-subtitle")) {
-        gsap.fromTo(".hero-subtitle", 
-            { y: 50, opacity: 0 }, 
+        gsap.fromTo(".hero-subtitle",
+            { y: 50, opacity: 0 },
             { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", delay: 0.4 }
         );
     }
     if (document.querySelector(".hero-btns")) {
-        gsap.fromTo(".hero-btns", 
-            { y: 20, opacity: 0 }, 
+        gsap.fromTo(".hero-btns",
+            { y: 20, opacity: 0 },
             { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.8 }
         );
     }
@@ -359,12 +305,12 @@ function initHomeAnimations() {
     // Scroll animations for sections
     const fadeUps = document.querySelectorAll('.gsap-fade-up');
     fadeUps.forEach(elem => {
-        gsap.fromTo(elem, 
+        gsap.fromTo(elem,
             { y: 50, opacity: 0 },
-            { 
-                y: 0, 
-                opacity: 1, 
-                duration: 1, 
+            {
+                y: 0,
+                opacity: 1,
+                duration: 1,
                 ease: "power3.out",
                 scrollTrigger: {
                     trigger: elem,

@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | Elite Pricing</title>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,6 +23,7 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="bg-surface">
 
     <div class="noise"></div>
@@ -29,22 +32,29 @@
     <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
-            
+
             <!-- Desktop Menu -->
             <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
                 <a href="index.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
-                <a href="services.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-services">Services</a>
-                <a href="tools.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-tools">Tools</a>
-                <a href="pricing.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-pricing">Pricing</a>
+                <a href="services.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-services">Services</a>
+                <a href="tools.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-tools">Tools</a>
+                <a href="pricing.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-pricing">Pricing</a>
                 <a href="blog.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-blog">Blog</a>
-                <a href="contact.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-contact">Contact</a>
+                <a href="contact.html" class="nav-item-link hover:text-secondary transition-colors"
+                    id="nav-contact">Contact</a>
             </div>
 
             <!-- Desktop Auth / CTA -->
             <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
-                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors" id="btn-signin">Sign In</a>
+                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors"
+                    id="btn-signin">Sign In</a>
                 <div class="magnetic-wrap">
-                    <a href="auth.html?mode=signup" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block" id="btn-signup">Get Started</a>
+                    <a href="auth.html?mode=signup"
+                        class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block"
+                        id="btn-signup">Get Started</a>
                 </div>
             </div>
 
@@ -58,7 +68,8 @@
     </nav>
 
     <!-- Mobile Drawer Overlay Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+    <div id="mobile-menu"
+        class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
         <div class="flex flex-col space-y-6 text-2xl font-bold tracking-tight">
             <a href="index.html" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
             <a href="services.html" class="mobile-nav-link hover:text-secondary transition-colors">Services</a>
@@ -67,51 +78,76 @@
             <a href="blog.html" class="mobile-nav-link hover:text-secondary transition-colors">Blog</a>
             <a href="contact.html" class="mobile-nav-link hover:text-secondary transition-colors">Contact</a>
         </div>
-        
+
         <div class="flex flex-col space-y-4" id="mobile-auth-container">
-            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors" id="mobile-btn-signin">Sign In</a>
-            <a href="auth.html?mode=signup" class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors" id="mobile-btn-signup">Get Started</a>
+            <a href="auth.html?mode=signin"
+                class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors"
+                id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup"
+                class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors"
+                id="mobile-btn-signup">Get Started</a>
         </div>
     </div>
 
     <!-- Main Content -->
     <main class="pt-32 pb-20 px-6">
         <div class="max-w-4xl mx-auto text-center mb-16">
-            <span class="text-xs uppercase tracking-widest text-secondary font-bold bg-white px-4 py-2 border border-border rounded-full">Transparent Pricing</span>
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mt-6 mb-6">Simple plans for serious growth.</h1>
-            <p class="text-xl text-secondary">Unlock the full power of DiginixIT Tools and Premium custom developments.</p>
+            <span
+                class="text-xs uppercase tracking-widest text-secondary font-bold bg-white px-4 py-2 border border-border rounded-full">Transparent
+                Pricing</span>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mt-6 mb-6">Simple plans for serious
+                growth.</h1>
+            <p class="text-xl text-secondary">Unlock the full power of DiginixIT Tools and Premium custom developments.
+            </p>
         </div>
 
         <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
             <!-- Free Plan -->
-            <div class="p-10 border border-border rounded-3xl bg-white hover:border-gray-300 transition-colors flex flex-col justify-between">
+            <div
+                class="p-10 border border-border rounded-3xl bg-white hover:border-gray-300 transition-colors flex flex-col justify-between">
                 <div>
                     <h3 class="text-2xl font-bold mb-2">Community</h3>
                     <p class="text-secondary mb-6">For individuals starting out.</p>
-                    <div class="text-5xl font-bold mb-8">$0<span class="text-lg text-secondary font-normal">/mo</span></div>
+                    <div class="text-5xl font-bold mb-8">$0<span class="text-lg text-secondary font-normal">/mo</span>
+                    </div>
                     <ul class="space-y-4 mb-10">
-                        <li class="flex items-center text-sm"><i data-lucide="check" class="w-5 h-5 mr-3 text-black"></i> View all tools</li>
-                        <li class="flex items-center text-sm"><i data-lucide="check" class="w-5 h-5 mr-3 text-black"></i> Basic SEO Analytics</li>
-                        <li class="flex items-center text-sm"><i data-lucide="check" class="w-5 h-5 mr-3 text-black"></i> Community Support</li>
+                        <li class="flex items-center text-sm"><i data-lucide="check"
+                                class="w-5 h-5 mr-3 text-black"></i> View all tools</li>
+                        <li class="flex items-center text-sm"><i data-lucide="check"
+                                class="w-5 h-5 mr-3 text-black"></i> Basic SEO Analytics</li>
+                        <li class="flex items-center text-sm"><i data-lucide="check"
+                                class="w-5 h-5 mr-3 text-black"></i> Community Support</li>
                     </ul>
                 </div>
-                <button class="w-full py-4 border border-border rounded-xl font-medium hover:bg-surface transition-colors" onclick="alert('You are already on the Community free tier.')">Current Plan</button>
+                <button
+                    class="w-full py-4 border border-border rounded-xl font-medium hover:bg-surface transition-colors"
+                    onclick="alert('You are already on the Community free tier.')">Current Plan</button>
             </div>
             <!-- Pro Plan -->
-            <div class="p-10 border-2 border-primary rounded-3xl bg-primary text-white relative flex flex-col justify-between shadow-2xl">
-                <div class="absolute top-0 right-8 transform -translate-y-1/2 bg-white text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Most Popular</div>
+            <div
+                class="p-10 border-2 border-primary rounded-3xl bg-primary text-white relative flex flex-col justify-between shadow-2xl">
+                <div
+                    class="absolute top-0 right-8 transform -translate-y-1/2 bg-white text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+                    Most Popular</div>
                 <div>
                     <h3 class="text-2xl font-bold mb-2">Pro Agency</h3>
                     <p class="text-gray-400 mb-6">For professionals and teams.</p>
-                    <div class="text-5xl font-bold mb-8">$49<span class="text-lg text-gray-400 font-normal">/mo</span></div>
+                    <div class="text-5xl font-bold mb-8">$49<span class="text-lg text-gray-400 font-normal">/mo</span>
+                    </div>
                     <ul class="space-y-4 mb-10 text-gray-300 text-sm">
-                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i> Unlimited tool access (Unlock Pro tools)</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i> PDF Report Exports</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i> Priority Support</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i> API Access</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i>
+                            Unlimited tool access (Unlock Pro tools)</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i> PDF
+                            Report Exports</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i>
+                            Priority Support</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 mr-3 text-white"></i> API
+                            Access</li>
                     </ul>
                 </div>
-                <button class="w-full py-4 bg-white text-primary rounded-xl font-medium hover:bg-gray-100 transition-colors" onclick="triggerCheckout()">Upgrade to Pro</button>
+                <button
+                    class="w-full py-4 bg-white text-primary rounded-xl font-medium hover:bg-gray-100 transition-colors"
+                    onclick="triggerCheckout()">Upgrade to Pro</button>
             </div>
         </div>
 
@@ -121,45 +157,60 @@
             <div class="space-y-6">
                 <div class="p-6 bg-white border border-border rounded-2xl">
                     <h3 class="font-bold text-lg mb-2">What is the difference between Community and Pro?</h3>
-                    <p class="text-secondary text-sm leading-relaxed">Community users get access to basic web diagnostics tools. Pro Agency unlocks advanced WebGL wireframes, design token generation templates, sitemap generators, and keyword difficulty checkers, along with higher rate limits.</p>
+                    <p class="text-secondary text-sm leading-relaxed">Community users get access to basic web
+                        diagnostics tools. Pro Agency unlocks advanced WebGL wireframes, design token generation
+                        templates, sitemap generators, and keyword difficulty checkers, along with higher rate limits.
+                    </p>
                 </div>
                 <div class="p-6 bg-white border border-border rounded-2xl">
                     <h3 class="font-bold text-lg mb-2">Can I cancel my subscription anytime?</h3>
-                    <p class="text-secondary text-sm leading-relaxed">Yes, absolutely. You can cancel your subscription from your account panel in settings. You will retain access to Pro features until the end of your current billing cycle.</p>
+                    <p class="text-secondary text-sm leading-relaxed">Yes, absolutely. You can cancel your subscription
+                        from your account panel in settings. You will retain access to Pro features until the end of
+                        your current billing cycle.</p>
                 </div>
                 <div class="p-6 bg-white border border-border rounded-2xl">
                     <h3 class="font-bold text-lg mb-2">Do you provide custom developer support?</h3>
-                    <p class="text-secondary text-sm leading-relaxed">Yes, for our Pro and Enterprise partners, we offer developer integration support to help deploy and sync our tools engine with your internal databases or tools panels.</p>
+                    <p class="text-secondary text-sm leading-relaxed">Yes, for our Pro and Enterprise partners, we offer
+                        developer integration support to help deploy and sync our tools engine with your internal
+                        databases or tools panels.</p>
                 </div>
             </div>
         </section>
     </main>
 
     <!-- Checkout Mockup Modal -->
-    <div id="checkout-modal" class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-white w-full max-w-md rounded-3xl p-8 transform scale-95 transition-transform duration-300" id="checkout-modal-content">
+    <div id="checkout-modal"
+        class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md rounded-3xl p-8 transform scale-95 transition-transform duration-300"
+            id="checkout-modal-content">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Upgrade to Pro</h3>
-                <button onclick="closeCheckoutModal()" class="p-2 hover:bg-surface rounded-full transition-colors"><i data-lucide="x"></i></button>
+                <button onclick="closeCheckoutModal()" class="p-2 hover:bg-surface rounded-full transition-colors"><i
+                        data-lucide="x"></i></button>
             </div>
-            
+
             <form onsubmit="confirmCheckout(event)" class="space-y-4">
                 <div>
                     <label class="text-xs text-secondary block mb-1">Card Number</label>
-                    <input type="text" placeholder="4000 1234 5678 9010" class="premium-input" required pattern="\d{16}" title="Please enter 16 digits">
+                    <input type="text" placeholder="4000 1234 5678 9010" class="premium-input" required pattern="\d{16}"
+                        title="Please enter 16 digits">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-xs text-secondary block mb-1">Expiry Date</label>
-                        <input type="text" placeholder="MM/YY" class="premium-input" required pattern="\d{2}/\d{2}" title="MM/YY">
+                        <input type="text" placeholder="MM/YY" class="premium-input" required pattern="\d{2}/\d{2}"
+                            title="MM/YY">
                     </div>
                     <div>
                         <label class="text-xs text-secondary block mb-1">CVC</label>
-                        <input type="password" placeholder="123" class="premium-input" required pattern="\d{3}" title="3 digit CVC">
+                        <input type="password" placeholder="123" class="premium-input" required pattern="\d{3}"
+                            title="3 digit CVC">
                     </div>
                 </div>
                 <div class="pt-4">
-                    <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors">Pay $49.00</button>
+                    <button type="submit"
+                        class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors">Pay
+                        $49.00</button>
                 </div>
             </form>
         </div>
@@ -167,7 +218,8 @@
 
     <!-- Footer -->
     <footer class="py-12 border-t border-border bg-white px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
             <div class="font-bold tracking-tighter site-logo-text md:mb-0">DIGINIXIT.</div>
             <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:mb-0">
                 <a href="index.html" class="hover:text-primary transition-colors">Home</a>
@@ -176,6 +228,17 @@
                 <a href="pricing.html" class="hover:text-primary transition-colors">Pricing</a>
                 <a href="blog.html" class="hover:text-primary transition-colors">Blog</a>
                 <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
+            </div>
+            <div class="flex space-x-4 items-center">
+                <a id="footer-social-linkedin" href="#" target="_blank"
+                    class="text-secondary hover:text-primary transition-colors" title="LinkedIn"><i
+                        data-lucide="linkedin" class="w-4 h-4"></i></a>
+                <a id="footer-social-instagram" href="#" target="_blank"
+                    class="text-secondary hover:text-primary transition-colors" title="Instagram"><i
+                        data-lucide="instagram" class="w-4 h-4"></i></a>
+                <a id="footer-social-twitter" href="#" target="_blank"
+                    class="text-secondary hover:text-primary transition-colors" title="Twitter"><i data-lucide="twitter"
+                        class="w-4 h-4"></i></a>
             </div>
             <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
         </div>
@@ -187,7 +250,7 @@
         const checkoutModal = document.getElementById('checkout-modal');
         const checkoutContent = document.getElementById('checkout-modal-content');
 
-        window.triggerCheckout = function() {
+        window.triggerCheckout = function () {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             if (!currentUser) {
                 alert('Please sign in or register to buy a plan.');
@@ -200,7 +263,7 @@
             gsap.to(checkoutContent, { scale: 1, duration: 0.3, ease: "back.out(1.5)" });
         }
 
-        window.closeCheckoutModal = function() {
+        window.closeCheckoutModal = function () {
             gsap.to(checkoutModal, { opacity: 0, duration: 0.2 });
             gsap.to(checkoutContent, { scale: 0.95, duration: 0.2 });
             setTimeout(() => {
@@ -208,7 +271,7 @@
             }, 200);
         }
 
-        window.confirmCheckout = async function(e) {
+        window.confirmCheckout = async function (e) {
             e.preventDefault();
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             if (currentUser) {
@@ -231,4 +294,5 @@
         }
     </script>
 </body>
+
 </html>

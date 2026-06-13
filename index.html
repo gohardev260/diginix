@@ -274,10 +274,91 @@
                             Our Philosophy <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
                         </a>
                     </div>
-                    <div
-                        class="relative h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden gsap-fade-up">
-                        <!-- 3D Rotating Globe Container -->
-                        <div id="globe-container" class="absolute inset-0 w-full h-full" style="filter: grayscale(100%) contrast(1.15);"></div>
+                    <div class="relative h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden gsap-fade-up">
+                        <!-- Growing Network Tree Visualizer Container -->
+                        <div id="network-visual-container" class="absolute inset-0 w-full h-full flex items-center justify-center">
+                            <svg class="network-svg w-[90%] h-[90%] max-w-[500px] max-h-[500px]" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Root Node to Gen 1 Lines -->
+                                <line class="network-line gen-1-line" x1="300" y1="50" x2="165" y2="120" />
+                                <line class="network-line gen-1-line" x1="300" y1="50" x2="435" y2="120" />
+
+                                <!-- Gen 1 to Gen 2 Lines -->
+                                <line class="network-line gen-2-line" x1="165" y1="120" x2="100" y2="190" />
+                                <line class="network-line gen-2-line" x1="165" y1="120" x2="230" y2="190" />
+                                <line class="network-line gen-2-line" x1="435" y1="120" x2="370" y2="190" />
+                                <line class="network-line gen-2-line" x1="435" y1="120" x2="500" y2="190" />
+
+                                <!-- Gen 2 to Gen 3 Lines -->
+                                <line class="network-line gen-3-line" x1="100" y1="190" x2="60" y2="260" />
+                                <line class="network-line gen-3-line" x1="100" y1="190" x2="130" y2="260" />
+                                <line class="network-line gen-3-line" x1="230" y1="190" x2="200" y2="260" />
+                                <line class="network-line gen-3-line" x1="230" y1="190" x2="270" y2="260" />
+                                <line class="network-line gen-3-line" x1="370" y1="190" x2="330" y2="260" />
+                                <line class="network-line gen-3-line" x1="370" y1="190" x2="400" y2="260" />
+                                <line class="network-line gen-3-line" x1="500" y1="190" x2="470" y2="260" />
+                                <line class="network-line gen-3-line" x1="500" y1="190" x2="540" y2="260" />
+
+                                <!-- Gen 3 to Gen 4 Lines -->
+                                <line class="network-line gen-4-line" x1="60" y1="260" x2="40" y2="330" />
+                                <line class="network-line gen-4-line" x1="60" y1="260" x2="80" y2="330" />
+                                <line class="network-line gen-4-line" x1="130" y1="260" x2="110" y2="330" />
+                                <line class="network-line gen-4-line" x1="130" y1="260" x2="150" y2="330" />
+                                <line class="network-line gen-4-line" x1="200" y1="260" x2="180" y2="330" />
+                                <line class="network-line gen-4-line" x1="200" y1="260" x2="220" y2="330" />
+                                <line class="network-line gen-4-line" x1="270" y1="260" x2="250" y2="330" />
+                                <line class="network-line gen-4-line" x1="270" y1="260" x2="290" y2="330" />
+                                <line class="network-line gen-4-line" x1="330" y1="260" x2="310" y2="330" />
+                                <line class="network-line gen-4-line" x1="330" y1="260" x2="350" y2="330" />
+                                <line class="network-line gen-4-line" x1="400" y1="260" x2="380" y2="330" />
+                                <line class="network-line gen-4-line" x1="400" y1="260" x2="420" y2="330" />
+                                <line class="network-line gen-4-line" x1="470" y1="260" x2="450" y2="330" />
+                                <line class="network-line gen-4-line" x1="470" y1="260" x2="490" y2="330" />
+                                <line class="network-line gen-4-line" x1="540" y1="260" x2="520" y2="330" />
+                                <line class="network-line gen-4-line" x1="540" y1="260" x2="560" y2="330" />
+
+                                <!-- Nodes -->
+                                <!-- Gen 0 Root -->
+                                <circle class="network-node gen-0-node" cx="300" cy="50" r="8" />
+
+                                <!-- Gen 1 -->
+                                <circle class="network-node gen-1-node" cx="165" cy="120" r="7" />
+                                <circle class="network-node gen-1-node" cx="435" cy="120" r="7" />
+
+                                <!-- Gen 2 -->
+                                <circle class="network-node gen-2-node" cx="100" cy="190" r="6" />
+                                <circle class="network-node gen-2-node" cx="230" cy="190" r="6" />
+                                <circle class="network-node gen-2-node" cx="370" cy="190" r="6" />
+                                <circle class="network-node gen-2-node" cx="500" cy="190" r="6" />
+
+                                <!-- Gen 3 -->
+                                <circle class="network-node gen-3-node" cx="60" cy="260" r="5" />
+                                <circle class="network-node gen-3-node" cx="130" cy="260" r="5" />
+                                <circle class="network-node gen-3-node" cx="200" cy="260" r="5" />
+                                <circle class="network-node gen-3-node" cx="270" cy="260" r="5" />
+                                <circle class="network-node gen-3-node" cx="330" cy="260" r="5" />
+                                <circle class="network-node gen-3-node" cx="400" cy="260" r="5" />
+                                <circle class="network-node gen-3-node" cx="470" cy="260" r="5" />
+                                <circle class="network-node gen-3-node" cx="540" cy="260" r="5" />
+
+                                <!-- Gen 4 -->
+                                <circle class="network-node gen-4-node" cx="40" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="80" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="110" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="150" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="180" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="220" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="250" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="290" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="310" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="350" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="380" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="420" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="450" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="490" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="520" cy="330" r="4" />
+                                <circle class="network-node gen-4-node" cx="560" cy="330" r="4" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -297,6 +378,23 @@
         </div>
 
     </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-border bg-surface px-6">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
+            <div class="font-bold tracking-tighter site-logo-text md:mb-0">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:mb-0">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="services.html" class="hover:text-primary transition-colors">Services</a>
+                <a href="tools.html" class="hover:text-primary transition-colors">Tools</a>
+                <a href="pricing.html" class="hover:text-primary transition-colors">Pricing</a>
+                <a href="blog.html" class="hover:text-primary transition-colors">Blog</a>
+                <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="js/common.js"></script>

@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS public.stats CASCADE;
 
 -- 2. CREATE TABLES
 
--- Settings Table (Global Config)
+-- Settings Table (Global Config using a Key-Value design)
 CREATE TABLE public.settings (
     key_name TEXT PRIMARY KEY,
     value_text TEXT NOT NULL
@@ -49,30 +49,28 @@ CREATE TABLE public.stats (
 
 -- 3. SEED INITIAL VALUES
 
--- Seed settings
+-- Seed settings (Includes all site configuration parameters: name, email, phone, and socials)
 INSERT INTO public.settings (key_name, value_text) VALUES 
 ('siteName', 'DIGINIXIT.'),
 ('contactEmail', 'contact@diginix.com'),
-('maintenanceMode', 'false')
+('contactPhone', '+92 300 7960300'),
+('maintenanceMode', 'false'),
+('linkedin', 'https://linkedin.com/'),
+('instagram', 'https://instagram.com/'),
+('twitter', 'https://twitter.com/')
 ON CONFLICT (key_name) DO UPDATE SET value_text = EXCLUDED.value_text;
-
--- No initial blogs seeded; start with an empty blogs table.
-
--- No initial users seeded; start with an empty users table.
 
 -- Seed stats
 INSERT INTO public.stats (revenue, activeUsers, executions, revenueHistory) VALUES 
 ('$0', '0', '0', '0,0,0,0,0,0');
 
 -- 4. ROW LEVEL SECURITY (RLS) POLICIES
--- NOTE: Enabling RLS and adding policies keeps your Supabase database secure while allowing your static frontend to query it directly.
-
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.blogs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stats ENABLE ROW LEVEL SECURITY;
 
--- Settings policies: Everyone can read, authenticated admins (via Supabase Auth) can modify
+-- Settings policies: Everyone can read, authenticated admins can manage
 CREATE POLICY "Allow public read on settings" ON public.settings FOR SELECT USING (true);
 CREATE POLICY "Allow authenticated changes on settings" ON public.settings FOR ALL TO authenticated USING (true);
 
@@ -84,8 +82,7 @@ CREATE POLICY "Allow authenticated changes on blogs" ON public.blogs FOR ALL TO 
 CREATE POLICY "Allow public read on stats" ON public.stats FOR SELECT USING (true);
 CREATE POLICY "Allow authenticated changes on stats" ON public.stats FOR ALL TO authenticated USING (true);
 
--- Users policies: Since custom client users sign up/login/edit profiles directly client-side,
--- we allow standard SELECT, INSERT, and UPDATE for the public (anon) role.
+-- Users policies: Direct access policies for registration, login and profile updates
 CREATE POLICY "Allow select on users" ON public.users FOR SELECT USING (true);
 CREATE POLICY "Allow insert on users" ON public.users FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow update on users" ON public.users FOR UPDATE USING (true) WITH CHECK (true);

@@ -115,36 +115,88 @@
                     </form>
                 </div>
 
-                <!-- Right: Information Cards -->
-                <div class="space-y-6">
-                    <div class="bg-white p-8 rounded-3xl border border-border space-y-4">
-                        <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
-                            <i data-lucide="mail" class="w-5 h-5 text-primary"></i>
+                <!-- Right: Premium Information Hub -->
+                <div class="space-y-5">
+
+                    <!-- Hero Contact Card -->
+                    <div class="bg-primary text-white p-8 md:p-10 rounded-3xl relative overflow-hidden group">
+                        <!-- Animated gradient accent -->
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-white/10 to-transparent rounded-full -translate-y-12 translate-x-12 group-hover:scale-150 transition-transform duration-700"></div>
+                        <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-full translate-y-8 -translate-x-8"></div>
+                        
+                        <div class="relative z-10 space-y-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20">
+                                    <i data-lucide="mail" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg tracking-tight">Inquiry Channels & Socials</h3>
+                                    <p class="text-white/60 text-xs">Reach out anytime — we respond fast</p>
+                                </div>
+                            </div>
+                            
+                            <p class="text-white/70 text-sm leading-relaxed">For project submissions, quotes, or general inquiries, email us directly at:</p>
+                            
+                            <a href="#" id="contact-display-email" class="inline-flex items-center space-x-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/10 hover:border-white/30 transition-all duration-300 group/email">
+                                <i data-lucide="at-sign" class="w-4 h-4 text-white/60"></i>
+                                <span class="font-bold text-sm tracking-wide">contact@diginix.com</span>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-white/40 group-hover/email:text-white group-hover/email:translate-x-0.5 group-hover/email:-translate-y-0.5 transition-all"></i>
+                            </a>
+
+                            <!-- Social Icons Row -->
+                            <div class="pt-4 border-t border-white/10">
+                                <p class="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Follow Us</p>
+                                <div class="flex space-x-3">
+                                    <a id="contact-social-linkedin" href="#" target="_blank" class="w-11 h-11 bg-white/10 hover:bg-white hover:text-primary border border-white/10 hover:border-white rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg" title="LinkedIn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                                    </a>
+                                    <a id="contact-social-instagram" href="#" target="_blank" class="w-11 h-11 bg-white/10 hover:bg-white hover:text-primary border border-white/10 hover:border-white rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg" title="Instagram">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                                    </a>
+                                    <a id="contact-social-twitter" href="#" target="_blank" class="w-11 h-11 bg-white/10 hover:bg-white hover:text-primary border border-white/10 hover:border-white rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg" title="Twitter/X">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="font-bold text-lg">Inquiry Channels</h3>
-                        <p class="text-secondary text-sm leading-relaxed">For project submissions, quotes, or general inquiries, email us directly at:</p>
-                        <a href="#" id="contact-display-email" class="text-primary font-bold hover:underline">contact@diginix.com</a>
                     </div>
 
-                    <div class="bg-white p-8 rounded-3xl border border-border space-y-4">
-                        <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
-                            <i data-lucide="map-pin" class="w-5 h-5 text-primary"></i>
+                    <!-- Two-Column Mini Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <!-- Location Card -->
+                        <div class="bg-white p-6 rounded-3xl border border-border hover:border-primary hover:shadow-md transition-all duration-300 group/card">
+                            <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center mb-4 group-hover/card:bg-primary group-hover/card:border-primary group-hover/card:text-white transition-all duration-300">
+                                <i data-lucide="map-pin" class="w-5 h-5 text-primary group-hover/card:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="font-bold text-sm tracking-tight mb-1">Global Studio</h3>
+                            <p class="text-secondary text-xs leading-relaxed mb-3">Engineering hub</p>
+                            <div class="text-sm font-semibold text-primary">Faisalabad, Punjab</div>
+                            <div class="text-xs text-secondary">Pakistan</div>
                         </div>
-                        <h3 class="font-bold text-lg">Global Studio</h3>
-                        <p class="text-secondary text-sm leading-relaxed">Our collective works asynchronously worldwide, with engineering hubs located at:</p>
-                        <div class="text-sm font-medium text-primary">
-                            Faisalabad, Punjab, Pakistan
+
+                        <!-- Phone Card -->
+                        <div class="bg-white p-6 rounded-3xl border border-border hover:border-primary hover:shadow-md transition-all duration-300 group/card">
+                            <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center mb-4 group-hover/card:bg-primary group-hover/card:border-primary group-hover/card:text-white transition-all duration-300">
+                                <i data-lucide="phone" class="w-5 h-5 text-primary group-hover/card:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="font-bold text-sm tracking-tight mb-1">Voice Line</h3>
+                            <p class="text-secondary text-xs leading-relaxed mb-3">Enterprise partners</p>
+                            <a id="contact-display-phone" href="tel:+923007960300" class="text-sm font-semibold text-primary hover:underline">+92 300 7960300</a>
                         </div>
                     </div>
 
-                    <div class="bg-white p-8 rounded-3xl border border-border space-y-4">
-                        <div class="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
-                            <i data-lucide="phone" class="w-5 h-5 text-primary"></i>
+                    <!-- Availability Status Bar -->
+                    <div class="bg-white p-5 rounded-2xl border border-border flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </span>
+                            <span class="text-sm font-semibold text-primary">Currently accepting new projects</span>
                         </div>
-                        <h3 class="font-bold text-lg">Voice Line</h3>
-                        <p class="text-secondary text-sm leading-relaxed">Direct support lines for active Enterprise Pro partners:</p>
-                        <div class="text-sm font-medium text-primary">+92 300 7960300</div>
+                        <span class="text-[10px] text-secondary font-bold uppercase tracking-wider hidden sm:inline">Avg. response: 2h</span>
                     </div>
+
                 </div>
 
             </div>
@@ -162,6 +214,7 @@
                 <a href="tools.html" class="hover:text-primary transition-colors">Tools</a>
                 <a href="pricing.html" class="hover:text-primary transition-colors">Pricing</a>
                 <a href="blog.html" class="hover:text-primary transition-colors">Blog</a>
+                <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
             </div>
             <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
         </div>
@@ -173,11 +226,34 @@
         async function loadSettingsContact() {
             await window.backendReady;
             const settings = await window.apiCall('get_settings');
-            if (settings && settings.contactEmail) {
-                const mailLink = document.getElementById('contact-display-email');
-                if (mailLink) {
-                    mailLink.innerText = settings.contactEmail;
-                    mailLink.href = `mailto:${settings.contactEmail}`;
+            if (settings) {
+                if (settings.contactEmail) {
+                    const mailLink = document.getElementById('contact-display-email');
+                    if (mailLink) {
+                        mailLink.innerText = settings.contactEmail;
+                        mailLink.href = `mailto:${settings.contactEmail}`;
+                    }
+                }
+                if (settings.contactPhone) {
+                    const phoneLink = document.getElementById('contact-display-phone');
+                    if (phoneLink) {
+                        phoneLink.innerText = settings.contactPhone;
+                        phoneLink.href = `tel:${settings.contactPhone.replace(/\s+/g, '')}`;
+                    }
+                }
+
+                // Dynamic Contact Socials Updates
+                const contactLn = document.getElementById('contact-social-linkedin');
+                if (contactLn && settings.linkedin) {
+                    contactLn.href = settings.linkedin;
+                }
+                const contactIg = document.getElementById('contact-social-instagram');
+                if (contactIg && settings.instagram) {
+                    contactIg.href = settings.instagram;
+                }
+                const contactTw = document.getElementById('contact-social-twitter');
+                if (contactTw && settings.twitter) {
+                    contactTw.href = settings.twitter;
                 }
             }
         }

@@ -10,10 +10,21 @@ body {
 }
 
 /* Lenis Smooth Scroll Recommended CSS */
-html.lenis { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto; }
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-.lenis.lenis-stopped { overflow: hidden; }
+html.lenis {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
 
 
 
@@ -31,10 +42,18 @@ html.lenis { height: auto; }
 }
 
 /* Utilities */
-.hide-scrollbar::-webkit-scrollbar { display: none; }
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
 
-.magnetic-wrap { display: inline-block; }
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.magnetic-wrap {
+    display: inline-block;
+}
 
 /* Glass Navbar */
 .glass-nav {
@@ -50,9 +69,15 @@ html.lenis { height: auto; }
     animation: marquee 20s linear infinite;
     width: max-content;
 }
+
 @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 /* View Transitions */
@@ -60,9 +85,11 @@ html.lenis { height: auto; }
     display: none;
     opacity: 0;
 }
+
 .view-section.active {
     display: block;
-    opacity: 1; /* Fixes the initial content loading issue */
+    opacity: 1;
+    /* Fixes the initial content loading issue */
 }
 
 /* Premium Input Styles */
@@ -75,12 +102,16 @@ html.lenis { height: auto; }
     outline: none;
     transition: border-color 0.3s ease;
 }
-.premium-input:focus { border-color: #111111; }
+
+.premium-input:focus {
+    border-color: #111111;
+}
 
 /* Mobile Menu Drawer */
 #mobile-menu {
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 #mobile-menu.active {
     transform: translateX(0);
 }
@@ -95,6 +126,7 @@ html.lenis { height: auto; }
 .admin-tab-content {
     display: none;
 }
+
 .admin-tab-content.active {
     display: block;
 }
@@ -103,6 +135,7 @@ html.lenis { height: auto; }
 .blog-card-img {
     transition: transform 0.5s ease;
 }
+
 .blog-card:hover .blog-card-img {
     transform: scale(1.03);
 }
@@ -112,4 +145,139 @@ html.lenis { height: auto; }
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+/* Floating Social Sidebar */
+.social-sidebar {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) translateX(calc(100% - 44px));
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    background: rgba(17, 17, 17, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-right: none;
+    border-radius: 16px 0 0 16px;
+    padding: 16px 12px 16px 8px;
+    gap: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.social-sidebar:hover {
+    transform: translateY(-50%) translateX(0);
+}
+
+.social-sidebar-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    width: 28px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.social-sidebar:hover .social-sidebar-handle {
+    color: #ffffff;
+}
+
+.social-sidebar:hover .social-sidebar-handle svg {
+    transform: rotate(180deg);
+}
+
+.social-sidebar-handle svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.4s ease;
+    animation: sidebarPulse 2s infinite ease-in-out;
+}
+
+@keyframes sidebarPulse {
+
+    0%,
+    100% {
+        transform: translateX(0);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translateX(-3px);
+        opacity: 1;
+    }
+}
+
+.social-sidebar-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.social-sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.social-sidebar-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.social-sidebar-links a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* Hide on mobile viewports for clean layout */
+@media (max-width: 768px) {
+    .social-sidebar {
+        display: none !important;
+    }
+}
+
+/* Growing Network Tree Visualizer Styles */
+#network-visual-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.network-svg {
+    transform-style: preserve-3d;
+    will-change: transform;
+    transform: rotateX(0deg) rotateY(0deg);
+}
+
+.network-node {
+    fill: #e5e5e5;
+    stroke: none;
+    transform-origin: center;
+    will-change: transform, fill;
+}
+
+.network-line {
+    stroke: #e5e5e5;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    will-change: stroke, stroke-width;
 }

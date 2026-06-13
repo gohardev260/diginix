@@ -110,34 +110,7 @@
         </div>
     </main>
 
-    <!-- Reading Modal (Hidden by default) -->
-    <div id="blog-modal" class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 px-4">
-        <div class="bg-white w-full max-w-3xl rounded-3xl p-6 md:p-8 transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto" id="blog-modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <span id="modal-blog-category" class="bg-surface border border-border px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-secondary">Tech</span>
-                <button onclick="closeBlogModal()" class="p-2 hover:bg-surface rounded-full transition-colors"><i data-lucide="x"></i></button>
-            </div>
-            
-            <div class="space-y-6">
-                <div class="h-64 md:h-80 w-full overflow-hidden rounded-2xl border border-border">
-                    <img id="modal-blog-image" src="" alt="Blog Image" class="w-full h-full object-cover">
-                </div>
-                
-                <div>
-                    <h2 id="modal-blog-title" class="text-3xl md:text-4xl font-bold tracking-tight mb-3">Blog Title Here</h2>
-                    <div class="flex items-center text-xs text-secondary space-x-4">
-                        <span id="modal-blog-author">By Alex Rivers</span>
-                        <span>&bull;</span>
-                        <span id="modal-blog-date">June 1, 2026</span>
-                    </div>
-                </div>
-
-                <div id="modal-blog-content" class="text-secondary text-sm md:text-base leading-relaxed space-y-4 font-light">
-                    <!-- Dynamic paragraphs -->
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- No Modal Needed - Dedicated Page Implemented -->
 
     <!-- Footer -->
     <footer class="py-12 border-t border-border bg-white px-6">
@@ -168,8 +141,7 @@
         const searchInput = document.getElementById('blog-search-input');
         const filterContainer = document.getElementById('blog-category-filter');
         
-        const modal = document.getElementById('blog-modal');
-        const modalContent = document.getElementById('blog-modal-content');
+        // Modal variables removed
 
         async function renderBlogs() {
             if (!grid) return;
@@ -194,7 +166,7 @@
                 `;
             } else {
                 grid.innerHTML = filtered.map(post => `
-                    <div class="blog-card bg-white border border-border rounded-3xl overflow-hidden hover:border-primary transition-colors cursor-pointer group flex flex-col justify-between" onclick="openBlogModal('${post.id}')">
+                    <a href="article.html?id=${post.id}" class="blog-card bg-white border border-border rounded-3xl overflow-hidden hover:border-primary transition-colors group flex flex-col justify-between">
                         <div>
                             <div class="h-48 overflow-hidden relative">
                                 <img src="${post.image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800'}" alt="${post.title}" class="blog-card-img w-full h-full object-cover">
@@ -210,7 +182,7 @@
                             <span>Read Article</span>
                             <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                         </div>
-                    </div>
+                    </a>
                 `).join('');
             }
 
@@ -242,33 +214,7 @@
             });
         }
 
-        // Modal Action
-        window.openBlogModal = function(id) {
-            const post = blogs.find(b => b.id == id);
-            if (!post) return;
-
-            document.getElementById('modal-blog-category').innerText = post.category;
-            document.getElementById('modal-blog-image').src = post.image;
-            document.getElementById('modal-blog-title').innerText = post.title;
-            document.getElementById('modal-blog-author').innerText = `By ${post.author}`;
-            document.getElementById('modal-blog-date').innerText = post.date;
-            
-            // Format content into paragraphs
-            const paragraphs = post.content.split('\n\n');
-            document.getElementById('modal-blog-content').innerHTML = paragraphs.map(p => `<p class="mb-4 font-light text-secondary leading-relaxed">${p}</p>`).join('');
-
-            modal.classList.remove('pointer-events-none');
-            gsap.to(modal, { opacity: 1, duration: 0.3 });
-            gsap.to(modalContent, { scale: 1, duration: 0.3, ease: "back.out(1.5)" });
-        }
-
-        window.closeBlogModal = function() {
-            gsap.to(modal, { opacity: 0, duration: 0.2 });
-            gsap.to(modalContent, { scale: 0.95, duration: 0.2 });
-            setTimeout(() => {
-                modal.classList.add('pointer-events-none');
-            }, 200);
-        }
+        // Modal Actions Removed (Dedicated article.html page handles rendering)
 
         document.addEventListener('DOMContentLoaded', async () => {
             await window.backendReady;
