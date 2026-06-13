@@ -40,9 +40,9 @@ const defaultBlogs = [
 ];
 
 const defaultUsers = [
-    { name: "Sarah Connor", email: "sarah@connor.com", date: "2026-05-10", status: "Active", plan: "Community" },
-    { name: "John Doe", email: "john@doe.com", date: "2026-05-15", status: "Active", plan: "Pro" },
-    { name: "Jane Smith", email: "jane@smith.com", date: "2026-06-01", status: "Blocked", plan: "Community" }
+    { name: "Sarah Connor", email: "sarah@connor.com", date: "2026-05-10", status: "Active", plan: "Community", visits: 12 },
+    { name: "John Doe", email: "john@doe.com", date: "2026-05-15", status: "Active", plan: "Pro", visits: 45 },
+    { name: "Jane Smith", email: "jane@smith.com", date: "2026-06-01", status: "Blocked", plan: "Community", visits: 0 }
 ];
 
 const defaultSettings = {
@@ -59,7 +59,6 @@ const defaultStats = {
     revenue: "$124,500",
     activeUsers: "8,241",
     executions: "142.3K",
-    visits: 25421,
     revenueHistory: [42000, 58000, 65000, 89000, 105000, 124500]
 };
 
@@ -188,7 +187,7 @@ window.apiCall = async function (action, data = null) {
             case 'get_users': {
                 const { data: users, error } = await window.supabase
                     .from('users')
-                    .select('name, email, date, plan, status')
+                    .select('name, email, date, plan, status, visits')
                     .order('id', { ascending: false });
                 if (error) throw error;
                 return users || [];
@@ -279,7 +278,6 @@ window.apiCall = async function (action, data = null) {
                         revenue: "$0",
                         activeUsers: String(realUserCount),
                         executions: "0",
-                        visits: 0,
                         revenueHistory: [0, 0, 0, 0, 0, 0]
                     };
                 }
@@ -288,7 +286,6 @@ window.apiCall = async function (action, data = null) {
                     revenue: dbStats.revenue,
                     activeUsers: String(realUserCount || dbStats.activeusers || dbStats.activeUsers || 0),
                     executions: dbStats.executions,
-                    visits: dbStats.visits || 0,
                     revenueHistory: (dbStats.revenuehistory || dbStats.revenueHistory || '0,0,0,0,0,0').split(',').map(Number)
                 };
             }
@@ -299,7 +296,6 @@ window.apiCall = async function (action, data = null) {
                     revenue: data.revenue,
                     activeusers: data.activeUsers,
                     executions: data.executions,
-                    visits: data.visits || 0,
                     revenuehistory: histStr
                 };
 
@@ -413,10 +409,22 @@ window.apiCall = async function (action, data = null) {
                 return { success: true, user: user };
             }
 
-            case 'increment_visit': {
-                const { error } = await window.supabase.rpc('increment_visits');
-                if (error) throw error;
-                return { success: true };
+            case 'increment_user_visit': {
+                const { data: user, error: fetchError } = await window.supabase
+                    .from('users')
+                    .select('visits')
+                    .eq('email', data.email)
+                    .single();
+                if (fetchError || !user) throw new Error("User not found");
+                
+                const newVisits = (Number(user.visits) || 0) + 1;
+                
+                const { error: updateError } = await window.supabase
+                    .from('users')
+                    .update({ visits: newVisits })
+                    .eq('email', data.email);
+                if (updateError) throw updateError;
+                return { success: true, visits: newVisits };
             }
 
             default:
@@ -495,10 +503,15 @@ function apiCallLocalStorageFallback(action, data) {
                 localStorage.setItem('stats', JSON.stringify(data));
                 resolve({ success: true });
                 break;
-            case 'increment_visit':
-                stats.visits = (Number(stats.visits) || 0) + 1;
-                localStorage.setItem('stats', JSON.stringify(stats));
-                resolve({ success: true });
+            case 'increment_user_visit':
+                const uIdx = users.findIndex(u => u.email === data.email);
+                let newVisits = 1;
+                if (uIdx !== -1) {
+                    users[uIdx].visits = (Number(users[uIdx].visits) || 0) + 1;
+                    newVisits = users[uIdx].visits;
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+                resolve({ success: true, visits: newVisits });
                 break;
             case 'submit_contact':
                 resolve({ success: true });
@@ -718,15 +731,17 @@ document.addEventListener('DOMContentLoaded', () => {
         await window.backendReady;
         await applySiteSettings();
         
-        // Count visit once per session for public client pages
+        // Count visit every time a logged-in user visits a public client page
         const path = window.location.pathname.toLowerCase();
         const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
-        if (isClientPage && !sessionStorage.getItem('website_visited')) {
-            sessionStorage.setItem('website_visited', 'true');
-            try {
-                await window.apiCall('increment_visit');
-            } catch (e) {
-                console.error("Failed to record website visit:", e);
+        if (isClientPage) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            if (currentUser && currentUser.email) {
+                try {
+                    await window.apiCall('increment_user_visit', { email: currentUser.email });
+                } catch (e) {
+                    console.error("Failed to record user website visit:", e);
+                }
             }
         }
     })();

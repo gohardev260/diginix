@@ -129,7 +129,7 @@
                 </div>
 
                 <!-- Stats Cards Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
                         <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Total Revenue</div>
                         <div class="text-3xl font-bold" id="stat-revenue">$124,500</div>
@@ -144,11 +144,6 @@
                         <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Tool Executions</div>
                         <div class="text-3xl font-bold" id="stat-executions">142.3K</div>
                         <div class="text-[10px] text-green-500 font-bold" id="stat-executions-change">+22.1% from last month</div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
-                        <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Total Visits</div>
-                        <div class="text-3xl font-bold" id="stat-visits">0</div>
-                        <div class="text-[10px] text-green-500 font-bold" id="stat-visits-change">+0% from last month</div>
                     </div>
                 </div>
 
@@ -180,10 +175,6 @@
                             <div>
                                 <label for="input-executions" class="text-[10px] font-bold text-secondary block mb-1">Tool Executions</label>
                                 <input type="text" id="input-executions" class="premium-input text-xs py-2 px-3" required>
-                            </div>
-                            <div>
-                                <label for="input-visits" class="text-[10px] font-bold text-secondary block mb-1">Total Visits</label>
-                                <input type="number" id="input-visits" class="premium-input text-xs py-2 px-3" required>
                             </div>
                             <div class="border-t border-border pt-3">
                                 <label class="text-[10px] font-bold text-secondary block mb-2">Monthly Revenue Points (Chart)</label>
@@ -254,6 +245,7 @@
                                     <th class="p-4 font-semibold text-xs uppercase tracking-wider">Email Address</th>
                                     <th class="p-4 font-semibold text-xs uppercase tracking-wider">Joined Date</th>
                                     <th class="p-4 font-semibold text-xs uppercase tracking-wider">Tier Plan</th>
+                                    <th class="p-4 font-semibold text-xs uppercase tracking-wider">Visits</th>
                                     <th class="p-4 font-semibold text-xs uppercase tracking-wider">Access Status</th>
                                     <th class="p-4 font-semibold text-xs uppercase tracking-wider text-right">Actions</th>
                                 </tr>
