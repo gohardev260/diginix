@@ -503,16 +503,17 @@ function apiCallLocalStorageFallback(action, data) {
                 localStorage.setItem('stats', JSON.stringify(data));
                 resolve({ success: true });
                 break;
-            case 'increment_user_visit':
-                const uIdx = users.findIndex(u => u.email === data.email);
-                let newVisits = 1;
-                if (uIdx !== -1) {
-                    users[uIdx].visits = (Number(users[uIdx].visits) || 0) + 1;
-                    newVisits = users[uIdx].visits;
+            case 'increment_user_visit': {
+                const userIdx = users.findIndex(u => u.email === data.email);
+                let visitCount = 1;
+                if (userIdx !== -1) {
+                    users[userIdx].visits = (Number(users[userIdx].visits) || 0) + 1;
+                    visitCount = users[userIdx].visits;
                     localStorage.setItem('users', JSON.stringify(users));
                 }
-                resolve({ success: true, visits: newVisits });
+                resolve({ success: true, visits: visitCount });
                 break;
+            }
             case 'submit_contact':
                 resolve({ success: true });
                 break;
