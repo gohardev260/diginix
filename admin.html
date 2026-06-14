@@ -271,7 +271,14 @@
                         <p class="text-secondary text-sm mt-1">Manage registered users, tier levels and access privileges.</p>
                     </div>
                     <!-- Controls -->
-                    <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <!-- Date Range Filters -->
+                        <div class="flex items-center gap-2 bg-white border border-border px-3 py-1.5 rounded-xl">
+                            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Date:</span>
+                            <input type="date" id="users-start-date" class="bg-transparent border-0 outline-none text-xs text-primary focus:ring-0 cursor-pointer" aria-label="Start Registration Date">
+                            <span class="text-xs text-secondary">to</span>
+                            <input type="date" id="users-end-date" class="bg-transparent border-0 outline-none text-xs text-primary focus:ring-0 cursor-pointer" aria-label="End Registration Date">
+                        </div>
                         <!-- Search Input -->
                         <div class="relative w-full md:w-64">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">

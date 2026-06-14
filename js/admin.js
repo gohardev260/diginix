@@ -332,6 +332,11 @@ function filterAndRenderUsers() {
     const searchInput = document.getElementById('users-search-input');
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    const startDate = startDateInput ? startDateInput.value : '';
+    const endDate = endDateInput ? endDateInput.value : '';
+
     let filteredUsers = usersList;
     if (query) {
         filteredUsers = usersList.filter(user => {
@@ -342,6 +347,17 @@ function filterAndRenderUsers() {
             return name.includes(query) || email.includes(query) || plan.includes(query) || status.includes(query);
         });
     }
+
+    // Apply start and end date range filters (user.date format: YYYY-MM-DD)
+    if (startDate) {
+        filteredUsers = filteredUsers.filter(user => user.date && user.date >= startDate);
+    }
+    if (endDate) {
+        filteredUsers = filteredUsers.filter(user => user.date && user.date <= endDate);
+    }
+
+    // Cache filtered list for PDF export
+    window.currentFilteredUsers = filteredUsers;
 
     if (filteredUsers.length === 0) {
         tbody.innerHTML = `
@@ -393,25 +409,43 @@ window.exportUsersPDF = function () {
     doc.setFontSize(10);
     doc.setTextColor(102, 102, 102);
     doc.text("User Analytics & Engagement Report", 14, 26);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 32);
+    
+    // Add date range notice if any filters applied
+    const startDateVal = document.getElementById('users-start-date')?.value;
+    const endDateVal = document.getElementById('users-end-date')?.value;
+    let separatorY = 38;
+    let summaryY = 48;
+    
+    if (startDateVal || endDateVal) {
+        const rangeText = `Date Range: ${startDateVal || 'Beginning'} to ${endDateVal || 'Present'}`;
+        doc.text(rangeText, 14, 32);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 37);
+        separatorY = 42;
+        summaryY = 51;
+    } else {
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 32);
+    }
 
     // Separator line
     doc.setDrawColor(229, 229, 229);
-    doc.line(14, 38, 196, 38);
+    doc.line(14, separatorY, 196, separatorY);
+
+    // Get the filtered users
+    const filteredList = window.currentFilteredUsers || usersList;
 
     // Summary Analytics
-    const totalUsers = usersList.length;
-    const totalVisits = usersList.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
+    const totalUsers = filteredList.length;
+    const totalVisits = filteredList.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.setTextColor(17, 17, 17);
-    doc.text(`Total Users: ${totalUsers}`, 14, 48);
-    doc.text(`Total Recorded Visits: ${totalVisits}`, 80, 48);
+    doc.text(`Total Users: ${totalUsers}`, 14, summaryY);
+    doc.text(`Total Recorded Visits: ${totalVisits}`, 80, summaryY);
 
     // Generate table contents
     const headers = [["Client Name", "Email Address", "Tier Plan", "Total Visits"]];
-    const data = usersList.map(u => [
+    const data = filteredList.map(u => [
         u.name || "N/A",
         u.email || "N/A",
         u.plan || "Community",
@@ -421,7 +455,7 @@ window.exportUsersPDF = function () {
     doc.autoTable({
         head: headers,
         body: data,
-        startY: 55,
+        startY: summaryY + 7,
         theme: 'striped',
         headStyles: {
             fillColor: [17, 17, 17],
@@ -525,5 +559,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchInput = document.getElementById('users-search-input');
     if (searchInput) {
         searchInput.addEventListener('input', filterAndRenderUsers);
+    }
+
+    // Attach listeners to date inputs
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    if (startDateInput) {
+        startDateInput.addEventListener('change', filterAndRenderUsers);
+    }
+    if (endDateInput) {
+        endDateInput.addEventListener('change', filterAndRenderUsers);
     }
 });
