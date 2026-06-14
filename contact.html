@@ -338,8 +338,8 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                // Post to Cloudflare Pages Function at /api/contact
-                const response = await fetch("/api/contact", {
+                // Post to Cloudflare Worker
+                const response = await fetch("https://contact-form-handler.diginixhub90.workers.dev", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
