@@ -162,8 +162,7 @@
                 <!-- Left: Form -->
                 <div class="bg-white p-8 md:p-10 rounded-3xl border border-border shadow-sm">
                     <h2 class="text-2xl font-bold mb-6">Send an Inquiry</h2>
-                    <form onsubmit="handleContactSubmit(event)" class="space-y-4" data-netlify="true" name="contact">
-                        <input type="hidden" name="form-name" value="contact">
+                    <form onsubmit="handleContactSubmit(event)" class="space-y-4" name="contact">
                         <div>
                             <label for="contact-name" class="text-xs font-bold text-secondary block mb-1">Your Full Name</label>
                             <input type="text" id="contact-name" name="name" class="premium-input" placeholder="Sarah Connor" required>
@@ -334,21 +333,25 @@
             const name = document.getElementById('contact-name').value.trim();
             const subject = document.getElementById('contact-subject').value.trim();
 
+            // Extract the form fields to JSON payload
             const formData = new FormData(form);
-            const searchParams = new URLSearchParams(formData).toString();
+            const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch("/", {
+                // Post to Cloudflare Pages Function at /api/contact
+                const response = await fetch("/api/contact", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: searchParams
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
                 });
 
-                if (response.ok) {
+                const result = await response.json();
+
+                if (response.ok && result.success) {
                     alert(`Thank you, ${name}! Your inquiry concerning "${subject}" has been successfully transmitted to our team.`);
                     form.reset();
                 } else {
-                    throw new Error(`Server returned ${response.status}`);
+                    throw new Error(result.error || `Server returned status ${response.status}`);
                 }
             } catch (err) {
                 alert('Failed to submit inquiry: ' + err.message);
