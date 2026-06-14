@@ -36,9 +36,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-    <!-- Ads Popunder -->
-    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
-    
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -256,32 +253,19 @@
                 <button onclick="closeCheckoutModal()" class="p-2 hover:bg-surface rounded-full transition-colors"><i
                         data-lucide="x"></i></button>
             </div>
-
+            <div class="space-y-4 text-center my-6">
+                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-secondary mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                </div>
+                <h4 class="font-bold text-sm text-primary">Secure checkout is enabled</h4>
+                <p class="text-xs text-secondary">To comply with PCI security standards, real card transactions are processed externally. For testing and demonstration, you can perform a simulated upgrade to immediately unlock Pro tools.</p>
+            </div>
             <form onsubmit="confirmCheckout(event)" class="space-y-4">
-                <div>
-                    <label for="checkout-card-number" class="text-xs text-secondary block mb-1">Card Number</label>
-                    <input type="text" id="checkout-card-number" placeholder="4000 1234 5678 9010" class="premium-input" required pattern="\d{16}"
-                        title="Please enter 16 digits">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="checkout-card-expiry" class="text-xs text-secondary block mb-1">Expiry Date</label>
-                        <input type="text" id="checkout-card-expiry" placeholder="MM/YY" class="premium-input" required pattern="\d{2}/\d{2}"
-                            title="MM/YY">
-                    </div>
-                    <div>
-                        <label for="checkout-card-cvc" class="text-xs text-secondary block mb-1">CVC</label>
-                        <input type="password" id="checkout-card-cvc" placeholder="123" class="premium-input" required pattern="\d{3}"
-                            title="3 digit CVC">
-                    </div>
-                </div>
                 <div class="pt-4">
                     <button type="submit"
-                        class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors">Pay
-                        $49.00</button>
+                        class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors">Simulate Pro Upgrade</button>
                 </div>
-            </form>
-        </div>
+            </form>        </div>
     </div>
 
     <!-- Footer -->

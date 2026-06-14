@@ -52,9 +52,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
-
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- Hide body until verified -->
+    <style>body { visibility: hidden !important; }</style>
 </head>
 <body class="bg-surface min-h-screen">
 
@@ -62,11 +63,36 @@
 
     <!-- Security Check (Redirect if not authenticated) -->
     <script>
-        if (localStorage.getItem('adminLoggedIn') !== 'true') {
-            window.location.replace('admin_login.html');
-        }
+        (async function() {
+            const checkReady = setInterval(async () => {
+                if (window.backendReady) {
+                    clearInterval(checkReady);
+                    await window.backendReady;
+                    
+                    if (!window.useSupabase) {
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+                    
+                    const { data: { session }, error } = await window.supabase.auth.getSession();
+                    if (error || !session || !session.user) {
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+                    
+                    const role = session.user.app_metadata?.role || session.user.user_metadata?.role;
+                    if (role !== 'admin') {
+                        await window.supabase.auth.signOut();
+                        alert('Access Denied. Admin privileges required.');
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+                    
+                    document.body.style.setProperty('visibility', 'visible', 'important');
+                }
+            }, 50);
+        })();
     </script>
-
     <!-- Navbar -->
     <nav class="bg-white border-b border-border fixed w-full top-0 z-50 py-4 px-6 md:px-12 flex justify-between items-center h-20" aria-label="Admin Console Navigation">
         <div class="flex items-center">

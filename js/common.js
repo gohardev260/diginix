@@ -1,5 +1,16 @@
 // DiginixIT Common JS
 
+// --- HTML ESCAPING UTILITY ---
+window.escapeHtml = function (unsafe) {
+    if (!unsafe) return "";
+    return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
 // --- SUPABASE CONFIGURATION ---
 // Insert your live URL and Anon Key here from the Supabase Dashboard (Settings > API)
 const SUPABASE_URL = 'https://fvvdmrogquycehyncslp.supabase.co';
@@ -343,103 +354,88 @@ window.apiCall = async function (action, data = null) {
 
             case 'login': {
                 const { data: user, error } = await window.supabase
-                    .from('users')
-                    .select('*')
-                    .eq('email', data.email)
-                    .eq('password', data.password)
-                    .maybeSingle();
-                if (error) throw error;
-                if (!user) {
+                    .rpc('login_user_secure', {
+                        p_email: data.email,
+                        p_password: data.password
+                    });
+                if (error) {
+                    return { success: false, error: error.message || "Invalid email or password" };
+                }
+                if (!user || user.length === 0) {
                     return { success: false, error: "Invalid email or password" };
                 }
-                if (user.status === 'Blocked') {
+                const returnedUser = Array.isArray(user) ? user[0] : user;
+                if (returnedUser.status === 'Blocked') {
                     return { success: false, error: "Your account is blocked. Please contact administrator." };
                 }
-                delete user.password;
-                return { success: true, user: user };
+                return { success: true, user: returnedUser };
             }
 
             case 'register': {
-                const { data: existing, error: existError } = await window.supabase
-                    .from('users')
-                    .select('id')
-                    .eq('email', data.email)
-                    .maybeSingle();
-                if (existError) throw existError;
-                if (existing) {
-                    return { success: false, error: "An account with this email address already exists." };
+                const { data: user, error } = await window.supabase
+                    .rpc('register_user_secure', {
+                        p_name: data.name,
+                        p_email: data.email,
+                        p_password: data.password
+                    });
+                if (error) {
+                    return { success: false, error: error.message || "Registration failed" };
                 }
-
-                const newUser = {
-                    name: data.name,
-                    email: data.email,
-                    password: data.password,
-                    plan: data.plan,
-                    date: new Date().toISOString().split('T')[0],
-                    status: 'Active'
-                };
-
-                const { error: insertError } = await window.supabase
-                    .from('users')
-                    .insert(newUser);
-                if (insertError) throw insertError;
-
-                delete newUser.password;
-                return { success: true, user: newUser };
+                const returnedUser = Array.isArray(user) ? user[0] : user;
+                return { success: true, user: returnedUser };
             }
 
             case 'update_profile': {
-                const updateData = { name: data.name };
-                if (data.password) {
-                    updateData.password = data.password;
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const sessionToken = currentUser ? currentUser.session_token : null;
+                const { data: user, error } = await window.supabase
+                    .rpc('update_profile_secure', {
+                        p_email: data.email,
+                        p_token: sessionToken,
+                        p_name: data.name,
+                        p_new_password: data.password || null
+                    });
+                if (error) {
+                    return { success: false, error: error.message || "Update profile failed" };
                 }
-                const { error: updateError } = await window.supabase
-                    .from('users')
-                    .update(updateData)
-                    .eq('email', data.email);
-                if (updateError) throw updateError;
-
-                const { data: user, error: fetchError } = await window.supabase
-                    .from('users')
-                    .select('name, email, date, plan, status')
-                    .eq('email', data.email)
-                    .single();
-                if (fetchError) throw fetchError;
-                return { success: true, user: user };
+                const returnedUser = Array.isArray(user) ? user[0] : user;
+                // Keep session token in frontend state
+                if (currentUser && currentUser.session_token) {
+                    returnedUser.session_token = currentUser.session_token;
+                }
+                return { success: true, user: returnedUser };
             }
 
             case 'update_subscription': {
-                const { error: updateError } = await window.supabase
-                    .from('users')
-                    .update({ plan: data.plan })
-                    .eq('email', data.email);
-                if (updateError) throw updateError;
-
-                const { data: user, error: fetchError } = await window.supabase
-                    .from('users')
-                    .select('name, email, date, plan, status')
-                    .eq('email', data.email)
-                    .single();
-                if (fetchError) throw fetchError;
-                return { success: true, user: user };
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const sessionToken = currentUser ? currentUser.session_token : null;
+                const { data: user, error } = await window.supabase
+                    .rpc('update_subscription_secure', {
+                        p_email: data.email,
+                        p_token: sessionToken,
+                        p_plan: data.plan
+                    });
+                if (error) {
+                    return { success: false, error: error.message || "Update subscription failed" };
+                }
+                const returnedUser = Array.isArray(user) ? user[0] : user;
+                // Keep session token in frontend state
+                if (currentUser && currentUser.session_token) {
+                    returnedUser.session_token = currentUser.session_token;
+                }
+                return { success: true, user: returnedUser };
             }
 
             case 'increment_user_visit': {
-                const { data: user, error: fetchError } = await window.supabase
-                    .from('users')
-                    .select('visits')
-                    .eq('email', data.email)
-                    .single();
-                if (fetchError || !user) throw new Error("User not found");
-
-                const newVisits = (Number(user.visits) || 0) + 1;
-
-                const { error: updateError } = await window.supabase
-                    .from('users')
-                    .update({ visits: newVisits })
-                    .eq('email', data.email);
-                if (updateError) throw updateError;
-                return { success: true, visits: newVisits };
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const sessionToken = currentUser ? currentUser.session_token : null;
+                const { data: visits, error } = await window.supabase
+                    .rpc('increment_user_visit_secure', {
+                        p_email: data.email,
+                        p_token: sessionToken
+                    });
+                if (error) throw error;
+                return { success: true, visits: visits };
             }
 
             default:
@@ -544,7 +540,11 @@ function apiCallLocalStorageFallback(action, data) {
                 } else if (user.status === 'Blocked') {
                     resolve({ success: false, error: "Your account is blocked. Please contact administrator." });
                 } else {
-                    resolve({ success: true, user: user });
+                    const safeUser = { ...user };
+                    delete safeUser.password;
+                    // Generate local fake session token
+                    safeUser.session_token = 'local-session-token';
+                    resolve({ success: true, user: safeUser });
                 }
                 break;
             }
@@ -556,13 +556,17 @@ function apiCallLocalStorageFallback(action, data) {
                         name: data.name,
                         email: data.email,
                         password: data.password,
-                        plan: data.plan,
+                        plan: 'Community', // Force 'Community' plan
                         date: new Date().toISOString().split('T')[0],
                         status: 'Active'
                     };
                     users.push(newUser);
                     localStorage.setItem('users', JSON.stringify(users));
-                    resolve({ success: true, user: newUser });
+                    
+                    const safeUser = { ...newUser };
+                    delete safeUser.password;
+                    safeUser.session_token = 'local-session-token';
+                    resolve({ success: true, user: safeUser });
                 }
                 break;
             case 'update_profile': {
@@ -573,7 +577,11 @@ function apiCallLocalStorageFallback(action, data) {
                         users[profIdx].password = data.password;
                     }
                     localStorage.setItem('users', JSON.stringify(users));
-                    resolve({ success: true, user: users[profIdx] });
+                    
+                    const safeUser = { ...users[profIdx] };
+                    delete safeUser.password;
+                    safeUser.session_token = 'local-session-token';
+                    resolve({ success: true, user: safeUser });
                 } else {
                     resolve({ success: false, error: "User profile not found" });
                 }
@@ -584,7 +592,11 @@ function apiCallLocalStorageFallback(action, data) {
                 if (subIdx !== -1) {
                     users[subIdx].plan = data.plan;
                     localStorage.setItem('users', JSON.stringify(users));
-                    resolve({ success: true, user: users[subIdx] });
+                    
+                    const safeUser = { ...users[subIdx] };
+                    delete safeUser.password;
+                    safeUser.session_token = 'local-session-token';
+                    resolve({ success: true, user: safeUser });
                 } else {
                     resolve({ success: false, error: "User profile not found" });
                 }
@@ -663,10 +675,11 @@ function updateNavbarAuth() {
     const mobileAuthContainer = document.getElementById('mobile-auth-container');
 
     if (currentUser) {
+        const safeName = window.escapeHtml(currentUser.name);
         if (desktopAuthContainer) {
             desktopAuthContainer.innerHTML = `
                 <div class="flex items-center space-x-4">
-                    <a href="profile.html" class="text-sm font-medium text-secondary hover:text-primary transition-colors" id="nav-profile">Hello, ${currentUser.name}</a>
+                    <a href="profile.html" class="text-sm font-medium text-secondary hover:text-primary transition-colors" id="nav-profile">Hello, ${safeName}</a>
                     <button id="btn-signout" class="text-sm font-medium hover:text-secondary transition-colors">Sign Out</button>
                 </div>
             `;
@@ -674,7 +687,7 @@ function updateNavbarAuth() {
         }
         if (mobileAuthContainer) {
             mobileAuthContainer.innerHTML = `
-                <div class="text-center py-2 text-secondary font-medium"><a href="profile.html" class="hover:text-primary transition-colors">Hello, ${currentUser.name}</a></div>
+                <div class="text-center py-2 text-secondary font-medium"><a href="profile.html" class="hover:text-primary transition-colors">Hello, ${safeName}</a></div>
                 <button id="mobile-btn-signout" class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors">Sign Out</button>
             `;
             document.getElementById('mobile-btn-signout').addEventListener('click', handleSignOut);

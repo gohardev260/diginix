@@ -224,10 +224,10 @@ async function loadBlogData() {
 
     tbody.innerHTML = blogs.map(post => `
         <tr class="border-b border-border hover:bg-surface transition-colors">
-            <td class="p-4 font-bold text-primary max-w-xs truncate">${post.title}</td>
-            <td class="p-4"><span class="px-2.5 py-1 bg-surface border border-border text-xs rounded-full uppercase tracking-wider text-secondary">${post.category}</span></td>
-            <td class="p-4 text-secondary text-xs">${post.author}</td>
-            <td class="p-4 text-secondary text-xs">${post.date}</td>
+            <td class="p-4 font-bold text-primary max-w-xs truncate">${window.escapeHtml(post.title)}</td>
+            <td class="p-4"><span class="px-2.5 py-1 bg-surface border border-border text-xs rounded-full uppercase tracking-wider text-secondary">${window.escapeHtml(post.category)}</span></td>
+            <td class="p-4 text-secondary text-xs">${window.escapeHtml(post.author)}</td>
+            <td class="p-4 text-secondary text-xs">${window.escapeHtml(post.date)}</td>
             <td class="p-4 text-right space-x-2">
                 <button onclick="editBlogPost('${post.id}')" class="text-xs font-semibold text-primary hover:underline">Edit</button>
                 <button onclick="deleteBlogPost('${post.id}')" class="text-xs font-semibold text-red-500 hover:underline">Delete</button>
@@ -354,14 +354,14 @@ function filterAndRenderUsers() {
 
     tbody.innerHTML = filteredUsers.map((user, idx) => `
         <tr class="border-b border-border hover:bg-surface transition-colors">
-            <td class="p-4 font-bold text-primary">${user.name}</td>
-            <td class="p-4 text-xs font-mono text-secondary">${user.email}</td>
-            <td class="p-4 text-xs text-secondary">${user.date || '2026-06-01'}</td>
-            <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${user.plan || 'Community'}</span></td>
+            <td class="p-4 font-bold text-primary">${window.escapeHtml(user.name)}</td>
+            <td class="p-4 text-xs font-mono text-secondary">${window.escapeHtml(user.email)}</td>
+            <td class="p-4 text-xs text-secondary">${window.escapeHtml(user.date || '2026-06-01')}</td>
+            <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${window.escapeHtml(user.plan || 'Community')}</span></td>
             <td class="p-4 text-xs font-bold text-primary">${user.visits || 0}</td>
             <td class="p-4">
                 <span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
-                    ${user.status || 'Active'}
+                    ${window.escapeHtml(user.status || 'Active')}
                 </span>
             </td>
             <td class="p-4 text-right space-x-2">
@@ -507,7 +507,6 @@ window.handleSettingsUpdate = async function (e) {
 };
 
 window.handleAdminSignOut = async function () {
-    localStorage.removeItem('adminLoggedIn');
     await window.backendReady;
     if (window.useSupabase) {
         await window.supabase.auth.signOut();

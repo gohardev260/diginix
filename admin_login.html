@@ -107,11 +107,9 @@
                 email: email,
                 password: pass
             });
-
             if (error) {
                 alert('Access Denied. ' + error.message);
             } else {
-                localStorage.setItem('adminLoggedIn', 'true');
                 alert('Session authenticated successfully. Welcome to DiginixIT Console.');
                 window.location.href = 'admin.html';
             }

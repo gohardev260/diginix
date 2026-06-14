@@ -1,11 +1,22 @@
 -- SQL Setup Script for DiginixIT Supabase Integration
 -- Paste these commands into your Supabase SQL Editor (Dashboard > SQL Editor > New query)
 
--- 1. DROP EXISTING TABLES (If any exist, to start clean)
+-- 1. DROP EXISTING TABLES AND FUNCTIONS (If any exist, to start clean)
 DROP TABLE IF EXISTS public.settings CASCADE;
 DROP TABLE IF EXISTS public.blogs CASCADE;
 DROP TABLE IF EXISTS public.users CASCADE;
 DROP TABLE IF EXISTS public.stats CASCADE;
+
+DROP FUNCTION IF EXISTS public.login_user_secure(TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.register_user_secure(TEXT, TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.update_profile_secure(TEXT, UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.update_subscription_secure(TEXT, UUID, TEXT);
+DROP FUNCTION IF EXISTS public.increment_user_visit_secure(TEXT, UUID);
+DROP FUNCTION IF EXISTS public.hash_user_password();
+DROP FUNCTION IF EXISTS public.enforce_default_plan();
+
+-- Enable pgcrypto extension for secure password hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- 2. CREATE TABLES
 
@@ -36,7 +47,9 @@ CREATE TABLE public.users (
     plan TEXT NOT NULL DEFAULT 'Community',
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     status TEXT NOT NULL DEFAULT 'Active',
-    visits INT DEFAULT 0
+    visits INT DEFAULT 0,
+    session_token UUID DEFAULT NULL,
+    session_expires_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
 -- Stats Table (Platform Dashboard Metrics)
@@ -49,8 +62,6 @@ CREATE TABLE public.stats (
 );
 
 -- 3. SEED INITIAL VALUES
-
--- Seed settings (Includes all site configuration parameters: name, email, phone, and socials)
 INSERT INTO public.settings (key_name, value_text) VALUES 
 ('siteName', 'DIGINIXIT.'),
 ('contactEmail', 'contact@diginix.com'),
@@ -61,30 +72,255 @@ INSERT INTO public.settings (key_name, value_text) VALUES
 ('twitter', 'https://twitter.com/')
 ON CONFLICT (key_name) DO UPDATE SET value_text = EXCLUDED.value_text;
 
--- Seed stats
 INSERT INTO public.stats (revenue, activeUsers, executions, revenueHistory) VALUES 
 ('$0', '0', '0', '0,0,0,0,0,0');
 
--- 4. ROW LEVEL SECURITY (RLS) POLICIES
+-- 4. DATABASE TRIGGERS FOR SECURITY AND SANITIZATION
+
+-- Trigger function to hash user password using bcrypt (bf)
+CREATE OR REPLACE FUNCTION public.hash_user_password()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Only hash if it is a new record or the password has changed, and it is not already hashed
+    IF TG_OP = 'INSERT' OR (NEW.password <> OLD.password AND NEW.password NOT LIKE '$2a$%' AND NEW.password NOT LIKE '$2b$%') THEN
+        NEW.password := crypt(NEW.password, gen_salt('bf', 8));
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_hash_password
+BEFORE INSERT OR UPDATE ON public.users
+FOR EACH ROW
+EXECUTE FUNCTION public.hash_user_password();
+
+-- Trigger function to enforce default 'Community' plan during registration
+CREATE OR REPLACE FUNCTION public.enforce_default_plan()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.plan := 'Community';
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_enforce_plan
+BEFORE INSERT ON public.users
+FOR EACH ROW
+EXECUTE FUNCTION public.enforce_default_plan();
+
+-- 5. SECURE RPC FUNCTIONS (SECURITY DEFINER to bypass table RLS selectively)
+
+-- Secure login procedure checking hashed credentials and generating a session token
+CREATE OR REPLACE FUNCTION public.login_user_secure(p_email TEXT, p_password TEXT)
+RETURNS TABLE (
+    id BIGINT,
+    name TEXT,
+    email TEXT,
+    plan TEXT,
+    date DATE,
+    status TEXT,
+    visits INT,
+    session_token UUID,
+    session_expires_at TIMESTAMP WITH TIME ZONE
+) AS $$
+DECLARE
+    v_user public.users%ROWTYPE;
+    v_token UUID;
+    v_expiry TIMESTAMP WITH TIME ZONE;
+BEGIN
+    SELECT * INTO v_user FROM public.users WHERE LOWER(public.users.email) = LOWER(p_email);
+    
+    IF v_user.id IS NOT NULL AND v_user.password = crypt(p_password, v_user.password) THEN
+        IF v_user.status = 'Blocked' THEN
+            RAISE EXCEPTION 'Your account is blocked. Please contact administrator.';
+        END IF;
+        
+        v_token := gen_random_uuid();
+        v_expiry := now() + interval '30 days';
+        
+        UPDATE public.users
+        SET session_token = v_token,
+            session_expires_at = v_expiry
+        WHERE public.users.id = v_user.id;
+        
+        RETURN QUERY
+        SELECT u.id, u.name, u.email, u.plan, u.date, u.status, u.visits, v_token, v_expiry
+        FROM public.users u
+        WHERE u.id = v_user.id;
+    ELSE
+        RAISE EXCEPTION 'Invalid email or password';
+    END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Secure registration procedure creating a user and automatically generating session token
+CREATE OR REPLACE FUNCTION public.register_user_secure(p_name TEXT, p_email TEXT, p_password TEXT)
+RETURNS TABLE (
+    id BIGINT,
+    name TEXT,
+    email TEXT,
+    plan TEXT,
+    date DATE,
+    status TEXT,
+    visits INT,
+    session_token UUID,
+    session_expires_at TIMESTAMP WITH TIME ZONE
+) AS $$
+DECLARE
+    v_user_id BIGINT;
+    v_token UUID;
+    v_expiry TIMESTAMP WITH TIME ZONE;
+BEGIN
+    IF EXISTS (SELECT 1 FROM public.users WHERE LOWER(public.users.email) = LOWER(p_email)) THEN
+        RAISE EXCEPTION 'An account with this email address already exists.';
+    END IF;
+    
+    v_token := gen_random_uuid();
+    v_expiry := now() + interval '30 days';
+    
+    -- Insert user. plan will default to 'Community' via trigger_enforce_plan
+    INSERT INTO public.users (name, email, password, status, date, session_token, session_expires_at)
+    VALUES (p_name, p_email, p_password, 'Active', CURRENT_DATE, v_token, v_expiry)
+    RETURNING public.users.id INTO v_user_id;
+    
+    RETURN QUERY
+    SELECT u.id, u.name, u.email, u.plan, u.date, u.status, u.visits, v_token, v_expiry
+    FROM public.users u
+    WHERE u.id = v_user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Secure profile update requiring a valid session token
+CREATE OR REPLACE FUNCTION public.update_profile_secure(p_email TEXT, p_token UUID, p_name TEXT, p_new_password TEXT)
+RETURNS TABLE (
+    id BIGINT,
+    name TEXT,
+    email TEXT,
+    plan TEXT,
+    date DATE,
+    status TEXT,
+    visits INT
+) AS $$
+DECLARE
+    v_user_id BIGINT;
+BEGIN
+    SELECT u.id INTO v_user_id
+    FROM public.users u
+    WHERE LOWER(u.email) = LOWER(p_email)
+      AND u.session_token = p_token
+      AND u.session_expires_at > now();
+      
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'Invalid session or session expired. Please sign in again.';
+    END IF;
+    
+    IF p_new_password IS NOT NULL AND p_new_password <> '' THEN
+        UPDATE public.users
+        SET name = p_name,
+            password = p_new_password
+        WHERE public.users.id = v_user_id;
+    ELSE
+        UPDATE public.users
+        SET name = p_name
+        WHERE public.users.id = v_user_id;
+    END IF;
+    
+    RETURN QUERY
+    SELECT u.id, u.name, u.email, u.plan, u.date, u.status, u.visits
+    FROM public.users u
+    WHERE u.id = v_user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Secure subscription update requiring a valid session token
+CREATE OR REPLACE FUNCTION public.update_subscription_secure(p_email TEXT, p_token UUID, p_plan TEXT)
+RETURNS TABLE (
+    id BIGINT,
+    name TEXT,
+    email TEXT,
+    plan TEXT,
+    date DATE,
+    status TEXT,
+    visits INT
+) AS $$
+DECLARE
+    v_user_id BIGINT;
+BEGIN
+    SELECT u.id INTO v_user_id
+    FROM public.users u
+    WHERE LOWER(u.email) = LOWER(p_email)
+      AND u.session_token = p_token
+      AND u.session_expires_at > now();
+      
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'Invalid session or session expired. Please sign in again.';
+    END IF;
+    
+    UPDATE public.users
+    SET plan = p_plan
+    WHERE public.users.id = v_user_id;
+    
+    RETURN QUERY
+    SELECT u.id, u.name, u.email, u.plan, u.date, u.status, u.visits
+    FROM public.users u
+    WHERE u.id = v_user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Secure visit counter update requiring a valid session token
+CREATE OR REPLACE FUNCTION public.increment_user_visit_secure(p_email TEXT, p_token UUID)
+RETURNS INT AS $$
+DECLARE
+    v_user_id BIGINT;
+    v_visits INT;
+    v_status TEXT;
+BEGIN
+    SELECT u.id, u.visits, u.status INTO v_user_id, v_visits, v_status
+    FROM public.users u
+    WHERE LOWER(u.email) = LOWER(p_email)
+      AND u.session_token = p_token
+      AND u.session_expires_at > now();
+      
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'Invalid session';
+    END IF;
+
+    IF v_status = 'Blocked' THEN
+        RAISE EXCEPTION 'User is blocked';
+    END IF;
+    
+    UPDATE public.users
+    SET visits = COALESCE(visits, 0) + 1
+    WHERE public.users.id = v_user_id
+    RETURNING public.users.visits INTO v_visits;
+    
+    RETURN v_visits;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 6. ROW LEVEL SECURITY (RLS) POLICIES
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.blogs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stats ENABLE ROW LEVEL SECURITY;
 
--- Settings policies: Everyone can read, authenticated admins can manage
+-- Settings policies: Public read, only admin role can modify
 CREATE POLICY "Allow public read on settings" ON public.settings FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated changes on settings" ON public.settings FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow admin manage settings" ON public.settings FOR ALL TO authenticated 
+    USING ((auth.jwt()->'app_metadata'->>'role') = 'admin');
 
--- Blogs policies: Everyone can read, authenticated admins can manage
+-- Blogs policies: Public read, only admin role can modify
 CREATE POLICY "Allow public read on blogs" ON public.blogs FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated changes on blogs" ON public.blogs FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow admin manage blogs" ON public.blogs FOR ALL TO authenticated 
+    USING ((auth.jwt()->'app_metadata'->>'role') = 'admin');
 
--- Stats policies: Everyone can read, authenticated admins can manage
+-- Stats policies: Public read, only admin role can modify
 CREATE POLICY "Allow public read on stats" ON public.stats FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated changes on stats" ON public.stats FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow admin manage stats" ON public.stats FOR ALL TO authenticated 
+    USING ((auth.jwt()->'app_metadata'->>'role') = 'admin');
 
--- Users policies: Direct access policies for registration, login and profile updates
-CREATE POLICY "Allow select on users" ON public.users FOR SELECT USING (true);
-CREATE POLICY "Allow insert on users" ON public.users FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow update on users" ON public.users FOR UPDATE USING (true) WITH CHECK (true);
-CREATE POLICY "Allow delete on users" ON public.users FOR DELETE TO authenticated USING (true);
+-- Users policies: Completely locked down for public direct SELECT/INSERT/UPDATE/DELETE. 
+-- All regular user operations are handled through SECURITY DEFINER RPC functions.
+-- Only admin role is granted access to inspect and manage users directly.
+CREATE POLICY "Allow admin manage users" ON public.users FOR ALL TO authenticated 
+    USING ((auth.jwt()->'app_metadata'->>'role') = 'admin');

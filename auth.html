@@ -121,8 +121,7 @@
                         <label for="auth-password" class="text-xs font-bold text-secondary block mb-1">Password</label>
                         <input type="password" id="auth-password" class="premium-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="4">
                     </div>
-                    <input type="hidden" id="auth-plan" value="Community">
-                    
+                     
                     <button type="submit" id="btn-auth-submit" class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors mt-6">Sign In</button>
                 </form>
 
@@ -198,7 +197,7 @@
 
             if (mode === 'signup') {
                 const name = document.getElementById('auth-name').value.trim();
-                const plan = document.getElementById('auth-plan').value;
+                const plan = 'Community';
 
                 const res = await window.apiCall('register', { name, email, password, plan });
                 if (res && res.success === true) {
