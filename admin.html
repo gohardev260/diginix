@@ -271,13 +271,15 @@
                         <p class="text-secondary text-sm mt-1">Manage registered users, tier levels and access privileges.</p>
                     </div>
                     <!-- Controls -->
-                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
                         <!-- Date Range Filters -->
-                        <div class="flex items-center gap-2 bg-white border border-border px-3 py-1.5 rounded-xl">
-                            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Date:</span>
-                            <input type="date" id="users-start-date" class="bg-transparent border-0 outline-none text-xs text-primary focus:ring-0 cursor-pointer" aria-label="Start Registration Date">
-                            <span class="text-xs text-secondary">to</span>
-                            <input type="date" id="users-end-date" class="bg-transparent border-0 outline-none text-xs text-primary focus:ring-0 cursor-pointer" aria-label="End Registration Date">
+                        <div class="flex flex-col xs:flex-row xs:items-center gap-2 bg-white border border-border p-3 rounded-2xl w-full sm:w-auto">
+                            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider block sm:inline">Timeline:</span>
+                            <div class="flex items-center gap-1.5 justify-between">
+                                <input type="date" id="users-start-date" class="bg-transparent border border-gray-100 rounded-lg p-1 text-xs text-primary focus:ring-0 cursor-pointer w-[110px]" aria-label="Start Registration Date">
+                                <span class="text-xs text-secondary">to</span>
+                                <input type="date" id="users-end-date" class="bg-transparent border border-gray-100 rounded-lg p-1 text-xs text-primary focus:ring-0 cursor-pointer w-[110px]" aria-label="End Registration Date">
+                            </div>
                         </div>
                         <!-- Search Input -->
                         <div class="relative w-full md:w-64">
@@ -287,12 +289,11 @@
                             <input type="text" id="users-search-input" placeholder="Search users..." class="pl-10 pr-4 py-2.5 w-full bg-white border border-border rounded-xl text-xs placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
                         </div>
                         <!-- Export PDF Button -->
-                        <button onclick="exportUsersPDF()" class="bg-primary text-white border border-transparent px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-black transition-colors flex items-center gap-2 whitespace-nowrap justify-center">
+                        <button onclick="exportUsersPDF()" class="bg-primary text-white border border-transparent px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-black transition-colors flex items-center gap-2 whitespace-nowrap justify-center w-full sm:w-auto">
                             <i data-lucide="download" class="w-3.5 h-3.5"></i> Export PDF
                         </button>
                     </div>
                 </div>
-
                 <!-- Users Table -->
                 <div class="bg-white rounded-2xl border border-border overflow-hidden">
                     <div class="responsive-table-container">
