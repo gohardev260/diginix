@@ -612,7 +612,7 @@ function apiCallLocalStorageFallback(action, data) {
 function injectSocialSidebar() {
     // Prevent rendering on admin dashboard and login pages
     const path = window.location.pathname.toLowerCase();
-    if (path.includes('admin.html') || path.includes('admin_login.html')) return;
+    if (path.includes('admin')) return;
 
     // Check if sidebar already exists (prevent duplicate injection)
     if (document.getElementById('social-sidebar')) return;
