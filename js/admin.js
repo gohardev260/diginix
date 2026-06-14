@@ -317,22 +317,42 @@ window.handleBlogSave = async function(e) {
 };
 
 // --- 4. Users Tab Logic ---
+let usersList = []; // cache users list
+
 async function loadUserData() {
     await window.backendReady;
-    const users = await window.apiCall('get_users') || [];
+    usersList = await window.apiCall('get_users') || [];
+    filterAndRenderUsers();
+}
+
+function filterAndRenderUsers() {
     const tbody = document.getElementById('users-table-body');
     if (!tbody) return;
 
-    if (users.length === 0) {
+    const searchInput = document.getElementById('users-search-input');
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    let filteredUsers = usersList;
+    if (query) {
+        filteredUsers = usersList.filter(user => {
+            const name = (user.name || '').toLowerCase();
+            const email = (user.email || '').toLowerCase();
+            const plan = (user.plan || 'Community').toLowerCase();
+            const status = (user.status || 'Active').toLowerCase();
+            return name.includes(query) || email.includes(query) || plan.includes(query) || status.includes(query);
+        });
+    }
+
+    if (filteredUsers.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="p-8 text-center text-secondary font-light">No clients registered on platform.</td>
+                <td colspan="7" class="p-8 text-center text-secondary font-light">No clients found matching the search criteria.</td>
             </tr>
         `;
         return;
     }
 
-    tbody.innerHTML = users.map((user, idx) => `
+    tbody.innerHTML = filteredUsers.map((user, idx) => `
         <tr class="border-b border-border hover:bg-surface transition-colors">
             <td class="p-4 font-bold text-primary">${user.name}</td>
             <td class="p-4 text-xs font-mono text-secondary">${user.email}</td>
@@ -353,6 +373,80 @@ async function loadUserData() {
         </tr>
     `).join('');
 }
+
+window.exportUsersPDF = function() {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+        alert("PDF library is still loading. Please try again in a moment.");
+        return;
+    }
+
+    const doc = new jsPDF();
+
+    // Branded Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(17, 17, 17);
+    doc.text("DIGINIXIT.", 14, 20);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(102, 102, 102);
+    doc.text("User Analytics & Engagement Report", 14, 26);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 32);
+
+    // Separator line
+    doc.setDrawColor(229, 229, 229);
+    doc.line(14, 38, 196, 38);
+
+    // Summary Analytics
+    const totalUsers = usersList.length;
+    const totalVisits = usersList.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(17, 17, 17);
+    doc.text(`Total Users: ${totalUsers}`, 14, 48);
+    doc.text(`Total Recorded Visits: ${totalVisits}`, 80, 48);
+
+    // Generate table contents
+    const headers = [["Client Name", "Email Address", "Tier Plan", "Total Visits"]];
+    const data = usersList.map(u => [
+        u.name || "N/A",
+        u.email || "N/A",
+        u.plan || "Community",
+        String(u.visits || 0)
+    ]);
+
+    doc.autoTable({
+        head: headers,
+        body: data,
+        startY: 55,
+        theme: 'striped',
+        headStyles: {
+            fillColor: [17, 17, 17],
+            textColor: [255, 255, 255],
+            fontSize: 9,
+            fontStyle: 'bold'
+        },
+        bodyStyles: {
+            fontSize: 9,
+            textColor: [51, 51, 51]
+        },
+        alternateRowStyles: {
+            fillColor: [249, 249, 249]
+        },
+        columnStyles: {
+            0: { cellWidth: 50 },
+            1: { cellWidth: 70 },
+            2: { cellWidth: 32 },
+            3: { cellWidth: 30, halign: 'right' }
+        },
+        margin: { top: 55, left: 14, right: 14 }
+    });
+
+    doc.save("diginixit_users_report.pdf");
+};
 
 window.toggleUserStatus = async function(email) {
     await window.backendReady;
@@ -427,4 +521,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     await window.backendReady;
     initTabs();
     await loadAnalyticsData();
+
+    // Attach listener to search input
+    const searchInput = document.getElementById('users-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterAndRenderUsers);
+    }
 });

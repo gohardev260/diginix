@@ -598,6 +598,10 @@ function apiCallLocalStorageFallback(action, data) {
 
 // --- 4.5. Floating Social Sidebar Injection ---
 function injectSocialSidebar() {
+    // Prevent rendering on admin dashboard and login pages
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('admin.html') || path.includes('admin_login.html')) return;
+
     // Check if sidebar already exists (prevent duplicate injection)
     if (document.getElementById('social-sidebar')) return;
 

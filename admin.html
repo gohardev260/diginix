@@ -47,6 +47,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
@@ -235,9 +237,25 @@
             <!-- TAB: USERS PORTAL                          -->
             <!-- ========================================== -->
             <div id="tab-users" class="admin-tab-content space-y-8">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">User Portal</h2>
-                    <p class="text-secondary text-sm mt-1">Manage registered users, tier levels and access privileges.</p>
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">User Portal</h2>
+                        <p class="text-secondary text-sm mt-1">Manage registered users, tier levels and access privileges.</p>
+                    </div>
+                    <!-- Controls -->
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <!-- Search Input -->
+                        <div class="relative w-full md:w-64">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <i data-lucide="search" class="w-4 h-4 text-secondary"></i>
+                            </div>
+                            <input type="text" id="users-search-input" placeholder="Search users..." class="pl-10 pr-4 py-2.5 w-full bg-white border border-border rounded-xl text-xs placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                        </div>
+                        <!-- Export PDF Button -->
+                        <button onclick="exportUsersPDF()" class="bg-primary text-white border border-transparent px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-black transition-colors flex items-center gap-2 whitespace-nowrap">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export PDF
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Users Table -->
