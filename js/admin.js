@@ -12,7 +12,7 @@ function initTabs() {
         // Toggle desktop sidebar buttons
         sidebarBtns.forEach(btn => {
             const match = btn.getAttribute('data-tab') === tabId;
-            btn.className = match ? 
+            btn.className = match ?
                 "w-full flex items-center text-sm px-4 py-3 rounded-lg bg-primary text-white font-medium hover:bg-black transition-colors admin-tab-btn" :
                 "w-full flex items-center text-sm px-4 py-3 rounded-lg text-secondary hover:bg-surface hover:text-primary transition-colors admin-tab-btn font-medium";
         });
@@ -128,7 +128,7 @@ async function loadAnalyticsData() {
         document.getElementById('chart-jun').value = stats.revenueHistory[5] || 0;
     }
 
-    renderRevenueChart(stats.revenueHistory || [0,0,0,0,0,0]);
+    renderRevenueChart(stats.revenueHistory || [0, 0, 0, 0, 0, 0]);
 }
 
 function renderRevenueChart(chartData) {
@@ -178,7 +178,7 @@ function renderRevenueChart(chartData) {
     });
 }
 
-window.handleStatsUpdate = async function(e) {
+window.handleStatsUpdate = async function (e) {
     e.preventDefault();
     const updatedStats = {
         revenue: document.getElementById('input-revenue').value,
@@ -239,7 +239,7 @@ async function loadBlogData() {
 const editorPanel = document.getElementById('blog-editor-panel');
 const editorContent = document.getElementById('blog-editor-content');
 
-window.toggleBlogModal = function(show, isEdit = false) {
+window.toggleBlogModal = function (show, isEdit = false) {
     if (!editorPanel || !editorContent) return;
 
     if (show) {
@@ -253,7 +253,7 @@ window.toggleBlogModal = function(show, isEdit = false) {
             document.getElementById('blog-content').value = '';
             document.getElementById('blog-editor-title').innerText = "Write New Article";
         }
-        
+
         editorPanel.classList.remove('pointer-events-none');
         gsap.to(editorPanel, { opacity: 1, duration: 0.3 });
         gsap.to(editorContent, { x: 0, duration: 0.3, ease: "power2.out" });
@@ -266,7 +266,7 @@ window.toggleBlogModal = function(show, isEdit = false) {
     }
 };
 
-window.editBlogPost = function(id) {
+window.editBlogPost = function (id) {
     const post = blogs.find(b => b.id == id);
     if (!post) return;
 
@@ -282,7 +282,7 @@ window.editBlogPost = function(id) {
     toggleBlogModal(true, true);
 };
 
-window.deleteBlogPost = async function(id) {
+window.deleteBlogPost = async function (id) {
     if (!confirm('Are you sure you want to delete this insights article?')) return;
     await window.backendReady;
     const res = await window.apiCall('delete_blog', { id });
@@ -293,7 +293,7 @@ window.deleteBlogPost = async function(id) {
     }
 };
 
-window.handleBlogSave = async function(e) {
+window.handleBlogSave = async function (e) {
     e.preventDefault();
     const id = document.getElementById('edit-post-id').value;
     const title = document.getElementById('blog-title').value.trim();
@@ -374,7 +374,7 @@ function filterAndRenderUsers() {
     `).join('');
 }
 
-window.exportUsersPDF = function() {
+window.exportUsersPDF = function () {
     const { jsPDF } = window.jspdf;
     if (!jsPDF) {
         alert("PDF library is still loading. Please try again in a moment.");
@@ -448,7 +448,7 @@ window.exportUsersPDF = function() {
     doc.save("diginixit_users_report.pdf");
 };
 
-window.toggleUserStatus = async function(email) {
+window.toggleUserStatus = async function (email) {
     await window.backendReady;
     const res = await window.apiCall('update_user_status', { email });
     if (res && res.success === true) {
@@ -458,7 +458,7 @@ window.toggleUserStatus = async function(email) {
     }
 };
 
-window.deleteUser = async function(email) {
+window.deleteUser = async function (email) {
     if (!confirm('Are you sure you want to delete this user profile?')) return;
     await window.backendReady;
     const res = await window.apiCall('delete_user', { email });
@@ -482,7 +482,7 @@ async function loadSettingsData() {
     document.getElementById('settings-twitter').value = settings.twitter || '';
 }
 
-window.handleSettingsUpdate = async function(e) {
+window.handleSettingsUpdate = async function (e) {
     e.preventDefault();
     const siteName = document.getElementById('settings-sitename').value.trim();
     const contactEmail = document.getElementById('settings-email').value.trim();
@@ -493,7 +493,7 @@ window.handleSettingsUpdate = async function(e) {
     const twitter = document.getElementById('settings-twitter').value.trim();
 
     const newSettings = { siteName, contactEmail, contactPhone, maintenanceMode, linkedin, instagram, twitter };
-    
+
     await window.backendReady;
     const res = await window.apiCall('save_settings', newSettings);
     if (res && res.success === true) {
@@ -506,7 +506,7 @@ window.handleSettingsUpdate = async function(e) {
     }
 };
 
-window.handleAdminSignOut = async function() {
+window.handleAdminSignOut = async function () {
     localStorage.removeItem('adminLoggedIn');
     await window.backendReady;
     if (window.useSupabase) {

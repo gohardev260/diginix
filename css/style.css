@@ -1,3 +1,7 @@
+:root {
+    color-scheme: light !important;
+}
+
 /* Base & Resets */
 body {
     margin: 0;
@@ -280,4 +284,28 @@ html.lenis {
     stroke-width: 1.5;
     stroke-linecap: round;
     will-change: stroke, stroke-width;
+}
+
+/* Responsive Breakpoint Override (991px for navbar & mobile menu) */
+@media (max-width: 991px) {
+    /* Hide desktop navbar elements */
+    #navbar .hidden.md\:flex {
+        display: none !important;
+    }
+
+    /* Show mobile navbar controls */
+    #navbar .flex.md\:hidden {
+        display: flex !important;
+    }
+
+    /* Allow mobile menu to be displayed */
+    #mobile-menu.md\:hidden {
+        display: flex !important;
+    }
+
+    /* Adjust navbar padding for mobile/tablet */
+    #navbar {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
 }

@@ -431,9 +431,9 @@ window.apiCall = async function (action, data = null) {
                     .eq('email', data.email)
                     .single();
                 if (fetchError || !user) throw new Error("User not found");
-                
+
                 const newVisits = (Number(user.visits) || 0) + 1;
-                
+
                 const { error: updateError } = await window.supabase
                     .from('users')
                     .update({ visits: newVisits })
@@ -755,7 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
     (async () => {
         await window.backendReady;
         await applySiteSettings();
-        
+
         // Count visit once per session for logged-in users when they visit public client pages
         const path = window.location.pathname.toLowerCase();
         const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
