@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | User Profile Panel</title>
     <meta name="description" content="Manage your DiginixIT user account details, credentials, and billing tier levels.">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://diginixit.com/profile.html">
 
     <!-- Open Graph / Facebook -->
@@ -25,6 +25,7 @@
     <!-- DNS Prefetch & Preconnect -->
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,27 +63,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://unpkg.com/lucide@latest" defer></script>
 
-    <!-- DOMPurify for XSS Protection -->
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Guard style overlay -->
-    <style>
-        #profile-guard { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #FAFAFA; color: #111111; font-family: 'Inter', sans-serif; position: fixed; inset: 0; z-index: 9999; }
-        #profile-app   { display: none; }
-    </style>
+    <!-- Hide body until verified -->
+    <style>body { visibility: hidden !important; }</style>
 </head>
 <body class="bg-surface min-h-screen">
 
     <div class="noise"></div>
-
-    <!-- Guard Overlay Screen -->
-    <div id="profile-guard">
-        <div class="text-center space-y-4">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p class="text-xs uppercase tracking-widest text-neutral-500 font-bold">Verifying profile session</p>
-        </div>
-    </div>
 
     <!-- Security Check (Redirect if not logged in) -->
     <script>
@@ -92,75 +80,35 @@
                     clearInterval(checkReady);
                     await window.backendReady;
                     
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                    if (!currentUser || !currentUser.email) {
+                        window.location.replace('auth.html?mode=signin');
+                        return;
+                    }
+                    
+                    // Verify that the session token is valid in database
                     if (window.useSupabase) {
                         try {
-                            const { data: { session }, error: sessionError } = await window.supabase.auth.getSession();
-                            if (sessionError || !session || !session.user) {
+                            const res = await window.apiCall('verify_session', { email: currentUser.email });
+                            if (!res || res.success !== true) {
                                 localStorage.removeItem('currentUser');
+                                alert('Session expired. Please sign in again.');
                                 window.location.replace('auth.html?mode=signin');
                                 return;
                             }
-                            
-                            // Fetch profile dynamically (pure read check, no db updates on load - Vuln 9)
-                            const { data: profile, error } = await window.supabase
-                                .from('profiles')
-                                .select('*')
-                                .eq('id', session.user.id)
-                                .single();
-                                
-                            if (error || !profile) {
-                                localStorage.removeItem('currentUser');
-                                await window.supabase.auth.signOut();
-                                window.location.replace('auth.html?mode=signin');
-                                return;
-                            }
-                            
-                            if (profile.status === 'Blocked') {
-                                localStorage.removeItem('currentUser');
-                                await window.supabase.auth.signOut();
-                                alert('Your account is blocked. Please contact administrator.');
-                                window.location.replace('auth.html?mode=signin');
-                                return;
-                            }
-
-                            // Update localStorage user cache
-                            const updatedUser = {
-                                id: session.user.id,
-                                name: profile.name,
-                                email: session.user.email,
-                                plan: profile.plan,
-                                status: profile.status,
-                                visits: profile.visits,
-                                date: profile.date
-                            };
-                            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
                         } catch (e) {
                             console.error("Verification failed:", e);
                             localStorage.removeItem('currentUser');
                             window.location.replace('auth.html?mode=signin');
                             return;
                         }
-                    } else {
-                        // Offline Mock Mode session check
-                        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                        if (!currentUser || !currentUser.email) {
-                            window.location.replace('auth.html?mode=signin');
-                            return;
-                        }
                     }
                     
-                    // Reveal content
-                    const guard = document.getElementById('profile-guard');
-                    if (guard) guard.remove();
-                    const app = document.getElementById('profile-app');
-                    if (app) app.style.display = 'block';
+                    document.body.style.setProperty('visibility', 'visible', 'important');
                 }
             }, 50);
         })();
     </script>
-
-    <!-- Wrap all page HTML in #profile-app -->
-    <div id="profile-app">
     <!-- Navigation -->
     <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -282,8 +230,6 @@
             <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
         </div>
     </footer>
-
-    </div>
 
     <!-- Scripts -->
     <script src="js/common.js" defer></script>

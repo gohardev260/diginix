@@ -11,18 +11,6 @@ window.escapeHtml = function (unsafe) {
         .replace(/'/g, "&#039;");
 };
 
-// --- IMAGE URL SANITIZATION UTILITY ---
-window.isSafeImageUrl = function (url) {
-    if (!url) return false;
-    try {
-        const parsed = new URL(url);
-        return ['https:'].includes(parsed.protocol);
-    } catch (e) {
-        // Allow relative safe assets
-        return url.startsWith('/') && !url.toLowerCase().startsWith('/javascript:') && !url.toLowerCase().startsWith('/data:');
-    }
-};
-
 // --- SUPABASE CONFIGURATION ---
 // Insert your live URL and Anon Key here from the Supabase Dashboard (Settings > API)
 const SUPABASE_URL = 'https://fvvdmrogquycehyncslp.supabase.co';
@@ -209,16 +197,16 @@ window.apiCall = async function (action, data = null) {
 
             case 'get_users': {
                 const { data: users, error } = await window.supabase
-                    .from('profiles')
+                    .from('users')
                     .select('name, email, date, plan, status, visits')
-                    .order('date', { ascending: false });
+                    .order('id', { ascending: false });
                 if (error) throw error;
                 return users || [];
             }
 
             case 'update_user_status': {
                 const { data: user, error: fetchError } = await window.supabase
-                    .from('profiles')
+                    .from('users')
                     .select('status')
                     .eq('email', data.email)
                     .single();
@@ -227,7 +215,7 @@ window.apiCall = async function (action, data = null) {
                 const newStatus = user.status === 'Blocked' ? 'Active' : 'Blocked';
 
                 const { error: updateError } = await window.supabase
-                    .from('profiles')
+                    .from('users')
                     .update({ status: newStatus })
                     .eq('email', data.email);
                 if (updateError) throw updateError;
@@ -236,7 +224,9 @@ window.apiCall = async function (action, data = null) {
 
             case 'delete_user': {
                 const { error } = await window.supabase
-                    .rpc('delete_user_by_admin', { p_email: data.email });
+                    .from('users')
+                    .delete()
+                    .eq('email', data.email);
                 if (error) throw error;
                 return { success: true };
             }
@@ -281,11 +271,11 @@ window.apiCall = async function (action, data = null) {
                     .limit(1);
                 if (error) throw error;
 
-                // Dynamically retrieve the true count of registered users from the profiles table
+                // Dynamically retrieve the true count of registered users from the users table
                 let realUserCount = 0;
                 try {
                     const { count, error: countError } = await window.supabase
-                        .from('profiles')
+                        .from('users')
                         .select('*', { count: 'exact', head: true });
                     if (!countError && count !== null) {
                         realUserCount = count;
@@ -294,11 +284,11 @@ window.apiCall = async function (action, data = null) {
                     console.warn("Failed to count users dynamically:", e);
                 }
 
-                // Dynamically retrieve the sum of all visits in the profiles table
+                // Dynamically retrieve the sum of all visits in the users table
                 let totalVisitsCount = 0;
                 try {
                     const { data: usersData, error: sumError } = await window.supabase
-                        .from('profiles')
+                        .from('users')
                         .select('visits');
                     if (!sumError && usersData) {
                         totalVisitsCount = usersData.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
@@ -363,141 +353,95 @@ window.apiCall = async function (action, data = null) {
                 return { success: true };
 
             case 'login': {
-                const { data: authData, error: authError } = await window.supabase.auth.signInWithPassword({
-                    email: data.email,
-                    password: data.password
-                });
-                if (authError) {
-                    return { success: false, error: authError.message || "Invalid email or password" };
+                const { data: user, error } = await window.supabase
+                    .rpc('login_user_secure', {
+                        p_email: data.email,
+                        p_password: data.password
+                    });
+                if (error) {
+                    return { success: false, error: error.message || "Invalid email or password" };
                 }
-                if (!authData || !authData.user) {
+                if (!user || user.length === 0) {
                     return { success: false, error: "Invalid email or password" };
                 }
-
-                // Fetch profile
-                const { data: profile, error: profileError } = await window.supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', authData.user.id)
-                    .single();
-
-                if (profileError || !profile) {
-                    return { success: false, error: "User profile not found." };
-                }
-                if (profile.status === 'Blocked') {
-                    await window.supabase.auth.signOut();
+                const returnedUser = Array.isArray(user) ? user[0] : user;
+                if (returnedUser.status === 'Blocked') {
                     return { success: false, error: "Your account is blocked. Please contact administrator." };
                 }
-
-                const returnedUser = {
-                    id: authData.user.id,
-                    name: profile.name,
-                    email: authData.user.email,
-                    plan: profile.plan,
-                    status: profile.status,
-                    visits: profile.visits,
-                    date: profile.date
-                };
                 return { success: true, user: returnedUser };
             }
 
             case 'register': {
-                // Sign up via Supabase Auth
-                const { data: authData, error: authError } = await window.supabase.auth.signUp({
-                    email: data.email,
-                    password: data.password,
-                    options: {
-                        data: {
-                            name: data.name
-                        }
-                    }
-                });
-                if (authError) {
-                    return { success: false, error: authError.message || "Registration failed" };
+                const { data: user, error } = await window.supabase
+                    .rpc('register_user_secure', {
+                        p_name: data.name,
+                        p_email: data.email,
+                        p_password: data.password
+                    });
+                if (error) {
+                    return { success: false, error: error.message || "Registration failed" };
                 }
-                if (!authData || !authData.user) {
-                    return { success: false, error: "Registration failed" };
-                }
-
-                // Wait briefly for trigger execution to complete
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                // Fetch the newly created profile
-                const { data: profile, error: profileError } = await window.supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', authData.user.id)
-                    .single();
-
-                const returnedUser = {
-                    id: authData.user.id,
-                    name: profile ? profile.name : data.name,
-                    email: authData.user.email,
-                    plan: profile ? profile.plan : 'Community',
-                    status: profile ? profile.status : 'Active',
-                    visits: profile ? profile.visits : 0,
-                    date: profile ? profile.date : new Date().toISOString().split('T')[0]
-                };
+                const returnedUser = Array.isArray(user) ? user[0] : user;
                 return { success: true, user: returnedUser };
             }
 
             case 'update_profile': {
-                const { data: { session } } = await window.supabase.auth.getSession();
-                if (!session || !session.user) {
-                    return { success: false, error: "Session expired. Please sign in again." };
-                }
-
-                // Update profiles name
-                const { error: profileError } = await window.supabase
-                    .from('profiles')
-                    .update({ name: data.name })
-                    .eq('id', session.user.id);
-                if (profileError) {
-                    return { success: false, error: profileError.message || "Update profile failed" };
-                }
-
-                // Update auth password if provided
-                if (data.password && data.password.trim() !== '') {
-                    const { error: passwordError } = await window.supabase.auth.updateUser({
-                        password: data.password
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const sessionToken = currentUser ? currentUser.session_token : null;
+                const { data: user, error } = await window.supabase
+                    .rpc('update_profile_secure', {
+                        p_email: data.email,
+                        p_token: sessionToken,
+                        p_name: data.name,
+                        p_new_password: data.password || null
                     });
-                    if (passwordError) {
-                        return { success: false, error: passwordError.message || "Update password failed" };
-                    }
+                if (error) {
+                    return { success: false, error: error.message || "Update profile failed" };
                 }
-
-                // Fetch updated profile
-                const { data: profile, error: fetchError } = await window.supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single();
-                if (fetchError || !profile) {
-                    return { success: false, error: "Update profile failed" };
+                const returnedUser = Array.isArray(user) ? user[0] : user;
+                // Keep session token in frontend state
+                if (currentUser && currentUser.session_token) {
+                    returnedUser.session_token = currentUser.session_token;
                 }
-
-                const returnedUser = {
-                    id: session.user.id,
-                    name: profile.name,
-                    email: session.user.email,
-                    plan: profile.plan,
-                    status: profile.status,
-                    visits: profile.visits,
-                    date: profile.date
-                };
                 return { success: true, user: returnedUser };
             }
 
             case 'update_subscription': {
-                // Subscription upgrade via public client RPC is disallowed for security
                 return { 
                     success: false, 
                     error: "Direct subscription upgrades from browser are disabled for security. Plan upgrades must be processed via Stripe webhook." 
                 };
             }
 
+            case 'verify_session': {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const sessionToken = currentUser ? currentUser.session_token : null;
+                const { data: user, error } = await window.supabase
+                    .rpc('verify_session', {
+                        p_email: data.email,
+                        p_token: sessionToken
+                    });
+                if (error) {
+                    return { success: false, error: error.message || "Session verification failed" };
+                }
+                if (!user || user.length === 0) {
+                    return { success: false, error: "Session expired. Please sign in again." };
+                }
+                const returnedUser = Array.isArray(user) ? user[0] : user;
+                if (currentUser && currentUser.session_token) {
+                    returnedUser.session_token = currentUser.session_token;
+                }
+                return { success: true, user: returnedUser };
+            }
+
             case 'increment_user_visit': {
-                const { data: visits, error } = await window.supabase.rpc('increment_visit');
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const sessionToken = currentUser ? currentUser.session_token : null;
+                const { data: visits, error } = await window.supabase
+                    .rpc('increment_user_visit_secure', {
+                        p_email: data.email,
+                        p_token: sessionToken
+                    });
                 if (error) throw error;
                 return { success: true, visits: visits };
             }

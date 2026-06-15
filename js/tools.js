@@ -117,30 +117,13 @@ window.openToolModal = async function(id) {
     // Check auth status & plan
     let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     
-    // Sync plan dynamically from the database
-    if (currentUser && window.useSupabase) {
+    if (currentUser && currentUser.email && window.useSupabase) {
         try {
             await window.backendReady;
-            const { data: { session } } = await window.supabase.auth.getSession();
-            if (session && session.user) {
-                const { data: profile, error } = await window.supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single();
-                if (!error && profile) {
-                    const freshUser = {
-                        id: session.user.id,
-                        name: profile.name,
-                        email: session.user.email,
-                        plan: profile.plan,
-                        status: profile.status,
-                        visits: profile.visits,
-                        date: profile.date
-                    };
-                    localStorage.setItem('currentUser', JSON.stringify(freshUser));
-                    currentUser = freshUser;
-                }
+            const res = await window.apiCall('verify_session', { email: currentUser.email });
+            if (res && res.success === true) {
+                localStorage.setItem('currentUser', JSON.stringify(res.user));
+                currentUser = res.user;
             }
         } catch (e) {
             console.warn("Failed to verify subscription status with database:", e);
