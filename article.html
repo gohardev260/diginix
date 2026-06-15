@@ -25,7 +25,6 @@
     <!-- DNS Prefetch & Preconnect -->
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,8 +34,8 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-    <!-- Ads Popunder -->
-    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
+    <!-- DOMPurify for XSS Protection -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -371,7 +370,7 @@
             
             // Set Hero Image
             const heroImg = document.getElementById('article-image');
-            heroImg.src = post.image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800';
+            heroImg.src = window.isSafeImageUrl(post.image) ? post.image : 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800';
             heroImg.alt = post.title;
 
             // Date & Author details
@@ -397,11 +396,17 @@
             if (post.content) {
                 const paragraphs = post.content.split('\n\n');
                 contentsContainer.innerHTML = paragraphs.map((p, idx) => {
+                    // Sanitize paragraphs before rendering (Vuln 6)
+                    const cleanP = DOMPurify.sanitize(p, {
+                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre'],
+                        ALLOWED_ATTR: ['href', 'target', 'rel'],
+                        FORCE_HTTPS: true
+                    });
                     // Make first paragraph feel editorial & large
                     if (idx === 0) {
-                        return `<p class="text-lg md:text-xl font-normal text-primary leading-relaxed mb-6">${p}</p>`;
+                        return `<p class="text-lg md:text-xl font-normal text-primary leading-relaxed mb-6">${cleanP}</p>`;
                     }
-                    return `<p class="mb-6 font-light text-secondary leading-relaxed">${p}</p>`;
+                    return `<p class="mb-6 font-light text-secondary leading-relaxed">${cleanP}</p>`;
                 }).join('');
             } else {
                 contentsContainer.innerHTML = `<p class="font-light text-secondary italic">No content available for this article.</p>`;
@@ -496,12 +501,12 @@
                     <a href="article.html?id=${item.id}" class="blog-card bg-white border border-border rounded-3xl overflow-hidden hover:border-primary transition-colors group flex flex-col justify-between">
                         <div>
                             <div class="h-44 overflow-hidden relative">
-                                <img src="${item.image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800'}" alt="${item.title}" class="blog-card-img w-full h-full object-cover">
-                                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${item.category}</span>
+                                <img src="${window.isSafeImageUrl(item.image) ? item.image : 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800'}" alt="${window.escapeHtml(item.title)}" class="blog-card-img w-full h-full object-cover">
+                                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${window.escapeHtml(item.category)}</span>
                             </div>
                             <div class="p-6 space-y-2">
-                                <div class="text-[10px] text-secondary font-medium">${item.date}</div>
-                                <h3 class="font-bold text-base leading-snug group-hover:text-secondary transition-colors line-clamp-2">${item.title}</h3>
+                                <div class="text-[10px] text-secondary font-medium">${window.escapeHtml(item.date)}</div>
+                                <h3 class="font-bold text-base leading-snug group-hover:text-secondary transition-colors line-clamp-2">${window.escapeHtml(item.title)}</h3>
                             </div>
                         </div>
                         <div class="p-6 pt-0 flex justify-between items-center text-xs font-semibold text-primary">

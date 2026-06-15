@@ -118,21 +118,29 @@ window.openToolModal = async function(id) {
     let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     
     // Sync plan dynamically from the database
-    if (currentUser && currentUser.email && window.useSupabase) {
+    if (currentUser && window.useSupabase) {
         try {
             await window.backendReady;
-            const sessionToken = currentUser.session_token;
-            const { data: user, error } = await window.supabase.rpc('update_profile_secure', {
-                p_email: currentUser.email,
-                p_token: sessionToken,
-                p_name: currentUser.name,
-                p_new_password: null
-            });
-            if (!error && user && user.length > 0) {
-                const freshUser = Array.isArray(user) ? user[0] : user;
-                freshUser.session_token = sessionToken;
-                localStorage.setItem('currentUser', JSON.stringify(freshUser));
-                currentUser = freshUser;
+            const { data: { session } } = await window.supabase.auth.getSession();
+            if (session && session.user) {
+                const { data: profile, error } = await window.supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                if (!error && profile) {
+                    const freshUser = {
+                        id: session.user.id,
+                        name: profile.name,
+                        email: session.user.email,
+                        plan: profile.plan,
+                        status: profile.status,
+                        visits: profile.visits,
+                        date: profile.date
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(freshUser));
+                    currentUser = freshUser;
+                }
             }
         } catch (e) {
             console.warn("Failed to verify subscription status with database:", e);

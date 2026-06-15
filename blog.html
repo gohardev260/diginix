@@ -25,7 +25,6 @@
     <!-- DNS Prefetch & Preconnect -->
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +33,6 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-
-    <!-- Ads Popunder -->
-    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -239,13 +235,13 @@
                     <a href="article.html?id=${post.id}" class="blog-card bg-white border border-border rounded-3xl overflow-hidden hover:border-primary transition-colors group flex flex-col justify-between">
                         <div>
                             <div class="h-48 overflow-hidden relative">
-                                <img src="${post.image || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800'}" alt="${post.title}" class="blog-card-img w-full h-full object-cover">
-                                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${post.category}</span>
+                                <img src="${window.isSafeImageUrl(post.image) ? post.image : 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800'}" alt="${window.escapeHtml(post.title)}" class="blog-card-img w-full h-full object-cover">
+                                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${window.escapeHtml(post.category)}</span>
                             </div>
                             <div class="p-6 space-y-3">
-                                <div class="text-[10px] text-secondary font-medium">${post.date} &bull; By ${post.author}</div>
-                                <h3 class="font-bold text-xl leading-snug group-hover:text-secondary transition-colors">${post.title}</h3>
-                                <p class="text-secondary text-xs leading-relaxed font-light line-clamp-3">${post.summary}</p>
+                                <div class="text-[10px] text-secondary font-medium">${window.escapeHtml(post.date)} &bull; By ${window.escapeHtml(post.author)}</div>
+                                <h3 class="font-bold text-xl leading-snug group-hover:text-secondary transition-colors">${window.escapeHtml(post.title)}</h3>
+                                <p class="text-secondary text-xs leading-relaxed font-light line-clamp-3">${window.escapeHtml(post.summary)}</p>
                             </div>
                         </div>
                         <div class="p-6 pt-0 flex justify-between items-center text-xs font-semibold text-primary">

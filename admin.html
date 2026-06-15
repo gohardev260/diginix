@@ -52,14 +52,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
+    <!-- DOMPurify for XSS Protection -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Hide body until verified -->
-    <style>body { visibility: hidden !important; }</style>
+    <!-- Guard style overlay -->
+    <style>
+        #admin-guard { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #000000; color: #FFFFFF; font-family: 'Inter', sans-serif; position: fixed; inset: 0; z-index: 9999; }
+        #admin-app   { display: none; }
+    </style>
 </head>
 <body class="bg-surface min-h-screen">
 
     <div class="noise"></div>
+
+    <!-- Guard Overlay Screen -->
+    <div id="admin-guard">
+        <div class="text-center space-y-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+            <p class="text-xs uppercase tracking-widest text-neutral-500 font-bold">Establishing secure session</p>
+        </div>
+    </div>
 
     <!-- Security Check (Redirect if not authenticated) -->
     <script>
@@ -88,11 +101,17 @@
                         return;
                     }
                     
-                    document.body.style.setProperty('visibility', 'visible', 'important');
+                    const guard = document.getElementById('admin-guard');
+                    if (guard) guard.remove();
+                    const app = document.getElementById('admin-app');
+                    if (app) app.style.display = 'block';
                 }
             }, 50);
         })();
     </script>
+
+    <!-- Wrap all page HTML in #admin-app -->
+    <div id="admin-app">
     <!-- Navbar -->
     <nav class="bg-white border-b border-border fixed w-full top-0 z-50 py-4 px-6 md:px-12 flex justify-between items-center h-20" aria-label="Admin Console Navigation">
         <div class="flex items-center">
@@ -415,6 +434,8 @@
                 </div>
             </form>
         </div>
+    </div>
+
     </div>
 
     <!-- Scripts -->

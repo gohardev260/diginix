@@ -94,6 +94,16 @@
     <script>
         async function handleAdminLogin(e) {
             e.preventDefault();
+
+            // Client-side rate limiting (defense-in-depth)
+            const now = Date.now();
+            const attempts = JSON.parse(sessionStorage.getItem('admin_login_attempts') || '{"count":0,"first":0}');
+            if (attempts.count >= 5 && (now - attempts.first) < 15 * 60 * 1000) {
+                const remainingMin = Math.ceil((15 * 60 * 1000 - (now - attempts.first)) / (60 * 1000));
+                alert(`Too many failed login attempts. Please wait ${remainingMin} minute(s) before trying again.`);
+                return;
+            }
+
             const email = document.getElementById('admin-user').value.trim();
             const pass = document.getElementById('admin-pass').value;
 
@@ -103,15 +113,50 @@
                 return;
             }
 
-            const { data, error } = await window.supabase.auth.signInWithPassword({
-                email: email,
-                password: pass
-            });
-            if (error) {
-                alert('Access Denied. ' + error.message);
-            } else {
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying Credentials...';
+
+            try {
+                const { data, error } = await window.supabase.auth.signInWithPassword({
+                    email: email,
+                    password: pass
+                });
+
+                if (error) {
+                    // Track failed attempts
+                    attempts.count = (attempts.count || 0) + 1;
+                    if (attempts.count === 1) attempts.first = now;
+                    sessionStorage.setItem('admin_login_attempts', JSON.stringify(attempts));
+                    alert('Access Denied. Invalid email or password.');
+                    return;
+                }
+
+                // Verify the role BEFORE redirecting
+                const role = data.session?.user?.app_metadata?.role || data.session?.user?.user_metadata?.role;
+                if (role !== 'admin') {
+                    await window.supabase.auth.signOut();
+                    
+                    // Track failed attempts for unauthorized roles as well
+                    attempts.count = (attempts.count || 0) + 1;
+                    if (attempts.count === 1) attempts.first = now;
+                    sessionStorage.setItem('admin_login_attempts', JSON.stringify(attempts));
+                    
+                    alert('Access Denied. Admin privileges required.');
+                    return;
+                }
+
+                // Clear attempt counter on success
+                sessionStorage.removeItem('admin_login_attempts');
                 alert('Session authenticated successfully. Welcome to DiginixIT Console.');
-                window.location.href = 'admin.html';
+                window.location.replace('admin.html');
+            } catch (err) {
+                console.error("Login exception:", err);
+                alert("An error occurred during authentication.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
             }
         }
     </script>
