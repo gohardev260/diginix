@@ -11,6 +11,16 @@ window.escapeHtml = function (unsafe) {
         .replace(/'/g, "&#039;");
 };
 
+window.isSafeImageUrl = function (url) {
+    if (!url) return false;
+    try {
+        const parsed = new URL(url);
+        return ['https:'].includes(parsed.protocol);
+    } catch (e) {
+        return url.startsWith('/') && !url.toLowerCase().startsWith('/javascript:') && !url.toLowerCase().startsWith('/data:');
+    }
+};
+
 // --- SUPABASE CONFIGURATION ---
 // Insert your live URL and Anon Key here from the Supabase Dashboard (Settings > API)
 const SUPABASE_URL = 'https://fvvdmrogquycehyncslp.supabase.co';
