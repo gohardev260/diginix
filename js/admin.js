@@ -208,10 +208,48 @@ window.handleStatsUpdate = async function (e) {
 
 // --- 3. Blog Management Tab ---
 let blogs = []; // cache blogs list
+let quill = null;
+
+function initQuill() {
+    const editorEl = document.getElementById('blog-quill-editor');
+    if (editorEl && typeof Quill !== 'undefined' && !quill) {
+        quill = new Quill('#blog-quill-editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    ['link', 'clean']
+                ]
+            }
+        });
+    }
+}
 
 async function loadBlogData() {
     await window.backendReady;
-    blogs = await window.apiCall('get_blogs') || [];
+    const res = await window.apiCall('get_blogs');
+    if (res && Array.isArray(res)) {
+        blogs = res;
+    } else {
+        console.error("Failed to load blogs:", res);
+        blogs = [];
+        const tbody = document.getElementById('blog-table-body');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="p-8 text-center text-red-500 font-bold">
+                        Error loading articles: ${res && res.error ? window.escapeHtml(res.error) : 'Unknown error'}
+                    </td>
+                </tr>
+            `;
+        }
+        return;
+    }
     const tbody = document.getElementById('blog-table-body');
     if (!tbody) return;
 
@@ -229,7 +267,7 @@ async function loadBlogData() {
             <td class="p-4 font-bold text-primary max-w-xs truncate">${window.escapeHtml(post.title)}</td>
             <td class="p-4"><span class="px-2.5 py-1 bg-surface border border-border text-xs rounded-full uppercase tracking-wider text-secondary">${window.escapeHtml(post.category)}</span></td>
             <td class="p-4 text-secondary text-xs">${window.escapeHtml(post.author)}</td>
-            <td class="p-4 text-secondary text-xs">${window.escapeHtml(post.date)}</td>
+            <td class="p-4 text-secondary text-xs">${window.escapeHtml(formatLocalShortDate(post.date))}</td>
             <td class="p-4 text-right space-x-2">
                 <button class="text-xs font-semibold text-primary hover:underline edit-blog-btn" data-id="${post.id}">Edit</button>
                 <button class="text-xs font-semibold text-red-500 hover:underline delete-blog-btn" data-id="${post.id}">Delete</button>
@@ -257,15 +295,18 @@ const editorContent = document.getElementById('blog-editor-content');
 window.toggleBlogModal = function (show, isEdit = false) {
     if (!editorPanel || !editorContent) return;
 
+    // Make sure Quill is initialized
+    initQuill();
+
     if (show) {
         if (!isEdit) {
             // Clear fields for a new post
             document.getElementById('edit-post-id').value = '';
             document.getElementById('blog-title').value = '';
+            document.getElementById('blog-category').value = '';
             document.getElementById('blog-author').value = '';
-            document.getElementById('blog-image').value = '';
             document.getElementById('blog-summary').value = '';
-            document.getElementById('blog-content').value = '';
+            if (quill) quill.setContents([]); // Clear Quill text
             document.getElementById('blog-editor-title').innerText = "Write New Article";
         }
 
@@ -285,13 +326,17 @@ window.editBlogPost = function (id) {
     const post = blogs.find(b => b.id == id);
     if (!post) return;
 
+    // Make sure Quill is initialized
+    initQuill();
+
     document.getElementById('edit-post-id').value = post.id;
     document.getElementById('blog-title').value = post.title;
     document.getElementById('blog-category').value = post.category;
     document.getElementById('blog-author').value = post.author;
-    document.getElementById('blog-image').value = post.image;
     document.getElementById('blog-summary').value = post.summary;
-    document.getElementById('blog-content').value = post.content;
+    if (quill) {
+        quill.root.innerHTML = post.content || '';
+    }
     document.getElementById('blog-editor-title').innerText = "Edit Article";
 
     toggleBlogModal(true, true);
@@ -313,13 +358,12 @@ window.handleBlogSave = async function (e) {
     e.preventDefault();
     const id = document.getElementById('edit-post-id').value;
     const title = document.getElementById('blog-title').value.trim();
-    const category = document.getElementById('blog-category').value;
+    const category = document.getElementById('blog-category').value.trim();
     const author = document.getElementById('blog-author').value.trim();
-    const image = document.getElementById('blog-image').value.trim();
     const summary = document.getElementById('blog-summary').value.trim();
-    const content = document.getElementById('blog-content').value;
+    const content = quill ? quill.root.innerHTML : '';
 
-    const payload = { id, title, category, author, image, summary, content, _csrf_token: window.csrfToken };
+    const payload = { id, title, category, author, summary, content, _csrf_token: window.csrfToken };
 
     await window.backendReady;
     const res = await window.apiCall('save_blog', payload);
@@ -336,9 +380,41 @@ window.handleBlogSave = async function (e) {
 // --- 4. Users Tab Logic ---
 let usersList = []; // cache users list
 
+function formatLocalShortDate(dateStr) {
+    if (!dateStr) return 'N/A';
+    try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
+        
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    } catch (e) {
+        return String(dateStr).substring(0, 10);
+    }
+}
+
 async function loadUserData() {
     await window.backendReady;
-    usersList = await window.apiCall('get_users') || [];
+    const res = await window.apiCall('get_users');
+    if (res && Array.isArray(res)) {
+        usersList = res;
+    } else {
+        console.error("Failed to load users:", res);
+        usersList = [];
+        const tbody = document.getElementById('users-table-body');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="p-8 text-center text-red-500 font-bold">
+                        Error loading users: ${res && res.error ? window.escapeHtml(res.error) : 'Unknown error'}
+                    </td>
+                </tr>
+            `;
+        }
+        return;
+    }
     filterAndRenderUsers();
 }
 
@@ -349,14 +425,21 @@ function filterAndRenderUsers() {
     const searchInput = document.getElementById('users-search-input');
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    const startDateInput = document.getElementById('users-start-date');
-    const endDateInput = document.getElementById('users-end-date');
-    const startDate = startDateInput ? startDateInput.value : '';
-    const endDate = endDateInput ? endDateInput.value : '';
+    const dateFilterSelect = document.getElementById('users-date-filter');
+    const range = dateFilterSelect ? dateFilterSelect.value : 'all';
 
-    let filteredUsers = usersList;
+    // Deduplicate by lowercase email to prevent duplication
+    const uniqueUsersMap = new Map();
+    usersList.forEach(user => {
+        if (user && user.email) {
+            uniqueUsersMap.set(user.email.toLowerCase(), user);
+        }
+    });
+    const uniqueUsers = Array.from(uniqueUsersMap.values());
+
+    let filteredUsers = uniqueUsers;
     if (query) {
-        filteredUsers = usersList.filter(user => {
+        filteredUsers = uniqueUsers.filter(user => {
             const name = (user.name || '').toLowerCase();
             const email = (user.email || '').toLowerCase();
             const plan = (user.plan || 'Community').toLowerCase();
@@ -365,12 +448,30 @@ function filterAndRenderUsers() {
         });
     }
 
-    // Apply start and end date range filters (user.date format: YYYY-MM-DD)
-    if (startDate) {
-        filteredUsers = filteredUsers.filter(user => user.date && user.date >= startDate);
-    }
-    if (endDate) {
-        filteredUsers = filteredUsers.filter(user => user.date && user.date <= endDate);
+    // Apply exact local range filters (Starts from 12:00 AM straight local time)
+    if (range !== 'all') {
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+        const startOfYesterday = new Date(startOfToday.getTime() - 24 * 60 * 60 * 1000);
+        const sevenDaysAgo = new Date(startOfToday.getTime() - 6 * 24 * 60 * 60 * 1000);
+        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+
+        filteredUsers = filteredUsers.filter(user => {
+            if (!user.date) return false;
+            const d = new Date(user.date);
+            if (isNaN(d.getTime())) return false;
+            
+            if (range === 'today') {
+                return d.getTime() >= startOfToday.getTime();
+            } else if (range === 'yesterday') {
+                return d.getTime() >= startOfYesterday.getTime() && d.getTime() < startOfToday.getTime();
+            } else if (range === 'week') {
+                return d.getTime() >= sevenDaysAgo.getTime();
+            } else if (range === 'month') {
+                return d.getTime() >= startOfThisMonth.getTime();
+            }
+            return true;
+        });
     }
 
     // Cache filtered list for PDF export
@@ -389,7 +490,7 @@ function filterAndRenderUsers() {
         <tr class="border-b border-border hover:bg-surface transition-colors">
             <td class="p-4 font-bold text-primary">${window.escapeHtml(user.name)}</td>
             <td class="p-4 text-xs font-mono text-secondary">${window.escapeHtml(user.email)}</td>
-            <td class="p-4 text-xs text-secondary">${window.escapeHtml(user.date || '2026-06-01')}</td>
+            <td class="p-4 text-xs text-secondary">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
             <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${window.escapeHtml(user.plan || 'Community')}</span></td>
             <td class="p-4 text-xs font-bold text-primary">${user.visits || 0}</td>
             <td class="p-4">
@@ -441,13 +542,19 @@ window.exportUsersPDF = function () {
     doc.text("User Analytics & Engagement Report", 14, 26);
     
     // Add date range notice if any filters applied
-    const startDateVal = document.getElementById('users-start-date')?.value;
-    const endDateVal = document.getElementById('users-end-date')?.value;
+    const dateFilterSelect = document.getElementById('users-date-filter');
+    const rangeVal = dateFilterSelect ? dateFilterSelect.value : 'all';
     let separatorY = 38;
     let summaryY = 48;
     
-    if (startDateVal || endDateVal) {
-        const rangeText = `Date Range: ${startDateVal || 'Beginning'} to ${endDateVal || 'Present'}`;
+    if (rangeVal && rangeVal !== 'all') {
+        const labelMap = {
+            today: 'Today',
+            yesterday: 'Yesterday',
+            week: 'Last 7 Days',
+            month: 'This Month'
+        };
+        const rangeText = `Date Range: ${labelMap[rangeVal] || rangeVal}`;
         doc.text(rangeText, 14, 32);
         doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 37);
         separatorY = 42;
@@ -594,13 +701,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('input', filterAndRenderUsers);
     }
 
-    // Attach listeners to date inputs
-    const startDateInput = document.getElementById('users-start-date');
-    const endDateInput = document.getElementById('users-end-date');
-    if (startDateInput) {
-        startDateInput.addEventListener('change', filterAndRenderUsers);
-    }
-    if (endDateInput) {
-        endDateInput.addEventListener('change', filterAndRenderUsers);
+    // Attach listener to date filter dropdown
+    const dateFilterSelect = document.getElementById('users-date-filter');
+    if (dateFilterSelect) {
+        dateFilterSelect.addEventListener('change', filterAndRenderUsers);
     }
 });

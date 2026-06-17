@@ -197,7 +197,6 @@ window.apiCall = async function (action, data = null) {
                         p_title: data.title,
                         p_category: data.category,
                         p_author: data.author,
-                        p_image: data.image,
                         p_summary: data.summary,
                         p_content: data.content,
                         p_csrf_token: data._csrf_token
@@ -812,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentUser && currentUser.email && !sessionStorage.getItem('user_visit_tracked')) {
                 sessionStorage.setItem('user_visit_tracked', 'true');
                 try {
-                    await window.apiCall('increment_user_visit');
+                    await window.apiCall('increment_user_visit', { email: currentUser.email });
                 } catch (e) {
                     console.error("Failed to record user website visit:", e);
                 }

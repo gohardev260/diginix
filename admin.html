@@ -54,6 +54,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
     <!-- DOMPurify for XSS Protection -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <!-- Quill WYSIWYG Editor CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     <!-- Guard style overlay -->
@@ -321,12 +324,14 @@
                     <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
                         <!-- Date Range Filters -->
                         <div class="flex flex-col xs:flex-row xs:items-center gap-2 bg-white border border-border p-3 rounded-2xl w-full sm:w-auto">
-                            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider block sm:inline">Timeline:</span>
-                            <div class="flex items-center gap-1.5 justify-between">
-                                <input type="date" id="users-start-date" class="bg-transparent border border-gray-100 rounded-lg p-1 text-xs text-primary focus:ring-0 cursor-pointer w-[110px]" aria-label="Start Registration Date">
-                                <span class="text-xs text-secondary">to</span>
-                                <input type="date" id="users-end-date" class="bg-transparent border border-gray-100 rounded-lg p-1 text-xs text-primary focus:ring-0 cursor-pointer w-[110px]" aria-label="End Registration Date">
-                            </div>
+                            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider block sm:inline">Range:</span>
+                            <select id="users-date-filter" class="bg-transparent border-none p-1 text-xs text-primary font-bold focus:ring-0 cursor-pointer w-full sm:w-auto" aria-label="Select Date Range Filter">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="week">Last 7 Days</option>
+                                <option value="month">This Month</option>
+                            </select>
                         </div>
                         <!-- Search Input -->
                         <div class="relative w-full md:w-64">
@@ -434,11 +439,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="blog-category" class="text-xs font-bold text-secondary block mb-1">Category</label>
-                        <select id="blog-category" class="premium-input text-sm p-3 bg-white cursor-pointer">
-                            <option value="Tech">Tech</option>
-                            <option value="Design">Design</option>
-                            <option value="SEO">SEO</option>
-                        </select>
+                        <input type="text" id="blog-category" class="premium-input text-sm p-3" required placeholder="e.g. Tech">
                     </div>
                     <div>
                         <label for="blog-author" class="text-xs font-bold text-secondary block mb-1">Author Name</label>
@@ -446,16 +447,14 @@
                     </div>
                 </div>
                 <div>
-                    <label for="blog-image" class="text-xs font-bold text-secondary block mb-1">Featured Image URL</label>
-                    <input type="url" id="blog-image" class="premium-input text-sm p-3" required placeholder="https://images.unsplash.com/photo-...">
-                </div>
-                <div>
                     <label for="blog-summary" class="text-xs font-bold text-secondary block mb-1">Excerpt Summary</label>
                     <textarea id="blog-summary" class="premium-input text-sm p-3 h-20" required placeholder="Short summary displayed on grid cards..."></textarea>
                 </div>
                 <div>
-                    <label for="blog-content" class="text-xs font-bold text-secondary block mb-1">Article Content (markdown format or paragraphs)</label>
-                    <textarea id="blog-content" class="premium-input text-sm p-3 h-48 font-light" required placeholder="Full body contents of the blog post..."></textarea>
+                    <label class="text-xs font-bold text-secondary block mb-1">Article Content</label>
+                    <div class="border border-border rounded-xl overflow-hidden bg-white">
+                        <div id="blog-quill-editor" style="height: 260px;" class="font-sans text-sm"></div>
+                    </div>
                 </div>
                 <div class="pt-4">
                     <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors">Save & Publish Insights</button>
