@@ -80,25 +80,25 @@
                     clearInterval(checkReady);
                     await window.backendReady;
                     
-                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                    if (!currentUser || !currentUser.email) {
-                        window.location.replace('auth.html?mode=signin');
-                        return;
-                    }
-                    
-                    // Verify that the session token is valid in database
                     if (window.useSupabase) {
                         try {
-                            const res = await window.apiCall('verify_session', { email: currentUser.email });
+                            const res = await window.apiCall('verify_session');
                             if (!res || res.success !== true) {
                                 localStorage.removeItem('currentUser');
                                 alert('Session expired. Please sign in again.');
                                 window.location.replace('auth.html?mode=signin');
                                 return;
                             }
+                            localStorage.setItem('currentUser', JSON.stringify(res.user));
                         } catch (e) {
                             console.error("Verification failed:", e);
                             localStorage.removeItem('currentUser');
+                            window.location.replace('auth.html?mode=signin');
+                            return;
+                        }
+                    } else {
+                        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                        if (!currentUser || !currentUser.email) {
                             window.location.replace('auth.html?mode=signin');
                             return;
                         }

@@ -191,12 +191,14 @@ window.handleStatsUpdate = async function (e) {
             Number(document.getElementById('chart-apr').value),
             Number(document.getElementById('chart-may').value),
             Number(document.getElementById('chart-jun').value),
-        ]
+        ],
+        _csrf_token: window.csrfToken
     };
 
     await window.backendReady;
     const res = await window.apiCall('save_stats', updatedStats);
     if (res && res.success === true) {
+        if (window.useSupabase) await window.fetchCSRFToken();
         alert('Platform metrics successfully updated.');
         await loadAnalyticsData();
     } else {
@@ -229,11 +231,24 @@ async function loadBlogData() {
             <td class="p-4 text-secondary text-xs">${window.escapeHtml(post.author)}</td>
             <td class="p-4 text-secondary text-xs">${window.escapeHtml(post.date)}</td>
             <td class="p-4 text-right space-x-2">
-                <button onclick="editBlogPost('${post.id}')" class="text-xs font-semibold text-primary hover:underline">Edit</button>
-                <button onclick="deleteBlogPost('${post.id}')" class="text-xs font-semibold text-red-500 hover:underline">Delete</button>
+                <button class="text-xs font-semibold text-primary hover:underline edit-blog-btn" data-id="${post.id}">Edit</button>
+                <button class="text-xs font-semibold text-red-500 hover:underline delete-blog-btn" data-id="${post.id}">Delete</button>
             </td>
         </tr>
     `).join('');
+
+    tbody.querySelectorAll('.edit-blog-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
+            window.editBlogPost(id);
+        });
+    });
+    tbody.querySelectorAll('.delete-blog-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
+            window.deleteBlogPost(id);
+        });
+    });
 }
 
 const editorPanel = document.getElementById('blog-editor-panel');
@@ -285,8 +300,9 @@ window.editBlogPost = function (id) {
 window.deleteBlogPost = async function (id) {
     if (!confirm('Are you sure you want to delete this insights article?')) return;
     await window.backendReady;
-    const res = await window.apiCall('delete_blog', { id });
+    const res = await window.apiCall('delete_blog', { id, _csrf_token: window.csrfToken });
     if (res && res.success === true) {
+        if (window.useSupabase) await window.fetchCSRFToken();
         await loadBlogData();
     } else {
         alert('Failed to delete blog post.');
@@ -303,11 +319,12 @@ window.handleBlogSave = async function (e) {
     const summary = document.getElementById('blog-summary').value.trim();
     const content = document.getElementById('blog-content').value;
 
-    const payload = { id, title, category, author, image, summary, content };
+    const payload = { id, title, category, author, image, summary, content, _csrf_token: window.csrfToken };
 
     await window.backendReady;
     const res = await window.apiCall('save_blog', payload);
     if (res && res.success === true) {
+        if (window.useSupabase) await window.fetchCSRFToken();
         alert('Blog post saved successfully.');
         toggleBlogModal(false);
         await loadBlogData();
@@ -381,13 +398,26 @@ function filterAndRenderUsers() {
                 </span>
             </td>
             <td class="p-4 text-right space-x-2">
-                <button onclick="toggleUserStatus('${user.email}')" class="text-xs font-semibold text-primary hover:underline">
+                <button class="text-xs font-semibold text-primary hover:underline toggle-user-status-btn" data-email="${window.escapeHtml(user.email)}">
                     ${user.status === 'Blocked' ? 'Activate' : 'Block'}
                 </button>
-                <button onclick="deleteUser('${user.email}')" class="text-xs font-semibold text-red-500 hover:underline">Delete</button>
+                <button class="text-xs font-semibold text-red-500 hover:underline delete-user-btn" data-email="${window.escapeHtml(user.email)}">Delete</button>
             </td>
         </tr>
     `).join('');
+
+    tbody.querySelectorAll('.toggle-user-status-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const email = e.currentTarget.getAttribute('data-email');
+            window.toggleUserStatus(email);
+        });
+    });
+    tbody.querySelectorAll('.delete-user-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const email = e.currentTarget.getAttribute('data-email');
+            window.deleteUser(email);
+        });
+    });
 }
 
 window.exportUsersPDF = function () {
@@ -484,8 +514,9 @@ window.exportUsersPDF = function () {
 
 window.toggleUserStatus = async function (email) {
     await window.backendReady;
-    const res = await window.apiCall('update_user_status', { email });
+    const res = await window.apiCall('update_user_status', { email, _csrf_token: window.csrfToken });
     if (res && res.success === true) {
+        if (window.useSupabase) await window.fetchCSRFToken();
         await loadUserData();
     } else {
         alert('Failed to update user status.');
@@ -495,8 +526,9 @@ window.toggleUserStatus = async function (email) {
 window.deleteUser = async function (email) {
     if (!confirm('Are you sure you want to delete this user profile?')) return;
     await window.backendReady;
-    const res = await window.apiCall('delete_user', { email });
+    const res = await window.apiCall('delete_user', { email, _csrf_token: window.csrfToken });
     if (res && res.success === true) {
+        if (window.useSupabase) await window.fetchCSRFToken();
         await loadUserData();
     } else {
         alert('Failed to delete user.');
@@ -526,11 +558,12 @@ window.handleSettingsUpdate = async function (e) {
     const instagram = document.getElementById('settings-instagram').value.trim();
     const twitter = document.getElementById('settings-twitter').value.trim();
 
-    const newSettings = { siteName, contactEmail, contactPhone, maintenanceMode, linkedin, instagram, twitter };
+    const newSettings = { siteName, contactEmail, contactPhone, maintenanceMode, linkedin, instagram, twitter, _csrf_token: window.csrfToken };
 
     await window.backendReady;
     const res = await window.apiCall('save_settings', newSettings);
     if (res && res.success === true) {
+        if (window.useSupabase) await window.fetchCSRFToken();
         // Sync navbar layout name immediately
         const brandEls = document.querySelectorAll('.site-logo-text');
         brandEls.forEach(el => { el.innerText = siteName; });

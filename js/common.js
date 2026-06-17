@@ -26,6 +26,29 @@ window.isSafeImageUrl = function (url) {
 const SUPABASE_URL = 'https://fvvdmrogquycehyncslp.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2dmRtcm9ncXV5Y2VoeW5jc2xwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDQ3NTUsImV4cCI6MjA5NjgyMDc1NX0.a8PSwryUl589P7OkTZNdrik-f-1iLsTtxdhM9fKYM24';
 
+// --- AUTHENTICATION STATE & VERIFICATION ---
+window.currentUser = null;
+
+async function verifySessionWithBackend(session) {
+    if (!session || !session.user) return null;
+    try {
+        const { data: user, error } = await window.supabase
+            .rpc('verify_session_from_jwt', {
+                p_user_id: session.user.id
+            });
+        
+        if (error || !user) {
+            return null;
+        }
+
+        return Array.isArray(user) ? user[0] : user;
+    } catch (e) {
+        console.error("Session verification failed:", e);
+        return null;
+    }
+}
+window.verifySessionWithBackend = verifySessionWithBackend;
+
 // --- 1. Data Initialization (Local Storage Mock Database - Offline Fallback Mode Only) ---
 const defaultBlogs = [
     {
@@ -162,89 +185,79 @@ window.apiCall = async function (action, data = null) {
 
             case 'get_blogs': {
                 const { data: blogs, error } = await window.supabase
-                    .from('blogs')
-                    .select('*')
-                    .order('id', { ascending: false });
+                    .rpc('get_public_blogs');
                 if (error) throw error;
                 return blogs || [];
             }
 
             case 'save_blog': {
-                const blogData = {
-                    title: data.title,
-                    category: data.category,
-                    author: data.author,
-                    image: data.image,
-                    summary: data.summary,
-                    content: data.content
-                };
-                if (data.id) {
-                    const { error } = await window.supabase
-                        .from('blogs')
-                        .update(blogData)
-                        .eq('id', data.id);
-                    if (error) throw error;
-                } else {
-                    const { error } = await window.supabase
-                        .from('blogs')
-                        .insert({
-                            ...blogData,
-                            date: new Date().toISOString().split('T')[0]
-                        });
-                    if (error) throw error;
-                }
+                const { error } = await window.supabase
+                    .rpc('save_blog_secure', {
+                        p_id: data.id ? Number(data.id) : null,
+                        p_title: data.title,
+                        p_category: data.category,
+                        p_author: data.author,
+                        p_image: data.image,
+                        p_summary: data.summary,
+                        p_content: data.content,
+                        p_csrf_token: data._csrf_token
+                    });
+                if (error) throw error;
                 return { success: true };
             }
 
             case 'delete_blog': {
                 const { error } = await window.supabase
-                    .from('blogs')
-                    .delete()
-                    .eq('id', data.id);
+                    .rpc('delete_blog_secure', {
+                        p_id: Number(data.id),
+                        p_csrf_token: data._csrf_token
+                    });
                 if (error) throw error;
                 return { success: true };
             }
 
             case 'get_users': {
                 const { data: users, error } = await window.supabase
-                    .from('users')
-                    .select('name, email, date, plan, status, visits')
-                    .order('id', { ascending: false });
+                    .rpc('get_all_users_admin');
                 if (error) throw error;
                 return users || [];
             }
 
             case 'update_user_status': {
-                const { data: user, error: fetchError } = await window.supabase
-                    .from('users')
-                    .select('status')
-                    .eq('email', data.email)
-                    .single();
-                if (fetchError || !user) throw new Error("User not found");
-
-                const newStatus = user.status === 'Blocked' ? 'Active' : 'Blocked';
-
-                const { error: updateError } = await window.supabase
-                    .from('users')
-                    .update({ status: newStatus })
-                    .eq('email', data.email);
-                if (updateError) throw updateError;
-                return { success: true, status: newStatus };
+                const { data: result, error } = await window.supabase
+                    .rpc('update_user_status_secure', {
+                        p_email: data.email,
+                        p_csrf_token: data._csrf_token
+                    });
+                if (error) throw error;
+                const ret = Array.isArray(result) ? result[0] : result;
+                return { success: ret.success, status: ret.status };
             }
 
             case 'delete_user': {
                 const { error } = await window.supabase
-                    .from('users')
-                    .delete()
-                    .eq('email', data.email);
+                    .rpc('delete_user_secure', {
+                        p_email: data.email,
+                        p_csrf_token: data._csrf_token
+                    });
                 if (error) throw error;
                 return { success: true };
             }
 
             case 'get_settings': {
-                const { data: rows, error } = await window.supabase
-                    .from('settings')
-                    .select('*');
+                let rows, error;
+                try {
+                    const res = await window.supabase.rpc('get_all_settings_admin');
+                    rows = res.data;
+                    error = res.error;
+                } catch (e) {
+                    error = e;
+                }
+                if (error || !rows) {
+                    const res = await window.supabase.rpc('get_public_settings');
+                    rows = res.data;
+                    error = res.error;
+                }
                 if (error) throw error;
                 const settings = {};
                 (rows || []).forEach(row => {
@@ -258,102 +271,54 @@ window.apiCall = async function (action, data = null) {
             }
 
             case 'save_settings': {
-                const rows = [
-                    { key_name: 'siteName', value_text: data.siteName },
-                    { key_name: 'contactEmail', value_text: data.contactEmail },
-                    { key_name: 'contactPhone', value_text: data.contactPhone || '' },
-                    { key_name: 'maintenanceMode', value_text: data.maintenanceMode ? 'true' : 'false' },
-                    { key_name: 'linkedin', value_text: data.linkedin || '' },
-                    { key_name: 'instagram', value_text: data.instagram || '' },
-                    { key_name: 'twitter', value_text: data.twitter || '' }
-                ];
                 const { error } = await window.supabase
-                    .from('settings')
-                    .upsert(rows, { onConflict: 'key_name' });
+                    .rpc('save_settings_secure', {
+                        p_site_name: data.siteName,
+                        p_contact_email: data.contactEmail,
+                        p_contact_phone: data.contactPhone || '',
+                        p_maintenance_mode: data.maintenanceMode ? 'true' : 'false',
+                        p_linkedin: data.linkedin || '',
+                        p_instagram: data.instagram || '',
+                        p_twitter: data.twitter || '',
+                        p_csrf_token: data._csrf_token
+                    });
                 if (error) throw error;
                 return { success: true };
             }
 
             case 'get_stats': {
                 const { data: rows, error } = await window.supabase
-                    .from('stats')
-                    .select('*')
-                    .limit(1);
+                    .rpc('get_public_stats');
                 if (error) throw error;
-
-                // Dynamically retrieve the true count of registered users from the users table
-                let realUserCount = 0;
-                try {
-                    const { count, error: countError } = await window.supabase
-                        .from('users')
-                        .select('*', { count: 'exact', head: true });
-                    if (!countError && count !== null) {
-                        realUserCount = count;
-                    }
-                } catch (e) {
-                    console.warn("Failed to count users dynamically:", e);
-                }
-
-                // Dynamically retrieve the sum of all visits in the users table
-                let totalVisitsCount = 0;
-                try {
-                    const { data: usersData, error: sumError } = await window.supabase
-                        .from('users')
-                        .select('visits');
-                    if (!sumError && usersData) {
-                        totalVisitsCount = usersData.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
-                    }
-                } catch (e) {
-                    console.warn("Failed to compute total visits dynamically:", e);
-                }
-
-                if (!rows || rows.length === 0) {
+                const dbStats = Array.isArray(rows) ? rows[0] : rows;
+                if (!dbStats) {
                     return {
                         revenue: "$0",
-                        activeUsers: String(realUserCount),
+                        activeUsers: "0",
                         executions: "0",
-                        visits: totalVisitsCount,
+                        visits: 0,
                         revenueHistory: [0, 0, 0, 0, 0, 0]
                     };
                 }
-                const dbStats = rows[0];
                 return {
                     revenue: dbStats.revenue,
-                    activeUsers: String(realUserCount || dbStats.activeusers || dbStats.activeUsers || 0),
+                    activeUsers: String(dbStats.activeusers),
                     executions: dbStats.executions,
-                    visits: totalVisitsCount,
-                    revenueHistory: (dbStats.revenuehistory || dbStats.revenueHistory || '0,0,0,0,0,0').split(',').map(Number)
+                    visits: Number(dbStats.visits),
+                    revenueHistory: (dbStats.revenuehistory || '0,0,0,0,0,0').split(',').map(Number)
                 };
             }
 
             case 'save_stats': {
                 const histStr = data.revenueHistory.join(',');
-                const row = {
-                    revenue: data.revenue,
-                    activeusers: data.activeUsers,
-                    executions: data.executions,
-                    revenuehistory: histStr
-                };
-
-                const { data: existing, error: existError } = await window.supabase
-                    .from('stats')
-                    .select('id')
-                    .limit(1);
-                if (existError) throw existError;
-
-                let error;
-                if (existing && existing.length > 0) {
-                    const { error: updateError } = await window.supabase
-                        .from('stats')
-                        .update(row)
-                        .eq('id', existing[0].id);
-                    error = updateError;
-                } else {
-                    const { error: insertError } = await window.supabase
-                        .from('stats')
-                        .insert(row);
-                    error = insertError;
-                }
+                const { error } = await window.supabase
+                    .rpc('save_stats_secure', {
+                        p_revenue: data.revenue,
+                        p_active_users: data.activeUsers,
+                        p_executions: data.executions,
+                        p_revenue_history: histStr,
+                        p_csrf_token: data._csrf_token
+                    });
                 if (error) throw error;
                 return { success: true };
             }
@@ -363,95 +328,97 @@ window.apiCall = async function (action, data = null) {
                 return { success: true };
 
             case 'login': {
-                const { data: user, error } = await window.supabase
-                    .rpc('login_user_secure', {
-                        p_email: data.email,
-                        p_password: data.password
-                    });
-                if (error) {
-                    return { success: false, error: error.message || "Invalid email or password" };
+                const { data: authData, error: authError } = await window.supabase.auth.signInWithPassword({
+                    email: data.email,
+                    password: data.password
+                });
+                if (authError) {
+                    return { success: false, error: authError.message || "Invalid email or password" };
                 }
-                if (!user || user.length === 0) {
-                    return { success: false, error: "Invalid email or password" };
+                const verified = await verifySessionWithBackend(authData.session);
+                if (!verified) {
+                    await window.supabase.auth.signOut();
+                    return { success: false, error: "Your account is not active. Please contact support." };
                 }
-                const returnedUser = Array.isArray(user) ? user[0] : user;
-                if (returnedUser.status === 'Blocked') {
-                    return { success: false, error: "Your account is blocked. Please contact administrator." };
-                }
-                return { success: true, user: returnedUser };
+                return { success: true, user: verified };
             }
 
             case 'register': {
-                const { data: user, error } = await window.supabase
-                    .rpc('register_user_secure', {
+                const { data: authData, error: authError } = await window.supabase.auth.signUp({
+                    email: data.email,
+                    password: data.password,
+                    options: {
+                        data: {
+                            full_name: data.name
+                        }
+                    }
+                });
+                if (authError) {
+                    return { success: false, error: authError.message || "Registration failed" };
+                }
+                if (!authData.user) {
+                    return { success: false, error: "Registration failed" };
+                }
+                const { data: user, error: rpcError } = await window.supabase
+                    .rpc('create_user_profile_from_auth', {
+                        p_auth_user_id: authData.user.id,
                         p_name: data.name,
-                        p_email: data.email,
-                        p_password: data.password
+                        p_email: data.email
                     });
-                if (error) {
-                    return { success: false, error: error.message || "Registration failed" };
+                if (rpcError) {
+                    return { success: false, error: rpcError.message || "Profile creation failed" };
                 }
                 const returnedUser = Array.isArray(user) ? user[0] : user;
                 return { success: true, user: returnedUser };
             }
 
             case 'update_profile': {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                const sessionToken = currentUser ? currentUser.session_token : null;
-                const { data: user, error } = await window.supabase
+                const { data: user, error: rpcError } = await window.supabase
                     .rpc('update_profile_secure', {
-                        p_email: data.email,
-                        p_token: sessionToken,
-                        p_name: data.name,
-                        p_new_password: data.password || null
+                        p_name: data.name
                     });
-                if (error) {
-                    return { success: false, error: error.message || "Update profile failed" };
+                if (rpcError) {
+                    return { success: false, error: rpcError.message || "Update profile failed" };
+                }
+                if (data.password) {
+                    const { error: authError } = await window.supabase.auth.updateUser({
+                        password: data.password
+                    });
+                    if (authError) {
+                        return { success: false, error: "Profile updated, but password update failed: " + authError.message };
+                    }
                 }
                 const returnedUser = Array.isArray(user) ? user[0] : user;
-                // Keep session token in frontend state
-                if (currentUser && currentUser.session_token) {
-                    returnedUser.session_token = currentUser.session_token;
-                }
                 return { success: true, user: returnedUser };
             }
 
             case 'update_subscription': {
-                return { 
-                    success: false, 
-                    error: "Direct subscription upgrades from browser are disabled for security. Plan upgrades must be processed via Stripe webhook." 
-                };
-            }
-
-            case 'verify_session': {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                const sessionToken = currentUser ? currentUser.session_token : null;
-                const { data: user, error } = await window.supabase
-                    .rpc('verify_session', {
-                        p_email: data.email,
-                        p_token: sessionToken
+                const { data: user, error: rpcError } = await window.supabase
+                    .rpc('update_subscription_secure_jwt', {
+                        p_plan: data.plan
                     });
-                if (error) {
-                    return { success: false, error: error.message || "Session verification failed" };
-                }
-                if (!user || user.length === 0) {
-                    return { success: false, error: "Session expired. Please sign in again." };
+                if (rpcError) {
+                    return { success: false, error: rpcError.message || "Subscription upgrade failed" };
                 }
                 const returnedUser = Array.isArray(user) ? user[0] : user;
-                if (currentUser && currentUser.session_token) {
-                    returnedUser.session_token = currentUser.session_token;
-                }
                 return { success: true, user: returnedUser };
             }
 
+            case 'verify_session': {
+                const { data: { session }, error: sessionError } = await window.supabase.auth.getSession();
+                if (sessionError || !session) {
+                    return { success: false, error: "Session expired. Please sign in again." };
+                }
+                const verified = await verifySessionWithBackend(session);
+                if (!verified) {
+                    return { success: false, error: "Session expired. Please sign in again." };
+                }
+                return { success: true, user: verified };
+            }
+
             case 'increment_user_visit': {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                const sessionToken = currentUser ? currentUser.session_token : null;
                 const { data: visits, error } = await window.supabase
-                    .rpc('increment_user_visit_secure', {
-                        p_email: data.email,
-                        p_token: sessionToken
-                    });
+                    .rpc('increment_user_visit_secure');
                 if (error) throw error;
                 return { success: true, visits: visits };
             }
@@ -710,13 +677,60 @@ function updateNavbarAuth() {
             `;
             document.getElementById('mobile-btn-signout').addEventListener('click', handleSignOut);
         }
+    } else {
+        // Restore default navigation if signed out
+        if (desktopAuthContainer) {
+            desktopAuthContainer.innerHTML = `
+                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block" id="btn-signup">Get Started</a>
+                </div>
+            `;
+        }
+        if (mobileAuthContainer) {
+            mobileAuthContainer.innerHTML = `
+                <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors" id="mobile-btn-signin">Sign In</a>
+                <a href="auth.html?mode=signup" class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors" id="mobile-btn-signup">Get Started</a>
+            `;
+        }
     }
 }
 
-function handleSignOut() {
+async function handleSignOut() {
+    await window.backendReady;
+    if (window.useSupabase) {
+        await window.supabase.auth.signOut();
+    }
     localStorage.removeItem('currentUser');
-    window.location.reload();
+    window.location.href = 'index.html';
 }
+
+async function initializeAuth() {
+    await window.backendReady;
+    if (!window.useSupabase) return;
+
+    try {
+        const { data, error } = await window.supabase.auth.getSession();
+        if (error || !data.session) {
+            localStorage.removeItem('currentUser');
+            updateNavbarAuth();
+            return;
+        }
+
+        const verified = await verifySessionWithBackend(data.session);
+        if (verified) {
+            localStorage.setItem('currentUser', JSON.stringify(verified));
+            updateNavbarAuth();
+        } else {
+            await window.supabase.auth.signOut();
+            localStorage.removeItem('currentUser');
+            updateNavbarAuth();
+        }
+    } catch (e) {
+        console.error("Auth init exception:", e);
+    }
+}
+window.initializeAuth = initializeAuth;
 
 // --- 7. Mobile Hamburger Drawer Menu Toggle ---
 function initMobileMenu() {
@@ -785,6 +799,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Perform database-dependent site adjustments in the background once ready
     (async () => {
         await window.backendReady;
+        if (window.useSupabase) {
+            await initializeAuth();
+        }
         await applySiteSettings();
 
         // Count visit once per session for logged-in users when they visit public client pages
@@ -795,7 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentUser && currentUser.email && !sessionStorage.getItem('user_visit_tracked')) {
                 sessionStorage.setItem('user_visit_tracked', 'true');
                 try {
-                    await window.apiCall('increment_user_visit', { email: currentUser.email });
+                    await window.apiCall('increment_user_visit');
                 } catch (e) {
                     console.error("Failed to record user website visit:", e);
                 }

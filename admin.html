@@ -76,6 +76,20 @@
 
     <!-- Security Check (Redirect if not authenticated) -->
     <script>
+        window.csrfToken = null;
+        
+        async function fetchCSRFToken() {
+            const { data, error } = await window.supabase.rpc('generate_csrf_token');
+            if (error || !data || data.length === 0) {
+                console.error('Failed to generate CSRF token:', error);
+                alert('Security token generation failed. Please reload the page.');
+                return false;
+            }
+            window.csrfToken = data[0].csrf_token;
+            return true;
+        }
+        window.fetchCSRFToken = fetchCSRFToken;
+
         (async function() {
             const checkReady = setInterval(async () => {
                 if (window.backendReady) {
@@ -93,10 +107,24 @@
                         return;
                     }
                     
-                    const role = session.user.app_metadata?.role || session.user.user_metadata?.role;
-                    if (role !== 'admin') {
+                    // Verify admin role on backend
+                    const { data: adminCheck, error: adminError } = await window.supabase
+                        .rpc('verify_admin_access', {
+                            p_user_email: session.user.email
+                        });
+
+                    const is_admin = adminCheck && adminCheck.length > 0 && adminCheck[0].is_admin;
+                    if (adminError || !is_admin) {
                         await window.supabase.auth.signOut();
                         alert('Access Denied. Admin privileges required.');
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+
+                    // Generate first CSRF token
+                    const tokenReady = await fetchCSRFToken();
+                    if (!tokenReady) {
+                        await window.supabase.auth.signOut();
                         window.location.replace('admin_login.html');
                         return;
                     }
