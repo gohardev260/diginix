@@ -246,7 +246,7 @@ RETURNS TABLE (
     name TEXT,
     email TEXT,
     plan TEXT,
-    date DATE,
+    date TIMESTAMPTZ,
     status TEXT,
     visits INT
 ) AS $$
@@ -459,7 +459,7 @@ CREATE OR REPLACE FUNCTION public.get_all_users_admin()
 RETURNS TABLE (
     name TEXT,
     email TEXT,
-    date DATE,
+    date TIMESTAMPTZ,
     plan TEXT,
     status TEXT,
     visits INT
@@ -655,7 +655,7 @@ RETURNS TABLE (
     name TEXT,
     email TEXT,
     plan TEXT,
-    date DATE,
+    date TIMESTAMPTZ,
     status TEXT,
     visits INT
 ) AS $$

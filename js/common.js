@@ -427,6 +427,14 @@ window.apiCall = async function (action, data = null) {
         }
     } catch (err) {
         console.error(`DiginixIT: Supabase query execution exception on '${action}':`, err);
+        if (err && typeof err === 'object') {
+            console.error(`Error Details for '${action}':`, {
+                message: err.message,
+                details: err.details,
+                hint: err.hint,
+                code: err.code
+            });
+        }
         return { success: false, error: err.message || "Database connection error." };
     }
 };
