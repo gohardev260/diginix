@@ -36,7 +36,7 @@ async function verifySessionWithBackend(session) {
             .rpc('verify_session_from_jwt', {
                 p_user_id: session.user.id
             });
-        
+
         if (error || !user) {
             return null;
         }
@@ -554,7 +554,7 @@ function apiCallLocalStorageFallback(action, data) {
                     };
                     users.push(newUser);
                     localStorage.setItem('users', JSON.stringify(users));
-                    
+
                     const safeUser = { ...newUser };
                     delete safeUser.password;
                     safeUser.session_token = 'local-session-token';
@@ -569,7 +569,7 @@ function apiCallLocalStorageFallback(action, data) {
                         users[profIdx].password = data.password;
                     }
                     localStorage.setItem('users', JSON.stringify(users));
-                    
+
                     const safeUser = { ...users[profIdx] };
                     delete safeUser.password;
                     safeUser.session_token = 'local-session-token';
@@ -584,7 +584,7 @@ function apiCallLocalStorageFallback(action, data) {
                 if (subIdx !== -1) {
                     users[subIdx].plan = data.plan;
                     localStorage.setItem('users', JSON.stringify(users));
-                    
+
                     const safeUser = { ...users[subIdx] };
                     delete safeUser.password;
                     safeUser.session_token = 'local-session-token';
