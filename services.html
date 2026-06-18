@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiginixIT | Premium Services</title>
-    <meta name="description" content="Explore the premium digital services of DiginixIT, including custom high-performance website development, editorial UI/UX design, and technical SEO optimization.">
+    <title>Bespoke Web Development & UI/UX Design Services | DiginixIT</title>
+    <meta name="description" content="Explore professional services by DiginixIT, including custom web development, premium UI/UX design, and speed-optimized technical SEO.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://diginixit.com/services.html">
 
@@ -88,6 +88,49 @@
             "name": "Services",
             "item": "https://diginixit.com/services.html"
         }]
+    </script>
+    <!-- Structured Data (Services Schema) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": "Web Development & UI/UX Design Services",
+        "provider": {
+            "@type": "Organization",
+            "name": "DiginixIT",
+            "url": "https://diginixit.com/"
+        },
+        "areaServed": "Worldwide",
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Digital Services Catalog",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Website Development",
+                        "description": "Custom high-performance web products built from the ground up, optimized for speed and cinematic interactions."
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "UX/UI Design",
+                        "description": "Bespoke interface patterns, design systems, and user experience flows."
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Technical SEO",
+                        "description": "Core Web Vitals optimization, JSON-LD schemas, and speed improvements for search engine ranking."
+                    }
+                }
+            ]
+        }
     }
     </script>
 </head>
@@ -98,11 +141,11 @@
     <!-- Navigation -->
     <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
+            <a href="./" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
             
             <!-- Desktop Menu -->
             <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
-                <a href="index.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
+                <a href="./" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
                 <a href="services.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-services">Services</a>
                 <a href="tools.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-tools">Tools</a>
                 <a href="pricing.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-pricing">Pricing</a>
@@ -130,7 +173,7 @@
     <!-- Mobile Drawer Overlay Menu -->
     <div id="mobile-menu" class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
         <div class="flex flex-col space-y-6 text-2xl font-bold tracking-tight">
-            <a href="index.html" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
+            <a href="./" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
             <a href="services.html" class="mobile-nav-link hover:text-secondary transition-colors">Services</a>
             <a href="tools.html" class="mobile-nav-link hover:text-secondary transition-colors">Tools</a>
             <a href="pricing.html" class="mobile-nav-link hover:text-secondary transition-colors">Pricing</a>
@@ -146,7 +189,13 @@
 
     <!-- Main Content -->
     <main class="pt-32 pb-20 px-6">
-        <div class="max-w-5xl mx-auto text-center mb-20">
+        <div class="max-w-5xl mx-auto text-center mb-20 flex flex-col items-center">
+            <!-- Breadcrumbs -->
+            <nav class="mb-8 flex items-center space-x-2 text-xs font-semibold text-secondary uppercase tracking-widest" aria-label="Breadcrumb">
+                <a href="./" class="hover:text-primary transition-colors">Home</a>
+                <span>/</span>
+                <span class="text-primary font-bold">Services</span>
+            </nav>
             <span class="text-xs uppercase tracking-widest text-secondary font-bold bg-surface px-4 py-2 border border-border rounded-full">Our Capabilities</span>
             <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter mt-6 mb-8">Bespoke Digital Solutions.</h1>
             <p class="text-xl text-secondary max-w-2xl mx-auto leading-relaxed">
@@ -156,7 +205,7 @@
 
         <div class="max-w-7xl mx-auto space-y-32">
             <!-- Service 1: Website Development -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                 <div class="space-y-6">
                     <div class="w-12 h-12 bg-surface border border-border rounded-xl flex items-center justify-center">
                         <i data-lucide="layout" class="w-6 h-6 text-primary"></i>
@@ -178,10 +227,10 @@
                     </div>
                     <div class="absolute w-[200px] h-[200px] border border-dashed border-gray-200 rounded-full animate-[spin_40s_linear_infinite]"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- Service 2: UX/UI Design -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                 <div class="order-last md:order-first bg-card border border-border rounded-3xl p-8 h-[350px] flex items-center justify-center relative overflow-hidden group">
                     <div class="w-40 h-40 bg-white border border-border rounded-2xl flex flex-col justify-between p-6 shadow-xl relative z-10 group-hover:scale-105 transition-transform duration-300">
                         <i data-lucide="palette" class="w-8 h-8 text-black"></i>
@@ -203,10 +252,10 @@
                         <li class="flex items-center text-sm text-secondary"><i data-lucide="check" class="w-4 h-4 mr-3 text-black"></i> Cross-Platform Systems</li>
                     </ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Service 3: Technical SEO -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                 <div class="space-y-6">
                     <div class="w-12 h-12 bg-surface border border-border rounded-xl flex items-center justify-center">
                         <i data-lucide="search" class="w-6 h-6 text-primary"></i>
@@ -228,7 +277,7 @@
                     </div>
                     <div class="absolute w-[250px] h-[250px] border border-dashed border-gray-200 rounded-full animate-[spin_60s_linear_infinite]"></div>
                 </div>
-            </div>
+            </section>
         </div>
 
     </main>
@@ -238,7 +287,7 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
             <div class="font-bold tracking-tighter site-logo-text md:mb-0">DIGINIXIT.</div>
             <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:mb-0">
-                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="./" class="hover:text-primary transition-colors">Home</a>
                 <a href="services.html" class="hover:text-primary transition-colors">Services</a>
                 <a href="tools.html" class="hover:text-primary transition-colors">Tools</a>
                 <a href="pricing.html" class="hover:text-primary transition-colors">Pricing</a>

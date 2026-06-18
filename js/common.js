@@ -709,7 +709,7 @@ async function handleSignOut() {
         await window.supabase.auth.signOut();
     }
     localStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
+    window.location.href = './';
 }
 
 async function initializeAuth() {

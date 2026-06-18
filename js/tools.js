@@ -48,7 +48,7 @@ function renderTools() {
         toolsGrid.innerHTML = `
             <div class="col-span-full text-center py-16 bg-white border border-border rounded-2xl">
                 <i data-lucide="info" class="w-12 h-12 text-secondary mx-auto mb-4"></i>
-                <h3 class="text-xl font-bold mb-1">No tools found</h3>
+                <h2 class="text-xl font-bold mb-1">No tools found</h2>
                 <p class="text-secondary text-sm">Try expanding your search query or switching categories.</p>
             </div>
         `;
@@ -238,7 +238,7 @@ function setupToolInterface(tool, container) {
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
                 <div id="mock-report" class="hidden p-6 bg-surface border border-border rounded-2xl space-y-3">
-                    <h4 class="font-bold text-sm text-primary">Analysis Complete</h4>
+                    <h3 class="font-bold text-sm text-primary">Analysis Complete</h3>
                     <div class="grid grid-cols-2 gap-4 text-xs">
                         <div class="p-3 bg-white border border-border rounded-xl">
                             <div class="text-secondary mb-1">Performance</div>
