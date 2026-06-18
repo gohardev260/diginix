@@ -451,7 +451,7 @@ DECLARE
     v_stat public.stats%ROWTYPE;
 BEGIN
     SELECT COUNT(*) INTO v_user_count FROM public.users;
-    SELECT COUNT(*) INTO v_total_visits FROM public.visit_logs;
+    SELECT COALESCE(SUM(COALESCE(u.visits, 0)), 0) + (SELECT COUNT(*) FROM public.visit_logs WHERE email IS NULL OR email = '') INTO v_total_visits FROM public.users u;
     SELECT * INTO v_stat FROM public.stats LIMIT 1;
     
     RETURN QUERY

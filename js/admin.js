@@ -480,7 +480,7 @@ function filterAndRenderUsers() {
                 });
                 rangeVisits = logsInRange.length;
             } else {
-                rangeVisits = userLogs.length;
+                rangeVisits = user.visits || 0;
             }
         } else {
             rangeVisits = user.visits || 0;

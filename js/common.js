@@ -516,9 +516,11 @@ function apiCallLocalStorageFallback(action, data) {
                 break;
             case 'get_stats': {
                 const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+                const anonLogs = visitLogs.filter(log => !log.email);
+                const userVisitsSum = users.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
                 resolve({
                     ...stats,
-                    visits: visitLogs.length
+                    visits: userVisitsSum + anonLogs.length
                 });
                 break;
             }
