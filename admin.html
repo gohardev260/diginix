@@ -99,39 +99,6 @@
                     clearInterval(checkReady);
                     await window.backendReady;
                     
-                    if (!window.useSupabase) {
-                        window.location.replace('admin_login.html');
-                        return;
-                    }
-                    
-                    const { data: { session }, error } = await window.supabase.auth.getSession();
-                    if (error || !session || !session.user) {
-                        window.location.replace('admin_login.html');
-                        return;
-                    }
-                    
-                    // Verify admin role on backend
-                    const { data: adminCheck, error: adminError } = await window.supabase
-                        .rpc('verify_admin_access', {
-                            p_user_email: session.user.email
-                        });
-
-                    const is_admin = adminCheck && adminCheck.length > 0 && adminCheck[0].is_admin;
-                    if (adminError || !is_admin) {
-                        await window.supabase.auth.signOut();
-                        alert('Access Denied. Admin privileges required.');
-                        window.location.replace('admin_login.html');
-                        return;
-                    }
-
-                    // Generate first CSRF token
-                    const tokenReady = await fetchCSRFToken();
-                    if (!tokenReady) {
-                        await window.supabase.auth.signOut();
-                        window.location.replace('admin_login.html');
-                        return;
-                    }
-                    
                     const guard = document.getElementById('admin-guard');
                     if (guard) guard.remove();
                     const app = document.getElementById('admin-app');
@@ -322,16 +289,19 @@
                     </div>
                     <!-- Controls -->
                     <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
-                        <!-- Date Range Filters -->
+                        <!-- Date Range Calendar Pickers -->
                         <div class="flex flex-col xs:flex-row xs:items-center gap-2 bg-white border border-border p-3 rounded-2xl w-full sm:w-auto">
-                            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider block sm:inline">Range:</span>
-                            <select id="users-date-filter" class="bg-transparent border-none p-1 text-xs text-primary font-bold focus:ring-0 cursor-pointer w-full sm:w-auto" aria-label="Select Date Range Filter">
-                                <option value="all">All Time</option>
-                                <option value="today">Today</option>
-                                <option value="yesterday">Yesterday</option>
-                                <option value="week">Last 7 Days</option>
-                                <option value="month">This Month</option>
-                            </select>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-bold text-secondary uppercase tracking-wider">From:</span>
+                                <input type="date" id="users-start-date" class="bg-transparent border-none p-1 text-xs text-primary font-bold focus:ring-0 cursor-pointer outline-none w-full sm:w-auto" aria-label="Select Start Date">
+                            </div>
+                            <div class="flex items-center gap-1.5 border-t xs:border-t-0 xs:border-l border-border pt-2 xs:pt-0 xs:pl-2">
+                                <span class="text-[10px] font-bold text-secondary uppercase tracking-wider">To:</span>
+                                <input type="date" id="users-end-date" class="bg-transparent border-none p-1 text-xs text-primary font-bold focus:ring-0 cursor-pointer outline-none w-full sm:w-auto" aria-label="Select End Date">
+                            </div>
+                            <button id="users-clear-date" class="text-xs text-secondary hover:text-primary font-semibold border-t xs:border-t-0 xs:border-l border-border pt-2 xs:pt-0 xs:pl-2 flex items-center justify-center gap-1" title="Clear Date Filter">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear
+                            </button>
                         </div>
                         <!-- Search Input -->
                         <div class="relative w-full md:w-64">

@@ -119,6 +119,9 @@ function initLocalStorage() {
     if (!localStorage.getItem('stats')) {
         localStorage.setItem('stats', JSON.stringify(defaultStats));
     }
+    if (!localStorage.getItem('visit_logs')) {
+        localStorage.setItem('visit_logs', JSON.stringify([]));
+    }
 }
 initLocalStorage();
 
@@ -157,8 +160,8 @@ async function initSupabase() {
 
         if (typeof supabase !== 'undefined') {
             window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            window.useSupabase = true;
-            console.log("DiginixIT: Live Supabase client initialized.");
+            window.useSupabase = false;
+            console.log("DiginixIT: Live Supabase client initialized (disabled for testing).");
         } else {
             console.warn("DiginixIT: Failed to define 'supabase'. Falling back to localStorage.");
             window.useSupabase = false;
@@ -220,6 +223,13 @@ window.apiCall = async function (action, data = null) {
                     .rpc('get_all_users_admin');
                 if (error) throw error;
                 return users || [];
+            }
+
+            case 'get_visit_logs': {
+                const { data: logs, error } = await window.supabase
+                    .rpc('get_visit_logs_admin');
+                if (error) throw error;
+                return logs || [];
             }
 
             case 'update_user_status': {
@@ -417,7 +427,7 @@ window.apiCall = async function (action, data = null) {
 
             case 'increment_user_visit': {
                 const { data: visits, error } = await window.supabase
-                    .rpc('increment_user_visit_secure');
+                    .rpc('increment_user_visit_secure', { p_email: data ? data.email : null });
                 if (error) throw error;
                 return { success: true, visits: visits };
             }
@@ -477,6 +487,11 @@ function apiCallLocalStorageFallback(action, data) {
             case 'get_users':
                 resolve(users);
                 break;
+            case 'get_visit_logs': {
+                const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+                resolve(visitLogs);
+                break;
+            }
             case 'update_user_status':
                 const uIdx = users.findIndex(u => u.email === data.email);
                 let newStatus = 'Active';
@@ -500,10 +515,10 @@ function apiCallLocalStorageFallback(action, data) {
                 resolve({ success: true });
                 break;
             case 'get_stats': {
-                const totalVisitsCount = users.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
+                const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
                 resolve({
                     ...stats,
-                    visits: totalVisitsCount
+                    visits: visitLogs.length
                 });
                 break;
             }
@@ -512,12 +527,21 @@ function apiCallLocalStorageFallback(action, data) {
                 resolve({ success: true });
                 break;
             case 'increment_user_visit': {
-                const userIdx = users.findIndex(u => u.email === data.email);
-                let visitCount = 1;
-                if (userIdx !== -1) {
-                    users[userIdx].visits = (Number(users[userIdx].visits) || 0) + 1;
-                    visitCount = users[userIdx].visits;
-                    localStorage.setItem('users', JSON.stringify(users));
+                let visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+                visitLogs.push({
+                    email: (data && data.email) ? data.email : null,
+                    visited_at: new Date().toISOString()
+                });
+                localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
+
+                let visitCount = 0;
+                if (data && data.email) {
+                    const userIdx = users.findIndex(u => u.email.toLowerCase() === data.email.toLowerCase());
+                    if (userIdx !== -1) {
+                        users[userIdx].visits = (Number(users[userIdx].visits) || 0) + 1;
+                        visitCount = users[userIdx].visits;
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
                 }
                 resolve({ success: true, visits: visitCount });
                 break;
@@ -811,17 +835,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         await applySiteSettings();
 
-        // Count visit once per session for logged-in users when they visit public client pages
+        // Count visit once per session for all visitors when they visit public client pages
         const path = window.location.pathname.toLowerCase();
         const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
         if (isClientPage) {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-            if (currentUser && currentUser.email && !sessionStorage.getItem('user_visit_tracked')) {
+            if (!sessionStorage.getItem('user_visit_tracked')) {
                 sessionStorage.setItem('user_visit_tracked', 'true');
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const email = currentUser ? currentUser.email : null;
                 try {
-                    await window.apiCall('increment_user_visit', { email: currentUser.email });
+                    await window.apiCall('increment_user_visit', { email: email });
                 } catch (e) {
-                    console.error("Failed to record user website visit:", e);
+                    console.error("Failed to record website visit:", e);
                 }
             }
         }

@@ -397,25 +397,51 @@ function formatLocalShortDate(dateStr) {
 
 async function loadUserData() {
     await window.backendReady;
-    const res = await window.apiCall('get_users');
-    if (res && Array.isArray(res)) {
-        usersList = res;
+    const [usersRes, logsRes] = await Promise.all([
+        window.apiCall('get_users'),
+        window.apiCall('get_visit_logs')
+    ]);
+
+    if (usersRes && Array.isArray(usersRes)) {
+        usersList = usersRes;
     } else {
-        console.error("Failed to load users:", res);
+        console.error("Failed to load users:", usersRes);
         usersList = [];
         const tbody = document.getElementById('users-table-body');
         if (tbody) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" class="p-8 text-center text-red-500 font-bold">
-                        Error loading users: ${res && res.error ? window.escapeHtml(res.error) : 'Unknown error'}
+                        Error loading users: ${usersRes && usersRes.error ? window.escapeHtml(usersRes.error) : 'Unknown error'}
                     </td>
                 </tr>
             `;
         }
         return;
     }
+
+    if (logsRes && Array.isArray(logsRes)) {
+        window.visitLogsList = logsRes;
+    } else {
+        console.error("Failed to load visit logs:", logsRes);
+        window.visitLogsList = [];
+    }
+
     filterAndRenderUsers();
+}
+
+function getLocalDateBounds(dateStr, isEnd = false) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return null;
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    if (isEnd) {
+        return new Date(year, month, day, 23, 59, 59, 999);
+    } else {
+        return new Date(year, month, day, 0, 0, 0, 0);
+    }
 }
 
 function filterAndRenderUsers() {
@@ -425,8 +451,13 @@ function filterAndRenderUsers() {
     const searchInput = document.getElementById('users-search-input');
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    const dateFilterSelect = document.getElementById('users-date-filter');
-    const range = dateFilterSelect ? dateFilterSelect.value : 'all';
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    const startDateVal = startDateInput ? startDateInput.value : '';
+    const endDateVal = endDateInput ? endDateInput.value : '';
+
+    const startDate = getLocalDateBounds(startDateVal, false);
+    const endDate = getLocalDateBounds(endDateVal, true);
 
     // Deduplicate by lowercase email to prevent duplication
     const uniqueUsersMap = new Map();
@@ -437,9 +468,32 @@ function filterAndRenderUsers() {
     });
     const uniqueUsers = Array.from(uniqueUsersMap.values());
 
-    let filteredUsers = uniqueUsers;
+    // Compute range visits for all users
+    let mappedUsers = uniqueUsers.map(user => {
+        let rangeVisits = 0;
+        if (window.visitLogsList) {
+            const userLogs = window.visitLogsList.filter(log => log.email && log.email.toLowerCase() === user.email.toLowerCase());
+            if (startDate || endDate) {
+                const logsInRange = userLogs.filter(log => {
+                    const logDate = new Date(log.visited_at);
+                    return (!startDate || logDate >= startDate) && (!endDate || logDate <= endDate);
+                });
+                rangeVisits = logsInRange.length;
+            } else {
+                rangeVisits = userLogs.length;
+            }
+        } else {
+            rangeVisits = user.visits || 0;
+        }
+        return {
+            ...user,
+            rangeVisits: rangeVisits
+        };
+    });
+
+    let filteredUsers = mappedUsers;
     if (query) {
-        filteredUsers = uniqueUsers.filter(user => {
+        filteredUsers = mappedUsers.filter(user => {
             const name = (user.name || '').toLowerCase();
             const email = (user.email || '').toLowerCase();
             const plan = (user.plan || 'Community').toLowerCase();
@@ -448,29 +502,13 @@ function filterAndRenderUsers() {
         });
     }
 
-    // Apply exact local range filters (Starts from 12:00 AM straight local time)
-    if (range !== 'all') {
-        const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-        const startOfYesterday = new Date(startOfToday.getTime() - 24 * 60 * 60 * 1000);
-        const sevenDaysAgo = new Date(startOfToday.getTime() - 6 * 24 * 60 * 60 * 1000);
-        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-
+    // Filter by date range (Joined in range OR Visited in range)
+    if (startDate || endDate) {
         filteredUsers = filteredUsers.filter(user => {
-            if (!user.date) return false;
-            const d = new Date(user.date);
-            if (isNaN(d.getTime())) return false;
-            
-            if (range === 'today') {
-                return d.getTime() >= startOfToday.getTime();
-            } else if (range === 'yesterday') {
-                return d.getTime() >= startOfYesterday.getTime() && d.getTime() < startOfToday.getTime();
-            } else if (range === 'week') {
-                return d.getTime() >= sevenDaysAgo.getTime();
-            } else if (range === 'month') {
-                return d.getTime() >= startOfThisMonth.getTime();
-            }
-            return true;
+            const userJoinedDate = user.date ? new Date(user.date) : null;
+            const joinedInRange = userJoinedDate && (!startDate || userJoinedDate >= startDate) && (!endDate || userJoinedDate <= endDate);
+            const visitedInRange = user.rangeVisits > 0;
+            return joinedInRange || visitedInRange;
         });
     }
 
@@ -492,7 +530,7 @@ function filterAndRenderUsers() {
             <td class="p-4 text-xs font-mono text-secondary">${window.escapeHtml(user.email)}</td>
             <td class="p-4 text-xs text-secondary">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
             <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${window.escapeHtml(user.plan || 'Community')}</span></td>
-            <td class="p-4 text-xs font-bold text-primary">${user.visits || 0}</td>
+            <td class="p-4 text-xs font-bold text-primary">${user.rangeVisits || 0}</td>
             <td class="p-4">
                 <span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
                     ${window.escapeHtml(user.status || 'Active')}
@@ -542,19 +580,15 @@ window.exportUsersPDF = function () {
     doc.text("User Analytics & Engagement Report", 14, 26);
     
     // Add date range notice if any filters applied
-    const dateFilterSelect = document.getElementById('users-date-filter');
-    const rangeVal = dateFilterSelect ? dateFilterSelect.value : 'all';
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    const startDateVal = startDateInput ? startDateInput.value : '';
+    const endDateVal = endDateInput ? endDateInput.value : '';
     let separatorY = 38;
     let summaryY = 48;
     
-    if (rangeVal && rangeVal !== 'all') {
-        const labelMap = {
-            today: 'Today',
-            yesterday: 'Yesterday',
-            week: 'Last 7 Days',
-            month: 'This Month'
-        };
-        const rangeText = `Date Range: ${labelMap[rangeVal] || rangeVal}`;
+    if (startDateVal || endDateVal) {
+        const rangeText = `Date Range: ${startDateVal || 'Beginning'} to ${endDateVal || 'End'}`;
         doc.text(rangeText, 14, 32);
         doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 37);
         separatorY = 42;
@@ -572,7 +606,7 @@ window.exportUsersPDF = function () {
 
     // Summary Analytics
     const totalUsers = filteredList.length;
-    const totalVisits = filteredList.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
+    const totalVisits = filteredList.reduce((sum, u) => sum + (Number(u.rangeVisits) || 0), 0);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -586,7 +620,7 @@ window.exportUsersPDF = function () {
         u.name || "N/A",
         u.email || "N/A",
         u.plan || "Community",
-        String(u.visits || 0)
+        String(u.rangeVisits || 0)
     ]);
 
     doc.autoTable({
@@ -701,9 +735,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('input', filterAndRenderUsers);
     }
 
-    // Attach listener to date filter dropdown
-    const dateFilterSelect = document.getElementById('users-date-filter');
-    if (dateFilterSelect) {
-        dateFilterSelect.addEventListener('change', filterAndRenderUsers);
+    // Attach listeners to calendar date inputs
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    const clearDateBtn = document.getElementById('users-clear-date');
+
+    if (startDateInput) {
+        startDateInput.addEventListener('change', filterAndRenderUsers);
+    }
+    if (endDateInput) {
+        endDateInput.addEventListener('change', filterAndRenderUsers);
+    }
+    if (clearDateBtn) {
+        clearDateBtn.addEventListener('click', () => {
+            if (startDateInput) startDateInput.value = '';
+            if (endDateInput) endDateInput.value = '';
+            filterAndRenderUsers();
+        });
     }
 });
