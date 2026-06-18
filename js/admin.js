@@ -380,6 +380,78 @@ window.handleBlogSave = async function (e) {
 // --- 4. Users Tab Logic ---
 let usersList = []; // cache users list
 
+// --- Visit Utility Helpers ---
+function parseUserJoinedDate(dateStr) {
+    if (!dateStr) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        const parts = dateStr.split('-');
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 0, 0, 0, 0);
+    }
+    return new Date(dateStr);
+}
+
+function deduplicateUsers(list) {
+    if (!list || !Array.isArray(list)) return [];
+    const seen = new Set();
+    return list.filter(user => {
+        if (!user || !user.email) return false;
+        const emailLower = user.email.toLowerCase();
+        if (seen.has(emailLower)) return false;
+        seen.add(emailLower);
+        return true;
+    });
+}
+
+function getPresetDateRange(preset) {
+    const today = new Date();
+    let start = null;
+    let end = today;
+
+    switch (preset) {
+        case 'today':
+            start = today;
+            break;
+        case 'yesterday':
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            start = yesterday;
+            end = yesterday;
+            break;
+        case 'last-7-days':
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(today.getDate() - 6);
+            start = sevenDaysAgo;
+            break;
+        case 'last-30-days':
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 29);
+            start = thirtyDaysAgo;
+            break;
+        case 'this-month':
+            start = new Date(today.getFullYear(), today.getMonth(), 1);
+            break;
+        case 'last-month':
+            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            end = new Date(today.getFullYear(), today.getMonth(), 0);
+            break;
+        case 'all-time':
+        default:
+            return { startStr: '', endStr: '' };
+    }
+
+    const formatDate = (d) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    return {
+        startStr: formatDate(start),
+        endStr: formatDate(end)
+    };
+}
+
 function formatLocalShortDate(dateStr) {
     if (!dateStr) return 'N/A';
     try {
@@ -403,7 +475,7 @@ async function loadUserData() {
     ]);
 
     if (usersRes && Array.isArray(usersRes)) {
-        usersList = usersRes;
+        usersList = deduplicateUsers(usersRes);
     } else {
         console.error("Failed to load users:", usersRes);
         usersList = [];
@@ -459,20 +531,17 @@ function filterAndRenderUsers() {
     const startDate = getLocalDateBounds(startDateVal, false);
     const endDate = getLocalDateBounds(endDateVal, true);
 
-    // Deduplicate by lowercase email to prevent duplication
-    const uniqueUsersMap = new Map();
-    usersList.forEach(user => {
-        if (user && user.email) {
-            uniqueUsersMap.set(user.email.toLowerCase(), user);
-        }
-    });
-    const uniqueUsers = Array.from(uniqueUsersMap.values());
+    // usersList is already deduplicated on load, but we ensure uniqueness again here to be safe
+    const uniqueUsers = deduplicateUsers(usersList);
 
-    // Compute range visits for all users
+    // Compute range visits and total visits for all users
     let mappedUsers = uniqueUsers.map(user => {
         let rangeVisits = 0;
+        let totalVisits = Number(user.visits) || 0;
         if (window.visitLogsList) {
             const userLogs = window.visitLogsList.filter(log => log.email && log.email.toLowerCase() === user.email.toLowerCase());
+            // Align the baseline user.visits with database logs
+            totalVisits = Math.max(totalVisits, userLogs.length);
             if (startDate || endDate) {
                 const logsInRange = userLogs.filter(log => {
                     const logDate = new Date(log.visited_at);
@@ -480,13 +549,14 @@ function filterAndRenderUsers() {
                 });
                 rangeVisits = logsInRange.length;
             } else {
-                rangeVisits = user.visits || 0;
+                rangeVisits = totalVisits;
             }
         } else {
-            rangeVisits = user.visits || 0;
+            rangeVisits = totalVisits;
         }
         return {
             ...user,
+            totalVisits: totalVisits,
             rangeVisits: rangeVisits
         };
     });
@@ -505,7 +575,7 @@ function filterAndRenderUsers() {
     // Filter by date range (Joined in range OR Visited in range)
     if (startDate || endDate) {
         filteredUsers = filteredUsers.filter(user => {
-            const userJoinedDate = user.date ? new Date(user.date) : null;
+            const userJoinedDate = parseUserJoinedDate(user.date);
             const joinedInRange = userJoinedDate && (!startDate || userJoinedDate >= startDate) && (!endDate || userJoinedDate <= endDate);
             const visitedInRange = user.rangeVisits > 0;
             return joinedInRange || visitedInRange;
@@ -530,7 +600,9 @@ function filterAndRenderUsers() {
             <td class="p-4 text-xs font-mono text-secondary">${window.escapeHtml(user.email)}</td>
             <td class="p-4 text-xs text-secondary">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
             <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${window.escapeHtml(user.plan || 'Community')}</span></td>
-            <td class="p-4 text-xs font-bold text-primary">${user.rangeVisits || 0}</td>
+            <td class="p-4 text-xs font-bold text-primary">
+                ${startDate || endDate ? `${user.rangeVisits || 0} <span class="text-secondary font-normal text-[10px]">/ ${user.totalVisits || 0}</span>` : (user.totalVisits || 0)}
+            </td>
             <td class="p-4">
                 <span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
                     ${window.escapeHtml(user.status || 'Active')}
@@ -601,27 +673,33 @@ window.exportUsersPDF = function () {
     doc.setDrawColor(229, 229, 229);
     doc.line(14, separatorY, 196, separatorY);
 
-    // Get the filtered users
-    const filteredList = window.currentFilteredUsers || usersList;
+    // Get the filtered users (deduplicated)
+    const filteredList = deduplicateUsers(window.currentFilteredUsers || usersList);
 
     // Summary Analytics
     const totalUsers = filteredList.length;
-    const totalVisits = filteredList.reduce((sum, u) => sum + (Number(u.rangeVisits) || 0), 0);
+    const isFiltered = !!(startDateVal || endDateVal);
+    const totalVisits = filteredList.reduce((sum, u) => sum + (Number(isFiltered ? u.rangeVisits : u.totalVisits) || 0), 0);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.setTextColor(17, 17, 17);
     doc.text(`Total Users: ${totalUsers}`, 14, summaryY);
-    doc.text(`Total Recorded Visits: ${totalVisits}`, 80, summaryY);
+    const visitsSummaryLabel = isFiltered ? `Selected Range Visits: ${totalVisits}` : `Total Recorded Visits: ${totalVisits}`;
+    doc.text(visitsSummaryLabel, 80, summaryY);
 
     // Generate table contents
-    const headers = [["Client Name", "Email Address", "Tier Plan", "Total Visits"]];
-    const data = filteredList.map(u => [
-        u.name || "N/A",
-        u.email || "N/A",
-        u.plan || "Community",
-        String(u.rangeVisits || 0)
-    ]);
+    const visitsHeader = isFiltered ? "Visits (Range / Total)" : "Total Visits";
+    const headers = [["Client Name", "Email Address", "Tier Plan", visitsHeader]];
+    const data = filteredList.map(u => {
+        const visitsText = isFiltered ? `${u.rangeVisits || 0} / ${u.totalVisits || 0}` : String(u.totalVisits || 0);
+        return [
+            u.name || "N/A",
+            u.email || "N/A",
+            u.plan || "Community",
+            visitsText
+        ];
+    });
 
     doc.autoTable({
         head: headers,
@@ -735,21 +813,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('input', filterAndRenderUsers);
     }
 
-    // Attach listeners to calendar date inputs
+    // Attach listeners to calendar date inputs and presets dropdown
     const startDateInput = document.getElementById('users-start-date');
     const endDateInput = document.getElementById('users-end-date');
     const clearDateBtn = document.getElementById('users-clear-date');
+    const presetSelect = document.getElementById('users-date-preset');
+
+    const resetPresetToCustom = () => {
+        if (presetSelect) presetSelect.value = 'custom';
+        filterAndRenderUsers();
+    };
 
     if (startDateInput) {
-        startDateInput.addEventListener('change', filterAndRenderUsers);
+        startDateInput.addEventListener('change', resetPresetToCustom);
     }
     if (endDateInput) {
-        endDateInput.addEventListener('change', filterAndRenderUsers);
+        endDateInput.addEventListener('change', resetPresetToCustom);
     }
+
+    if (presetSelect) {
+        presetSelect.addEventListener('change', () => {
+            const val = presetSelect.value;
+            if (val === 'custom') return;
+            const { startStr, endStr } = getPresetDateRange(val);
+            if (startDateInput) startDateInput.value = startStr;
+            if (endDateInput) endDateInput.value = endStr;
+            filterAndRenderUsers();
+        });
+    }
+
     if (clearDateBtn) {
         clearDateBtn.addEventListener('click', () => {
             if (startDateInput) startDateInput.value = '';
             if (endDateInput) endDateInput.value = '';
+            if (presetSelect) presetSelect.value = 'all-time';
             filterAndRenderUsers();
         });
     }

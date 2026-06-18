@@ -152,6 +152,12 @@ INSERT INTO public.admin_users (email) VALUES
 ('admin@diginix.com')
 ON CONFLICT (email) DO NOTHING;
 
+-- Seed some mock anonymous visit logs if table is empty
+INSERT INTO public.visit_logs (email, visited_at)
+SELECT NULL, NOW() - (val || ' hours')::INTERVAL
+FROM generate_series(1, 100) AS val
+WHERE NOT EXISTS (SELECT 1 FROM public.visit_logs LIMIT 1);
+
 -- 4. DATABASE TRIGGERS FOR SECURITY AND SANITIZATION
 
 -- Trigger function to hash user password using bcrypt (bf) for legacy fallback
@@ -641,6 +647,7 @@ RETURNS BOOLEAN AS $$
 BEGIN
     PERFORM public.verify_admin_and_csrf(p_csrf_token);
     DELETE FROM public.users WHERE LOWER(email) = LOWER(p_email);
+    DELETE FROM public.visit_logs WHERE LOWER(email) = LOWER(p_email);
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

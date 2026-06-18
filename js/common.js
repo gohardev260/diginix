@@ -120,7 +120,46 @@ function initLocalStorage() {
         localStorage.setItem('stats', JSON.stringify(defaultStats));
     }
     if (!localStorage.getItem('visit_logs')) {
-        localStorage.setItem('visit_logs', JSON.stringify([]));
+        const logs = [];
+        const today = new Date();
+        
+        // Helper to generate a random date between two Date objects
+        const randomDateBetween = (start, end) => {
+            const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            return date.toISOString();
+        };
+
+        // Sarah Connor joined 2026-05-10
+        const sarahStart = new Date(2026, 4, 10, 0, 0, 0, 0); // May 10, 2026
+        for (let i = 0; i < 12; i++) {
+            logs.push({
+                email: 'sarah@connor.com',
+                visited_at: randomDateBetween(sarahStart, today)
+            });
+        }
+
+        // John Doe joined 2026-05-15
+        const johnStart = new Date(2026, 4, 15, 0, 0, 0, 0); // May 15, 2026
+        for (let i = 0; i < 45; i++) {
+            logs.push({
+                email: 'john@doe.com',
+                visited_at: randomDateBetween(johnStart, today)
+            });
+        }
+
+        // 100 Anonymous visits over last 40 days
+        const anonStart = new Date();
+        anonStart.setDate(today.getDate() - 40);
+        for (let i = 0; i < 100; i++) {
+            logs.push({
+                email: null,
+                visited_at: randomDateBetween(anonStart, today)
+            });
+        }
+
+        // Sort chronologically
+        logs.sort((a, b) => new Date(a.visited_at) - new Date(b.visited_at));
+        localStorage.setItem('visit_logs', JSON.stringify(logs));
     }
 }
 initLocalStorage();
@@ -505,6 +544,11 @@ function apiCallLocalStorageFallback(action, data) {
             case 'delete_user':
                 users = users.filter(u => u.email !== data.email);
                 localStorage.setItem('users', JSON.stringify(users));
+                if (data && data.email) {
+                    let visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+                    visitLogs = visitLogs.filter(log => !log.email || log.email.toLowerCase() !== data.email.toLowerCase());
+                    localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
+                }
                 resolve({ success: true });
                 break;
             case 'get_settings':
