@@ -160,8 +160,8 @@ async function initSupabase() {
 
         if (typeof supabase !== 'undefined') {
             window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            window.useSupabase = false;
-            console.log("DiginixIT: Live Supabase client initialized (disabled for testing).");
+            window.useSupabase = true;
+            console.log("DiginixIT: Live Supabase client initialized.");
         } else {
             console.warn("DiginixIT: Failed to define 'supabase'. Falling back to localStorage.");
             window.useSupabase = false;

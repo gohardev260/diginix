@@ -99,6 +99,39 @@
                     clearInterval(checkReady);
                     await window.backendReady;
                     
+                    if (!window.useSupabase) {
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+                    
+                    const { data: { session }, error } = await window.supabase.auth.getSession();
+                    if (error || !session || !session.user) {
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+                    
+                    // Verify admin role on backend
+                    const { data: adminCheck, error: adminError } = await window.supabase
+                        .rpc('verify_admin_access', {
+                            p_user_email: session.user.email
+                        });
+
+                    const is_admin = adminCheck && adminCheck.length > 0 && adminCheck[0].is_admin;
+                    if (adminError || !is_admin) {
+                        await window.supabase.auth.signOut();
+                        alert('Access Denied. Admin privileges required.');
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+
+                    // Generate first CSRF token
+                    const tokenReady = await fetchCSRFToken();
+                    if (!tokenReady) {
+                        await window.supabase.auth.signOut();
+                        window.location.replace('admin_login.html');
+                        return;
+                    }
+                    
                     const guard = document.getElementById('admin-guard');
                     if (guard) guard.remove();
                     const app = document.getElementById('admin-app');
