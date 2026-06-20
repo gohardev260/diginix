@@ -506,8 +506,8 @@ BEGIN
     SELECT COUNT(*) INTO v_pro_count FROM public.users WHERE plan = 'Pro';
     
     -- Count of total visits
-    SELECT COALESCE(SUM(visits), 0) + (SELECT COUNT(*) FROM public.visit_logs WHERE email IS NULL OR email = '')
-    INTO v_total_visits FROM public.users;
+    SELECT COALESCE(SUM(u.visits), 0) + (SELECT COUNT(*) FROM public.visit_logs WHERE email IS NULL OR email = '')
+    INTO v_total_visits FROM public.users u;
 
     -- Calculate User History (Last 6 months user signups, e.g. '5,10,12,18,20,25')
     SELECT string_agg(count_val::text, ',') INTO v_user_history
@@ -518,10 +518,10 @@ BEGIN
             date_trunc('month', NOW() - INTERVAL '5 months'),
             date_trunc('month', NOW()),
             '1 month'::interval
-        ) m
-        LEFT JOIN public.users u ON date_trunc('month', u.date) = m
-        GROUP BY m
-        ORDER BY m
+        ) AS gs(dt)
+        LEFT JOIN public.users u ON date_trunc('month', u.date) = gs.dt
+        GROUP BY gs.dt
+        ORDER BY gs.dt
     ) t;
 
     -- Calculate Visit History (Last 6 months visits, e.g. '10,15,30,45,60,75')
@@ -533,10 +533,10 @@ BEGIN
             date_trunc('month', NOW() - INTERVAL '5 months'),
             date_trunc('month', NOW()),
             '1 month'::interval
-        ) m
-        LEFT JOIN public.visit_logs v ON date_trunc('month', v.visited_at) = m
-        GROUP BY m
-        ORDER BY m
+        ) AS gs(dt)
+        LEFT JOIN public.visit_logs v ON date_trunc('month', v.visited_at) = gs.dt
+        GROUP BY gs.dt
+        ORDER BY gs.dt
     ) t;
 
     -- Calculate Revenue History (Last 6 months cumulative Pro users * 1000 PKR, e.g. '2000,3000,5000,8000,10000,15000')
@@ -547,14 +547,14 @@ BEGIN
                 SELECT COUNT(*) 
                 FROM public.users u 
                 WHERE u.plan = 'Pro' 
-                  AND u.date <= m + INTERVAL '1 month' - INTERVAL '1 second'
+                  AND u.date <= gs.dt + INTERVAL '1 month' - INTERVAL '1 second'
             ) * 1000 AS amount_val
         FROM generate_series(
             date_trunc('month', NOW() - INTERVAL '5 months'),
             date_trunc('month', NOW()),
             '1 month'::interval
-        ) m
-        ORDER BY m
+        ) AS gs(dt)
+        ORDER BY gs.dt
     ) t;
 
     RETURN QUERY
