@@ -159,7 +159,7 @@ SELECT '$0', '0', '0', '0,0,0,0,0,0'
 WHERE NOT EXISTS (SELECT 1 FROM public.stats);
 
 INSERT INTO public.admin_users (email) VALUES 
-('admin@diginix.com')
+('admin@diginixit.com')
 ON CONFLICT (email) DO NOTHING;
 
 -- Seed some mock anonymous visit logs if table is empty
