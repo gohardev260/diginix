@@ -96,10 +96,6 @@ CREATE TABLE IF NOT EXISTS public.visit_logs (
     visited_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_visit_logs_visited_at ON public.visit_logs(visited_at);
-CREATE INDEX IF NOT EXISTS idx_visit_logs_email ON public.visit_logs(email);
-CREATE INDEX IF NOT EXISTS idx_visit_logs_session_id ON public.visit_logs(session_id);
-
 -- Admin Users Table
 CREATE TABLE IF NOT EXISTS public.admin_users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -117,10 +113,8 @@ CREATE TABLE IF NOT EXISTS public.csrf_tokens (
     used BOOLEAN DEFAULT FALSE
 );
 
-CREATE INDEX IF NOT EXISTS idx_csrf_tokens_user_id ON public.csrf_tokens(user_id);
-CREATE INDEX IF NOT EXISTS idx_csrf_tokens_expires ON public.csrf_tokens(expires_at);
-
 -- 2.5 ALTER EXISTING TABLES (For non-destructive schema updates)
+-- Run this BEFORE indexes or triggers are compiled so the columns exist even if tables were already present.
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS auth_user_id UUID UNIQUE DEFAULT NULL;
 ALTER TABLE public.users ALTER COLUMN password DROP NOT NULL;
 ALTER TABLE public.users ALTER COLUMN date TYPE TIMESTAMPTZ USING date::TIMESTAMPTZ;
@@ -128,6 +122,13 @@ ALTER TABLE public.users ALTER COLUMN date SET DEFAULT NOW();
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user';
 ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS session_id UUID DEFAULT NULL;
 ALTER TABLE public.blogs DROP COLUMN IF EXISTS image;
+
+-- 2.6 CREATE INDEXES
+CREATE INDEX IF NOT EXISTS idx_visit_logs_visited_at ON public.visit_logs(visited_at);
+CREATE INDEX IF NOT EXISTS idx_visit_logs_email ON public.visit_logs(email);
+CREATE INDEX IF NOT EXISTS idx_visit_logs_session_id ON public.visit_logs(session_id);
+CREATE INDEX IF NOT EXISTS idx_csrf_tokens_user_id ON public.csrf_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_csrf_tokens_expires ON public.csrf_tokens(expires_at);
 
 -- Safely add foreign key reference if not already present
 DO $$
