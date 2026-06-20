@@ -130,6 +130,10 @@
                             p_user_email: session.user.email
                         });
 
+                    // Debug claims in database context
+                    const { data: claims } = await window.supabase.rpc('debug_my_claims');
+                    alert("JWT Claims in Database context:\n" + JSON.stringify(claims));
+
                     const is_admin = adminCheck && adminCheck.length > 0 && adminCheck[0].is_admin;
                     if (adminError || !is_admin) {
                         await window.supabase.auth.signOut();

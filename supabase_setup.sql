@@ -39,6 +39,7 @@ DROP FUNCTION IF EXISTS public.migrate_legacy_users();
 DROP FUNCTION IF EXISTS public.get_filtered_users_admin_v2(TEXT, TIMESTAMPTZ, TIMESTAMPTZ, INT, INT);
 DROP FUNCTION IF EXISTS public.export_users_report_data(TEXT, TIMESTAMPTZ, TIMESTAMPTZ);
 DROP FUNCTION IF EXISTS public.handle_admin_role_assignment() CASCADE;
+DROP FUNCTION IF EXISTS public.debug_my_claims();
 
 -- Enable pgcrypto extension for secure password hashing and random bytes
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -948,3 +949,13 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 GRANT EXECUTE ON FUNCTION public.export_users_report_data(TEXT, TIMESTAMPTZ, TIMESTAMPTZ) TO authenticated;
+
+-- Debug JWT claims helper function
+CREATE OR REPLACE FUNCTION public.debug_my_claims()
+RETURNS JSONB AS $$
+BEGIN
+    RETURN auth.jwt();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.debug_my_claims() TO authenticated, anon;
