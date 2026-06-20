@@ -71,22 +71,41 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- Structured Data (Breadcrumb Schema) -->
+    <!-- Structured Data (Breadcrumb & Blog Schema) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://diginixit.com/"
-        },{
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Blog",
-            "item": "https://diginixit.com/blog.html"
-        }]
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [{
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://diginixit.com/"
+                },{
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Blog",
+                    "item": "https://diginixit.com/blog.html"
+                }]
+            },
+            {
+                "@type": "Blog",
+                "@id": "https://diginixit.com/blog.html#blog",
+                "name": "DiginixIT Insights Blog",
+                "url": "https://diginixit.com/blog.html",
+                "description": "Read DiginixIT Insights Blog. Our engineers share technical audits, web development insights, design guidelines, and Core Web Vitals optimization guides.",
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "DiginixIT",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200"
+                    }
+                }
+            }
+        ]
     }
     </script>
 </head>

@@ -1,5 +1,27 @@
 // DiginixIT Common JS
 
+// --- UUID GENERATOR ---
+function getUUID() {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+// Initialize Visitor and Session IDs
+if (typeof window !== 'undefined') {
+    if (!localStorage.getItem('visitor_id')) {
+        localStorage.setItem('visitor_id', getUUID());
+    }
+    if (!sessionStorage.getItem('session_id')) {
+        sessionStorage.setItem('session_id', getUUID());
+    }
+}
+
 // --- HTML ESCAPING UTILITY ---
 window.escapeHtml = function (unsafe) {
     if (!unsafe) return "";
@@ -388,6 +410,19 @@ window.apiCall = async function (action, data = null) {
                     await window.supabase.auth.signOut();
                     return { success: false, error: "Your account is not active. Please contact support." };
                 }
+                const sessionId = sessionStorage.getItem('session_id');
+                if (sessionId) {
+                    try {
+                        await window.supabase.rpc('associate_session_visits', {
+                            p_session_id: sessionId,
+                            p_email: verified.email
+                        });
+                        sessionStorage.setItem('user_logged_visit_tracked', verified.email);
+                        sessionStorage.setItem('user_visit_tracked', 'true');
+                    } catch (e) {
+                        console.error("Failed to associate session on login:", e);
+                    }
+                }
                 return { success: true, user: verified };
             }
 
@@ -417,7 +452,41 @@ window.apiCall = async function (action, data = null) {
                     return { success: false, error: rpcError.message || "Profile creation failed" };
                 }
                 const returnedUser = Array.isArray(user) ? user[0] : user;
+                const sessionId = sessionStorage.getItem('session_id');
+                if (sessionId) {
+                    try {
+                        await window.supabase.rpc('associate_session_visits', {
+                            p_session_id: sessionId,
+                            p_email: returnedUser.email
+                        });
+                        sessionStorage.setItem('user_logged_visit_tracked', returnedUser.email);
+                        sessionStorage.setItem('user_visit_tracked', 'true');
+                    } catch (e) {
+                        console.error("Failed to associate session on registration:", e);
+                    }
+                }
                 return { success: true, user: returnedUser };
+            }
+
+            case 'associate_session_visits': {
+                const { error } = await window.supabase
+                    .rpc('associate_session_visits', {
+                        p_session_id: data.session_id,
+                        p_email: data.email
+                    });
+                if (error) throw error;
+                return { success: true };
+            }
+
+            case 'get_filtered_users': {
+                const { data: users, error } = await window.supabase
+                    .rpc('get_filtered_users_admin', {
+                        p_search: data.search,
+                        p_start_date: data.start_date,
+                        p_end_date: data.end_date
+                    });
+                if (error) throw error;
+                return users || [];
             }
 
             case 'update_profile': {
@@ -466,7 +535,10 @@ window.apiCall = async function (action, data = null) {
 
             case 'increment_user_visit': {
                 const { data: visits, error } = await window.supabase
-                    .rpc('increment_user_visit_secure', { p_email: data ? data.email : null });
+                    .rpc('increment_user_visit_secure', { 
+                        p_email: data ? data.email : null,
+                        p_session_id: data ? data.session_id : null
+                    });
                 if (error) throw error;
                 return { success: true, visits: visits };
             }
@@ -523,6 +595,90 @@ function apiCallLocalStorageFallback(action, data) {
                 localStorage.setItem('blogs', JSON.stringify(blogs));
                 resolve({ success: true });
                 break;
+            case 'get_filtered_users': {
+                const query = data.search ? data.search.toLowerCase().trim() : '';
+                const startDate = data.start_date ? new Date(data.start_date) : null;
+                const endDate = data.end_date ? new Date(data.end_date) : null;
+                const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+
+                let filtered = users.map(user => {
+                    const userLogs = visitLogs.filter(log => log.email && log.email.toLowerCase() === user.email.toLowerCase());
+                    const totalVisits = Math.max(Number(user.visits) || 0, userLogs.length);
+                    
+                    let rangeVisits = 0;
+                    if (startDate || endDate) {
+                        const logsInRange = userLogs.filter(log => {
+                            const logDate = new Date(log.visited_at);
+                            return (!startDate || logDate >= startDate) && (!endDate || logDate <= endDate);
+                        });
+                        rangeVisits = logsInRange.length;
+                    } else {
+                        rangeVisits = totalVisits;
+                    }
+                    return {
+                        ...user,
+                        range_visits: rangeVisits,
+                        total_visits: totalVisits
+                    };
+                });
+
+                if (query) {
+                    filtered = filtered.filter(u => {
+                        return (u.name || '').toLowerCase().includes(query) ||
+                               (u.email || '').toLowerCase().includes(query) ||
+                               (u.plan || 'Community').toLowerCase().includes(query) ||
+                               (u.status || 'Active').toLowerCase().includes(query);
+                    });
+                }
+
+                if (startDate || endDate) {
+                    filtered = filtered.filter(u => {
+                        const uDate = new Date(u.date);
+                        const joinedInRange = (!startDate || uDate >= startDate) && (!endDate || uDate <= endDate);
+                        const visitedInRange = u.range_visits > 0;
+                        return joinedInRange || visitedInRange;
+                    });
+                }
+
+                // Map keys to match PostgREST returned fields
+                const mapped = filtered.map(u => ({
+                    name: u.name,
+                    email: u.email,
+                    date: u.date,
+                    plan: u.plan,
+                    status: u.status,
+                    range_visits: u.range_visits,
+                    total_visits: u.total_visits
+                }));
+
+                resolve(mapped);
+                break;
+            }
+            case 'associate_session_visits': {
+                let visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+                const sessionId = data.session_id;
+                const email = data.email;
+                let updateCount = 0;
+
+                if (sessionId && email) {
+                    visitLogs.forEach(log => {
+                        if (log.session_id === sessionId && (!log.email || log.email === '')) {
+                            log.email = email;
+                            updateCount++;
+                        }
+                    });
+                    if (updateCount > 0) {
+                        localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
+                        const userIdx = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+                        if (userIdx !== -1) {
+                            users[userIdx].visits = (Number(users[userIdx].visits) || 0) + updateCount;
+                            localStorage.setItem('users', JSON.stringify(users));
+                        }
+                    }
+                }
+                resolve({ success: true });
+                break;
+            }
             case 'get_users':
                 resolve(users);
                 break;
@@ -574,19 +730,32 @@ function apiCallLocalStorageFallback(action, data) {
                 break;
             case 'increment_user_visit': {
                 let visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
-                visitLogs.push({
-                    email: (data && data.email) ? data.email : null,
-                    visited_at: new Date().toISOString()
-                });
-                localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
-
+                const sessionId = data ? data.session_id : null;
+                const email = data ? data.email : null;
+                
+                const alreadyTracked = sessionId && visitLogs.some(log => log.session_id === sessionId);
                 let visitCount = 0;
-                if (data && data.email) {
-                    const userIdx = users.findIndex(u => u.email.toLowerCase() === data.email.toLowerCase());
-                    if (userIdx !== -1) {
-                        users[userIdx].visits = (Number(users[userIdx].visits) || 0) + 1;
-                        visitCount = users[userIdx].visits;
-                        localStorage.setItem('users', JSON.stringify(users));
+
+                if (!alreadyTracked) {
+                    visitLogs.push({
+                        email: email,
+                        session_id: sessionId,
+                        visited_at: new Date().toISOString()
+                    });
+                    localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
+
+                    if (email) {
+                        const userIdx = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+                        if (userIdx !== -1) {
+                            users[userIdx].visits = (Number(users[userIdx].visits) || 0) + 1;
+                            visitCount = users[userIdx].visits;
+                            localStorage.setItem('users', JSON.stringify(users));
+                        }
+                    }
+                } else {
+                    if (email) {
+                        const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+                        if (user) visitCount = user.visits;
                     }
                 }
                 resolve({ success: true, visits: visitCount });
@@ -798,6 +967,17 @@ async function initializeAuth() {
         if (verified) {
             localStorage.setItem('currentUser', JSON.stringify(verified));
             updateNavbarAuth();
+
+            // Link guest session visits to authenticated user
+            const sessionId = sessionStorage.getItem('session_id');
+            if (sessionId) {
+                await window.apiCall('associate_session_visits', {
+                    session_id: sessionId,
+                    email: verified.email
+                });
+                sessionStorage.setItem('user_logged_visit_tracked', verified.email);
+                sessionStorage.setItem('user_visit_tracked', 'true');
+            }
         } else {
             await window.supabase.auth.signOut();
             localStorage.removeItem('currentUser');
@@ -881,20 +1061,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         await applySiteSettings();
 
+        // Retry Queue processor
+        async function processTrackingQueue() {
+            let queue = JSON.parse(localStorage.getItem('visit_tracking_queue') || '[]');
+            if (queue.length === 0) return;
+            if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+
+            const remainingQueue = [];
+            for (const visit of queue) {
+                try {
+                    const res = await window.apiCall('increment_user_visit', { 
+                        email: visit.email, 
+                        session_id: visit.session_id 
+                    });
+                    if (!res || res.success !== true) {
+                        remainingQueue.push(visit);
+                    }
+                } catch (e) {
+                    console.error("Queue tracking attempt failed:", e);
+                    remainingQueue.push(visit);
+                }
+            }
+            localStorage.setItem('visit_tracking_queue', JSON.stringify(remainingQueue));
+        }
+
+        window.addEventListener('online', processTrackingQueue);
+        setInterval(processTrackingQueue, 15000);
+
+        async function recordVisit(email = null) {
+            const sessionId = sessionStorage.getItem('session_id');
+            const visitPayload = { email, session_id: sessionId };
+            try {
+                const res = await window.apiCall('increment_user_visit', visitPayload);
+                if (res && res.success === true) {
+                    sessionStorage.setItem('user_visit_tracked', 'true');
+                    if (email) {
+                        sessionStorage.setItem('user_logged_visit_tracked', email);
+                    }
+                } else {
+                    throw new Error("Tracking write failed");
+                }
+            } catch (e) {
+                console.error("Failed to record website visit, queuing for retry:", e);
+                let queue = JSON.parse(localStorage.getItem('visit_tracking_queue') || '[]');
+                const exists = queue.some(q => q.session_id === sessionId && q.email === email);
+                if (!exists) {
+                    queue.push(visitPayload);
+                    localStorage.setItem('visit_tracking_queue', JSON.stringify(queue));
+                }
+            }
+        }
+
         // Count visit once per session for all visitors when they visit public client pages
         const path = window.location.pathname.toLowerCase();
         const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
         if (isClientPage) {
-            if (!sessionStorage.getItem('user_visit_tracked')) {
-                sessionStorage.setItem('user_visit_tracked', 'true');
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                const email = currentUser ? currentUser.email : null;
-                try {
-                    await window.apiCall('increment_user_visit', { email: email });
-                } catch (e) {
-                    console.error("Failed to record website visit:", e);
-                }
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const email = currentUser ? currentUser.email : null;
+            
+            const trackedSession = sessionStorage.getItem('user_visit_tracked');
+            const trackedEmail = sessionStorage.getItem('user_logged_visit_tracked');
+
+            if (!trackedSession || (email && trackedEmail !== email)) {
+                await recordVisit(email);
             }
         }
+
+        // Also process tracking queue initially
+        processTrackingQueue();
     })();
 });

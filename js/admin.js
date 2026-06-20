@@ -1,6 +1,15 @@
 // DiginixIT Admin Dashboard Logic
 
-let currentChartInstance = null;
+window.adminState = {
+    currentChartInstance: null,
+    blogs: [],
+    usersList: [],
+    quill: null,
+    currentFilteredUsers: [],
+    visitLogsList: [],
+    activeTab: 'analytics',
+    isLoadingUsers: false
+};
 
 // --- 1. Tab Control Logic ---
 function initTabs() {
@@ -9,6 +18,7 @@ function initTabs() {
     const contents = document.querySelectorAll('.admin-tab-content');
 
     function switchTab(tabId) {
+        window.adminState.activeTab = tabId;
         // Toggle desktop sidebar buttons
         sidebarBtns.forEach(btn => {
             const match = btn.getAttribute('data-tab') === tabId;
@@ -135,11 +145,11 @@ function renderRevenueChart(chartData) {
     const ctx = document.getElementById('adminRevenueChart');
     if (!ctx) return;
 
-    if (currentChartInstance) {
-        currentChartInstance.destroy();
+    if (window.adminState.currentChartInstance) {
+        window.adminState.currentChartInstance.destroy();
     }
 
-    currentChartInstance = new Chart(ctx, {
+    window.adminState.currentChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -207,13 +217,10 @@ window.handleStatsUpdate = async function (e) {
 };
 
 // --- 3. Blog Management Tab ---
-let blogs = []; // cache blogs list
-let quill = null;
-
 function initQuill() {
     const editorEl = document.getElementById('blog-quill-editor');
-    if (editorEl && typeof Quill !== 'undefined' && !quill) {
-        quill = new Quill('#blog-quill-editor', {
+    if (editorEl && typeof Quill !== 'undefined' && !window.adminState.quill) {
+        window.adminState.quill = new Quill('#blog-quill-editor', {
             theme: 'snow',
             modules: {
                 toolbar: [
@@ -234,10 +241,10 @@ async function loadBlogData() {
     await window.backendReady;
     const res = await window.apiCall('get_blogs');
     if (res && Array.isArray(res)) {
-        blogs = res;
+        window.adminState.blogs = res;
     } else {
         console.error("Failed to load blogs:", res);
-        blogs = [];
+        window.adminState.blogs = [];
         const tbody = document.getElementById('blog-table-body');
         if (tbody) {
             tbody.innerHTML = `
@@ -253,16 +260,17 @@ async function loadBlogData() {
     const tbody = document.getElementById('blog-table-body');
     if (!tbody) return;
 
-    if (blogs.length === 0) {
+    if (window.adminState.blogs.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="5" class="p-8 text-center text-secondary font-light">No articles published. Click 'Add Article' to create one.</td>
             </tr>
         `;
         return;
+
     }
 
-    tbody.innerHTML = blogs.map(post => `
+    tbody.innerHTML = window.adminState.blogs.map(post => `
         <tr class="border-b border-border hover:bg-surface transition-colors">
             <td class="p-4 font-bold text-primary max-w-xs truncate">${window.escapeHtml(post.title)}</td>
             <td class="p-4"><span class="px-2.5 py-1 bg-surface border border-border text-xs rounded-full uppercase tracking-wider text-secondary">${window.escapeHtml(post.category)}</span></td>
@@ -306,7 +314,7 @@ window.toggleBlogModal = function (show, isEdit = false) {
             document.getElementById('blog-category').value = '';
             document.getElementById('blog-author').value = '';
             document.getElementById('blog-summary').value = '';
-            if (quill) quill.setContents([]); // Clear Quill text
+            if (window.adminState.quill) window.adminState.quill.setContents([]); // Clear Quill text
             document.getElementById('blog-editor-title').innerText = "Write New Article";
         }
 
@@ -323,7 +331,7 @@ window.toggleBlogModal = function (show, isEdit = false) {
 };
 
 window.editBlogPost = function (id) {
-    const post = blogs.find(b => b.id == id);
+    const post = window.adminState.blogs.find(b => b.id == id);
     if (!post) return;
 
     // Make sure Quill is initialized
@@ -334,8 +342,8 @@ window.editBlogPost = function (id) {
     document.getElementById('blog-category').value = post.category;
     document.getElementById('blog-author').value = post.author;
     document.getElementById('blog-summary').value = post.summary;
-    if (quill) {
-        quill.root.innerHTML = post.content || '';
+    if (window.adminState.quill) {
+        window.adminState.quill.root.innerHTML = post.content || '';
     }
     document.getElementById('blog-editor-title').innerText = "Edit Article";
 
@@ -361,7 +369,7 @@ window.handleBlogSave = async function (e) {
     const category = document.getElementById('blog-category').value.trim();
     const author = document.getElementById('blog-author').value.trim();
     const summary = document.getElementById('blog-summary').value.trim();
-    const content = quill ? quill.root.innerHTML : '';
+    const content = window.adminState.quill ? window.adminState.quill.root.innerHTML : '';
 
     const payload = { id, title, category, author, summary, content, _csrf_token: window.csrfToken };
 
@@ -378,7 +386,6 @@ window.handleBlogSave = async function (e) {
 };
 
 // --- 4. Users Tab Logic ---
-let usersList = []; // cache users list
 
 // --- Visit Utility Helpers ---
 function parseUserJoinedDate(dateStr) {
@@ -468,35 +475,52 @@ function formatLocalShortDate(dateStr) {
 }
 
 async function loadUserData() {
+    if (window.adminState.isLoadingUsers) return;
+    window.adminState.isLoadingUsers = true;
+
     await window.backendReady;
-    const [usersRes, logsRes] = await Promise.all([
-        window.apiCall('get_users'),
-        window.apiCall('get_visit_logs')
-    ]);
 
-    if (usersRes && Array.isArray(usersRes)) {
-        usersList = deduplicateUsers(usersRes);
-    } else {
-        console.error("Failed to load users:", usersRes);
-        usersList = [];
-        const tbody = document.getElementById('users-table-body');
-        if (tbody) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="p-8 text-center text-red-500 font-bold">
-                        Error loading users: ${usersRes && usersRes.error ? window.escapeHtml(usersRes.error) : 'Unknown error'}
-                    </td>
-                </tr>
-            `;
+    const searchInput = document.getElementById('users-search-input');
+    const query = searchInput ? searchInput.value.trim() : '';
+
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    
+    // Normalise UI bounds to UTC ISO strings
+    const startDateVal = startDateInput ? startDateInput.value : '';
+    const endDateVal = endDateInput ? endDateInput.value : '';
+    const startDate = getLocalDateBounds(startDateVal, false);
+    const endDate = getLocalDateBounds(endDateVal, true);
+
+    const startIso = startDate ? startDate.toISOString() : null;
+    const endIso = endDate ? endDate.toISOString() : null;
+
+    try {
+        const res = await window.apiCall('get_filtered_users', {
+            search: query,
+            start_date: startIso,
+            end_date: endIso
+        });
+
+        if (res && Array.isArray(res)) {
+            window.adminState.usersList = res.map(u => ({
+                name: u.name,
+                email: u.email,
+                date: u.date,
+                plan: u.plan,
+                status: u.status,
+                rangeVisits: u.range_visits,
+                totalVisits: u.total_visits
+            }));
+        } else {
+            console.error("Failed to load users:", res);
+            window.adminState.usersList = [];
         }
-        return;
-    }
-
-    if (logsRes && Array.isArray(logsRes)) {
-        window.visitLogsList = logsRes;
-    } else {
-        console.error("Failed to load visit logs:", logsRes);
-        window.visitLogsList = [];
+    } catch (e) {
+        console.error("Error loading users:", e);
+        window.adminState.usersList = [];
+    } finally {
+        window.adminState.isLoadingUsers = false;
     }
 
     filterAndRenderUsers();
@@ -520,70 +544,11 @@ function filterAndRenderUsers() {
     const tbody = document.getElementById('users-table-body');
     if (!tbody) return;
 
-    const searchInput = document.getElementById('users-search-input');
-    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-    const startDateInput = document.getElementById('users-start-date');
-    const endDateInput = document.getElementById('users-end-date');
-    const startDateVal = startDateInput ? startDateInput.value : '';
-    const endDateVal = endDateInput ? endDateInput.value : '';
-
-    const startDate = getLocalDateBounds(startDateVal, false);
-    const endDate = getLocalDateBounds(endDateVal, true);
-
-    // usersList is already deduplicated on load, but we ensure uniqueness again here to be safe
-    const uniqueUsers = deduplicateUsers(usersList);
-
-    // Compute range visits and total visits for all users
-    let mappedUsers = uniqueUsers.map(user => {
-        let rangeVisits = 0;
-        let totalVisits = Number(user.visits) || 0;
-        if (window.visitLogsList) {
-            const userLogs = window.visitLogsList.filter(log => log.email && log.email.toLowerCase() === user.email.toLowerCase());
-            // Align the baseline user.visits with database logs
-            totalVisits = Math.max(totalVisits, userLogs.length);
-            if (startDate || endDate) {
-                const logsInRange = userLogs.filter(log => {
-                    const logDate = new Date(log.visited_at);
-                    return (!startDate || logDate >= startDate) && (!endDate || logDate <= endDate);
-                });
-                rangeVisits = logsInRange.length;
-            } else {
-                rangeVisits = totalVisits;
-            }
-        } else {
-            rangeVisits = totalVisits;
-        }
-        return {
-            ...user,
-            totalVisits: totalVisits,
-            rangeVisits: rangeVisits
-        };
-    });
-
-    let filteredUsers = mappedUsers;
-    if (query) {
-        filteredUsers = mappedUsers.filter(user => {
-            const name = (user.name || '').toLowerCase();
-            const email = (user.email || '').toLowerCase();
-            const plan = (user.plan || 'Community').toLowerCase();
-            const status = (user.status || 'Active').toLowerCase();
-            return name.includes(query) || email.includes(query) || plan.includes(query) || status.includes(query);
-        });
-    }
-
-    // Filter by date range (Joined in range OR Visited in range)
-    if (startDate || endDate) {
-        filteredUsers = filteredUsers.filter(user => {
-            const userJoinedDate = parseUserJoinedDate(user.date);
-            const joinedInRange = userJoinedDate && (!startDate || userJoinedDate >= startDate) && (!endDate || userJoinedDate <= endDate);
-            const visitedInRange = user.rangeVisits > 0;
-            return joinedInRange || visitedInRange;
-        });
-    }
+    const filteredUsers = deduplicateUsers(window.adminState.usersList);
 
     // Cache filtered list for PDF export
-    window.currentFilteredUsers = filteredUsers;
+    window.adminState.currentFilteredUsers = filteredUsers;
+    window.currentFilteredUsers = filteredUsers; // compatibility fallback
 
     if (filteredUsers.length === 0) {
         tbody.innerHTML = `
@@ -594,6 +559,10 @@ function filterAndRenderUsers() {
         return;
     }
 
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    const isFiltered = !!(startDateInput?.value || endDateInput?.value);
+
     tbody.innerHTML = filteredUsers.map((user, idx) => `
         <tr class="border-b border-border hover:bg-surface transition-colors">
             <td class="p-4 font-bold text-primary">${window.escapeHtml(user.name)}</td>
@@ -601,7 +570,7 @@ function filterAndRenderUsers() {
             <td class="p-4 text-xs text-secondary">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
             <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${window.escapeHtml(user.plan || 'Community')}</span></td>
             <td class="p-4 text-xs font-bold text-primary">
-                ${startDate || endDate ? `${user.rangeVisits || 0} <span class="text-secondary font-normal text-[10px]">/ ${user.totalVisits || 0}</span>` : (user.totalVisits || 0)}
+                ${isFiltered ? `${user.rangeVisits || 0} <span class="text-secondary font-normal text-[10px]">/ ${user.totalVisits || 0}</span>` : (user.totalVisits || 0)}
             </td>
             <td class="p-4">
                 <span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
@@ -674,7 +643,7 @@ window.exportUsersPDF = function () {
     doc.line(14, separatorY, 196, separatorY);
 
     // Get the filtered users (deduplicated)
-    const filteredList = deduplicateUsers(window.currentFilteredUsers || usersList);
+    const filteredList = deduplicateUsers(window.adminState.currentFilteredUsers);
 
     // Summary Analytics
     const totalUsers = filteredList.length;
@@ -801,16 +770,51 @@ window.handleAdminSignOut = async function () {
     window.location.replace('admin_login.html');
 };
 
+// Realtime Subscription handler
+function subscribeToRealtime() {
+    if (!window.useSupabase || !window.supabase) return null;
+
+    const reloadActiveTab = () => {
+        const activeTab = window.adminState.activeTab;
+        console.log("Realtime event triggered reload of tab:", activeTab);
+        if (activeTab === 'analytics') {
+            loadAnalyticsData();
+        } else if (activeTab === 'blog') {
+            loadBlogData();
+        } else if (activeTab === 'users') {
+            loadUserData();
+        } else if (activeTab === 'settings') {
+            loadSettingsData();
+        }
+    };
+
+    const channel = window.supabase.channel('admin-db-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'visit_logs' }, reloadActiveTab)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, reloadActiveTab)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'stats' }, reloadActiveTab)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'blogs' }, reloadActiveTab)
+        .subscribe();
+
+    return channel;
+}
+
 // Initial Start
 document.addEventListener('DOMContentLoaded', async () => {
     await window.backendReady;
     initTabs();
     await loadAnalyticsData();
+    subscribeToRealtime();
 
     // Attach listener to search input
     const searchInput = document.getElementById('users-search-input');
+    let searchDebounceTimeout = null;
     if (searchInput) {
-        searchInput.addEventListener('input', filterAndRenderUsers);
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchDebounceTimeout);
+            searchDebounceTimeout = setTimeout(() => {
+                loadUserData();
+            }, 300);
+        });
     }
 
     // Attach listeners to calendar date inputs and presets dropdown
@@ -821,7 +825,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const resetPresetToCustom = () => {
         if (presetSelect) presetSelect.value = 'custom';
-        filterAndRenderUsers();
+        loadUserData();
     };
 
     if (startDateInput) {
@@ -838,7 +842,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const { startStr, endStr } = getPresetDateRange(val);
             if (startDateInput) startDateInput.value = startStr;
             if (endDateInput) endDateInput.value = endStr;
-            filterAndRenderUsers();
+            loadUserData();
         });
     }
 
@@ -847,7 +851,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (startDateInput) startDateInput.value = '';
             if (endDateInput) endDateInput.value = '';
             if (presetSelect) presetSelect.value = 'all-time';
-            filterAndRenderUsers();
+            loadUserData();
         });
     }
 });

@@ -71,22 +71,47 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- Structured Data (Breadcrumb Schema) -->
+    <!-- Structured Data (Breadcrumb & ContactPage Schema) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://diginixit.com/"
-        },{
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Contact",
-            "item": "https://diginixit.com/contact.html"
-        }]
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [{
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://diginixit.com/"
+                },{
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Contact",
+                    "item": "https://diginixit.com/contact.html"
+                }]
+            },
+            {
+                "@type": "ContactPage",
+                "@id": "https://diginixit.com/contact.html#webpage",
+                "url": "https://diginixit.com/contact.html",
+                "name": "Contact DiginixIT | Get a Web Design & Development Consultation",
+                "description": "Contact DiginixIT engineering and design team. Submit project details or book a custom web design & development consultation with our experts.",
+                "mainEntity": {
+                    "@type": "LocalBusiness",
+                    "name": "DiginixIT",
+                    "image": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800",
+                    "telephone": "+923007960300",
+                     "email": "contact@diginix.com",
+                     "address": {
+                         "@type": "PostalAddress",
+                         "streetAddress": "Main Boulevard",
+                         "addressLocality": "Lahore",
+                         "postalCode": "54000",
+                         "addressCountry": "PK"
+                     }
+                }
+            }
+        ]
     }
     </script>
 </head>

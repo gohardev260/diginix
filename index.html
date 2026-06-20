@@ -75,24 +75,92 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- Structured Data (Organization Schema) -->
+    <!-- Structured Data (Organization, LocalBusiness & FAQ Schema) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "DiginixIT",
-        "url": "https://diginixit.com/",
-        "logo": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200",
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+92-300-7960300",
-            "contactType": "customer service",
-            "email": "contact@diginix.com"
-        },
-        "sameAs": [
-            "https://linkedin.com/",
-            "https://instagram.com/",
-            "https://twitter.com/"
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "https://diginixit.com/#organization",
+                "name": "DiginixIT",
+                "url": "https://diginixit.com/",
+                "logo": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200",
+                "contactPoint": {
+                     "@type": "ContactPoint",
+                     "telephone": "+92-300-7960300",
+                     "contactType": "customer service",
+                     "email": "contact@diginix.com"
+                },
+                "sameAs": [
+                    "https://linkedin.com/",
+                    "https://instagram.com/",
+                    "https://twitter.com/"
+                ]
+            },
+            {
+                "@type": "LocalBusiness",
+                "@id": "https://diginixit.com/#localbusiness",
+                "name": "DiginixIT",
+                "image": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800",
+                "url": "https://diginixit.com/",
+                "telephone": "+923007960300",
+                "priceRange": "$$",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "Main Boulevard",
+                    "addressLocality": "Lahore",
+                    "postalCode": "54000",
+                    "addressCountry": "PK"
+                },
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 31.5204,
+                    "longitude": 74.3587
+                },
+                "openingHoursSpecification": {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": [
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday"
+                    ],
+                    "opens": "09:00",
+                    "closes": "18:00"
+                }
+            },
+            {
+                "@type": "FAQPage",
+                "@id": "https://diginixit.com/#faq",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What web development services does DiginixIT offer?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "DiginixIT provides custom SaaS development, high-performance web engineering, spatial editorial layouts, database optimization, and secure API integration using modern tech stacks."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How does DiginixIT improve website performance?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "We optimize Core Web Vitals (LCP, FID, CLS) using server-side query processing, local caching systems, modern CSS structures, and streamlined database architectures."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are your SEO services localized?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes, we build robust topic clusters, structure local search business schemas, and construct advanced JSON-LD annotations to drive targeted traffic to client products."
+                        }
+                    }
+                ]
+            }
         ]
     }
     </script>
