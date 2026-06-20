@@ -501,12 +501,14 @@ window.apiCall = async function (action, data = null) {
     } catch (err) {
         console.error(`DiginixIT: Supabase query execution exception on '${action}':`, err);
         if (err && typeof err === 'object') {
+            const errStr = `Action: ${action}\nMessage: ${err.message}\nDetails: ${err.details}\nHint: ${err.hint}\nCode: ${err.code}`;
             console.error(`Error Details for '${action}':`, {
                 message: err.message,
                 details: err.details,
                 hint: err.hint,
                 code: err.code
             });
+            alert(errStr);
         }
         return { success: false, error: err.message || "Database connection error." };
     }

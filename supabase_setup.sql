@@ -152,7 +152,7 @@ SELECT '$0', '0', '0', '0,0,0,0,0,0'
 WHERE NOT EXISTS (SELECT 1 FROM public.stats);
 
 INSERT INTO public.admin_users (email) VALUES 
-('admin@diginix.com')
+('admin@diginixit.com')
 ON CONFLICT (email) DO NOTHING;
 
 -- Seed some mock anonymous visit logs if table is empty
@@ -320,7 +320,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 GRANT EXECUTE ON FUNCTION public.create_user_profile_from_auth(UUID, TEXT, TEXT) TO authenticated, anon;
 
--- Verify Admin Access based on JWT Email and app_metadata Role claim
+-- Verify Admin Access based on JWT Email
 CREATE OR REPLACE FUNCTION public.verify_admin_access(p_user_email TEXT)
 RETURNS TABLE (
     is_admin BOOLEAN,
@@ -329,13 +329,7 @@ RETURNS TABLE (
 BEGIN
     RETURN QUERY
     SELECT 
-        (EXISTS (
-            SELECT 1 FROM public.admin_users WHERE LOWER(email) = LOWER(p_user_email)
-        ) AND EXISTS (
-            SELECT 1 FROM auth.users 
-            WHERE LOWER(email) = LOWER(p_user_email) 
-              AND COALESCE(raw_app_meta_data->>'role', '') = 'admin'
-        ))::BOOLEAN,
+        (EXISTS (SELECT 1 FROM public.admin_users WHERE LOWER(email) = LOWER(p_user_email)))::BOOLEAN,
         p_user_email;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -400,12 +394,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Guard: Verify Admin Role only (Read Actions) via secure JWT claims
+-- Guard: Verify Admin Role only (Read Actions)
 CREATE OR REPLACE FUNCTION public.verify_admin_only()
 RETURNS BOOLEAN AS $$
 BEGIN
-    -- Verify that the authenticated user has the 'admin' role in their app_metadata
-    IF auth.jwt()->'app_metadata'->>'role' IS DISTINCT FROM 'admin' THEN
+    IF NOT EXISTS (
+        SELECT 1 FROM public.admin_users 
+        WHERE LOWER(email) = LOWER(auth.jwt()->>'email') 
+           OR LOWER(email) = LOWER(COALESCE(auth.email(), ''))
+    ) THEN
         RAISE EXCEPTION 'Admin access required';
     END IF;
     RETURN TRUE;
