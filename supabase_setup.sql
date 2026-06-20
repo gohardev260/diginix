@@ -946,19 +946,37 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 GRANT EXECUTE ON FUNCTION public.get_filtered_users_admin(TEXT, TIMESTAMPTZ, TIMESTAMPTZ) TO authenticated;
 
 -- Enable Realtime Replication
-BEGIN;
-    ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS public.visit_logs;
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.visit_logs;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'visit_logs'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.visit_logs;
+    END IF;
     
-    ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS public.users;
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.users;
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'users'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.users;
+    END IF;
     
-    ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS public.stats;
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.stats;
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'stats'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.stats;
+    END IF;
     
-    ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS public.blogs;
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.blogs;
-COMMIT;
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'blogs'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.blogs;
+    END IF;
+END;
+$$;
 
 -- 6. ROW LEVEL SECURITY (RLS) POLICIES
 -- Enable RLS on all tables to protect them from direct unauthorized PostgREST access.

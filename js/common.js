@@ -315,19 +315,21 @@ window.apiCall = async function (action, data = null) {
             }
 
             case 'get_settings': {
-                let rows, error;
-                try {
-                    const res = await window.supabase.rpc('get_all_settings_admin');
-                    rows = res.data;
-                    error = res.error;
-                } catch (e) {
-                    error = e;
-                }
-                if (error || !rows) {
-                    const res = await window.supabase.rpc('get_public_settings');
-                    rows = res.data;
-                    error = res.error;
-                }
+                const { data: rows, error } = await window.supabase.rpc('get_public_settings');
+                if (error) throw error;
+                const settings = {};
+                (rows || []).forEach(row => {
+                    let val = row.value_text;
+                    if (row.key_name === 'maintenanceMode') {
+                        val = (val === 'true');
+                    }
+                    settings[row.key_name] = val;
+                });
+                return settings;
+            }
+
+            case 'get_admin_settings': {
+                const { data: rows, error } = await window.supabase.rpc('get_all_settings_admin');
                 if (error) throw error;
                 const settings = {};
                 (rows || []).forEach(row => {
@@ -708,6 +710,7 @@ function apiCallLocalStorageFallback(action, data) {
                 resolve({ success: true });
                 break;
             case 'get_settings':
+            case 'get_admin_settings':
                 resolve(settings);
                 break;
             case 'save_settings':

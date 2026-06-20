@@ -726,7 +726,7 @@ window.deleteUser = async function (email) {
 // --- 5. Settings Tab Logic ---
 async function loadSettingsData() {
     await window.backendReady;
-    const settings = await window.apiCall('get_settings') || {};
+    const settings = await window.apiCall('get_admin_settings') || {};
     document.getElementById('settings-sitename').value = settings.siteName || 'DIGINIXIT.';
     document.getElementById('settings-email').value = settings.contactEmail || 'contact@diginix.com';
     document.getElementById('settings-phone').value = settings.contactPhone || '';
