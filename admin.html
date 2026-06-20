@@ -258,91 +258,62 @@
                         <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
                             <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Total Revenue
                             </div>
-                            <div class="text-3xl font-bold" id="stat-revenue">$124,500</div>
-                            <div class="text-[10px] text-green-500 font-bold" id="stat-revenue-change">+14.5% from last
-                                month</div>
+                            <div class="text-3xl font-bold" id="stat-revenue">0 PKR</div>
+                            <div class="text-[10px] text-green-500 font-bold" id="stat-revenue-change">+0% from last month</div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
                             <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Active Users
                             </div>
-                            <div class="text-3xl font-bold" id="stat-users">8,241</div>
-                            <div class="text-[10px] text-green-500 font-bold" id="stat-users-change">+5.2% from last
-                                month</div>
+                            <div class="text-3xl font-bold" id="stat-users">0</div>
+                            <div class="text-[10px] text-green-500 font-bold" id="stat-users-change">+0% from last month</div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
-                            <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Tool Executions
+                            <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Pro Subscribers
                             </div>
-                            <div class="text-3xl font-bold" id="stat-executions">142.3K</div>
-                            <div class="text-[10px] text-green-500 font-bold" id="stat-executions-change">+22.1% from
-                                last month</div>
+                            <div class="text-3xl font-bold" id="stat-pro-users">0</div>
+                            <div class="text-[10px] text-green-500 font-bold" id="stat-executions-change">+0% from last month</div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
                             <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Total Visits
                             </div>
                             <div class="text-3xl font-bold" id="stat-visits">0</div>
-                            <div class="text-[10px] text-green-500 font-bold" id="stat-visits-change">+0% from last
-                                month</div>
+                            <div class="text-[10px] text-green-500 font-bold" id="stat-visits-change">+0% from last month</div>
                         </div>
                     </div>
 
-                    <!-- Chart & Controller -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Chart -->
-                        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-border h-[400px]">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="font-bold text-sm">Monthly Revenue Performance</h3>
-                                <span class="text-xs text-secondary">Q1-Q2 (USD)</span>
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Revenue Chart -->
+                        <div class="bg-white p-6 rounded-2xl border border-border h-[380px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-sm">Revenue Growth</h3>
+                                <span class="text-xs text-secondary">Last 6 Months (PKR)</span>
                             </div>
-                            <div class="h-[300px]">
+                            <div class="flex-1 min-h-0">
                                 <canvas id="adminRevenueChart"></canvas>
                             </div>
                         </div>
 
-                        <!-- Controller -->
-                        <div class="bg-white p-6 rounded-2xl border border-border space-y-4">
-                            <h3 class="font-bold text-sm">Update Analytics Data</h3>
-                            <form onsubmit="handleStatsUpdate(event)" class="space-y-3">
-                                <div>
-                                    <label for="input-revenue"
-                                        class="text-[10px] font-bold text-secondary block mb-1">Total Revenue
-                                        ($)</label>
-                                    <input type="text" id="input-revenue" class="premium-input text-xs py-2 px-3"
-                                        required>
-                                </div>
-                                <div>
-                                    <label for="input-users"
-                                        class="text-[10px] font-bold text-secondary block mb-1">Active Users</label>
-                                    <input type="number" id="input-users" class="premium-input text-xs py-2 px-3"
-                                        required>
-                                </div>
-                                <div>
-                                    <label for="input-executions"
-                                        class="text-[10px] font-bold text-secondary block mb-1">Tool Executions</label>
-                                    <input type="text" id="input-executions" class="premium-input text-xs py-2 px-3"
-                                        required>
-                                </div>
-                                <div class="border-t border-border pt-3">
-                                    <label class="text-[10px] font-bold text-secondary block mb-2">Monthly Revenue
-                                        Points (Chart)</label>
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <input type="number" id="chart-jan" aria-label="January Revenue"
-                                            placeholder="Jan" class="premium-input text-xs p-2 text-center" required>
-                                        <input type="number" id="chart-feb" aria-label="February Revenue"
-                                            placeholder="Feb" class="premium-input text-xs p-2 text-center" required>
-                                        <input type="number" id="chart-mar" aria-label="March Revenue" placeholder="Mar"
-                                            class="premium-input text-xs p-2 text-center" required>
-                                        <input type="number" id="chart-apr" aria-label="April Revenue" placeholder="Apr"
-                                            class="premium-input text-xs p-2 text-center" required>
-                                        <input type="number" id="chart-may" aria-label="May Revenue" placeholder="May"
-                                            class="premium-input text-xs p-2 text-center" required>
-                                        <input type="number" id="chart-jun" aria-label="June Revenue" placeholder="Jun"
-                                            class="premium-input text-xs p-2 text-center" required>
-                                    </div>
-                                </div>
-                                <button type="submit"
-                                    class="w-full bg-primary text-white text-xs py-3 rounded-xl font-bold hover:bg-black transition-colors mt-2">Apply
-                                    Metrics</button>
-                            </form>
+                        <!-- Users Chart -->
+                        <div class="bg-white p-6 rounded-2xl border border-border h-[380px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-sm">User Acquisitions</h3>
+                                <span class="text-xs text-secondary">Last 6 Months (Signups)</span>
+                            </div>
+                            <div class="flex-1 min-h-0">
+                                <canvas id="adminUsersChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Visits Chart -->
+                        <div class="bg-white p-6 rounded-2xl border border-border h-[380px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-sm">Website Traffic</h3>
+                                <span class="text-xs text-secondary">Last 6 Months (Visits)</span>
+                            </div>
+                            <div class="flex-1 min-h-0">
+                                <canvas id="adminVisitsChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>

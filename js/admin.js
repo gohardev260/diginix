@@ -1,7 +1,9 @@
 // DiginixIT Admin Dashboard Logic
 
 window.adminState = {
-    currentChartInstance: null,
+    revenueChartInstance: null,
+    userChartInstance: null,
+    visitChartInstance: null,
     blogs: [],
     usersList: [],
     quill: null,
@@ -69,152 +71,165 @@ async function loadAnalyticsData() {
     if (!stats) return;
 
     // Set numbers
-    const revenueVal = stats.revenue || "$0";
+    const revenueVal = stats.revenue || "0 PKR";
     const activeUsersVal = stats.activeUsers || "0";
-    const executionsVal = stats.executions || "0";
+    const proUsersVal = stats.proUsers || "0";
     const visitsVal = stats.visits || 0;
 
     document.getElementById('stat-revenue').innerText = revenueVal;
     document.getElementById('stat-users').innerText = activeUsersVal;
-    document.getElementById('stat-executions').innerText = executionsVal;
+    
+    const proEl = document.getElementById('stat-pro-users');
+    if (proEl) proEl.innerText = proUsersVal;
+    
     document.getElementById('stat-visits').innerText = Number(visitsVal).toLocaleString();
 
-    // Dynamically show/hide or set change text
+    // Dynamically show change texts (resetting to +0% / normal since manual overrides are removed)
     const revChange = document.getElementById('stat-revenue-change');
     if (revChange) {
-        if (revenueVal === "$0" || revenueVal === "0" || revenueVal === "$0.00") {
-            revChange.innerText = "0% change from last month";
-            revChange.className = "text-[10px] text-gray-400 font-medium";
-        } else {
-            revChange.innerText = "+14.5% from last month";
-            revChange.className = "text-[10px] text-green-500 font-bold";
-        }
+        revChange.innerText = "0% change from last month";
+        revChange.className = "text-[10px] text-gray-400 font-medium";
     }
 
     const usersChange = document.getElementById('stat-users-change');
     if (usersChange) {
-        if (activeUsersVal === "0") {
-            usersChange.innerText = "0% change from last month";
-            usersChange.className = "text-[10px] text-gray-400 font-medium";
-        } else {
-            usersChange.innerText = "+5.2% from last month";
-            usersChange.className = "text-[10px] text-green-500 font-bold";
-        }
+        usersChange.innerText = "0% change from last month";
+        usersChange.className = "text-[10px] text-gray-400 font-medium";
     }
 
     const execsChange = document.getElementById('stat-executions-change');
     if (execsChange) {
-        if (executionsVal === "0") {
-            execsChange.innerText = "0% change from last month";
-            execsChange.className = "text-[10px] text-gray-400 font-medium";
-        } else {
-            execsChange.innerText = "+22.1% from last month";
-            execsChange.className = "text-[10px] text-green-500 font-bold";
-        }
+        execsChange.innerText = "0% change from last month";
+        execsChange.className = "text-[10px] text-gray-400 font-medium";
     }
 
     const visitsChange = document.getElementById('stat-visits-change');
     if (visitsChange) {
-        if (visitsVal === 0 || visitsVal === "0") {
-            visitsChange.innerText = "0% change from last month";
-            visitsChange.className = "text-[10px] text-gray-400 font-medium";
-        } else {
-            visitsChange.innerText = "+12.4% from last month";
-            visitsChange.className = "text-[10px] text-green-500 font-bold";
-        }
+        visitsChange.innerText = "0% change from last month";
+        visitsChange.className = "text-[10px] text-gray-400 font-medium";
     }
 
-    // Fill inputs
-    document.getElementById('input-revenue').value = revenueVal;
-    document.getElementById('input-users').value = activeUsersVal.toString().replace(/,/g, '');
-    document.getElementById('input-executions').value = executionsVal;
-
-    if (stats.revenueHistory) {
-        document.getElementById('chart-jan').value = stats.revenueHistory[0] || 0;
-        document.getElementById('chart-feb').value = stats.revenueHistory[1] || 0;
-        document.getElementById('chart-mar').value = stats.revenueHistory[2] || 0;
-        document.getElementById('chart-apr').value = stats.revenueHistory[3] || 0;
-        document.getElementById('chart-may').value = stats.revenueHistory[4] || 0;
-        document.getElementById('chart-jun').value = stats.revenueHistory[5] || 0;
+    // Generate Month Labels dynamically (last 6 months)
+    const labels = [];
+    const today = new Date();
+    const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        labels.push(shortMonths[d.getMonth()]);
     }
 
-    renderRevenueChart(stats.revenueHistory || [0, 0, 0, 0, 0, 0]);
+    renderCharts(
+        labels,
+        stats.revenueHistory || [0, 0, 0, 0, 0, 0],
+        stats.userHistory || [0, 0, 0, 0, 0, 0],
+        stats.visitHistory || [0, 0, 0, 0, 0, 0]
+    );
 }
 
-function renderRevenueChart(chartData) {
-    const ctx = document.getElementById('adminRevenueChart');
-    if (!ctx) return;
-
-    if (window.adminState.currentChartInstance) {
-        window.adminState.currentChartInstance.destroy();
-    }
-
-    window.adminState.currentChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            datasets: [{
-                label: 'Revenue ($)',
-                data: chartData,
-                borderColor: '#111111',
-                backgroundColor: 'rgba(17, 17, 17, 0.05)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#FFFFFF',
-                pointBorderColor: '#111111',
-                pointBorderWidth: 2,
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+function renderCharts(labels, revenueData, userData, visitData) {
+    // 1. Revenue Growth Chart
+    const ctxRevenue = document.getElementById('adminRevenueChart');
+    if (ctxRevenue) {
+        if (window.adminState.revenueChartInstance) {
+            window.adminState.revenueChartInstance.destroy();
+        }
+        window.adminState.revenueChartInstance = new Chart(ctxRevenue, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue (PKR)',
+                    data: revenueData,
+                    borderColor: '#111111',
+                    backgroundColor: 'rgba(17, 17, 17, 0.05)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#FFFFFF',
+                    pointBorderColor: '#111111',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#F5F5F5' },
-                    border: { display: false }
-                },
-                x: {
-                    grid: { display: false },
-                    border: { display: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#F5F5F5' }, border: { display: false } },
+                    x: { grid: { display: false }, border: { display: false } }
                 }
             }
-        }
-    });
-}
-
-window.handleStatsUpdate = async function (e) {
-    e.preventDefault();
-    const updatedStats = {
-        revenue: document.getElementById('input-revenue').value,
-        activeUsers: Number(document.getElementById('input-users').value).toLocaleString(),
-        executions: document.getElementById('input-executions').value,
-        revenueHistory: [
-            Number(document.getElementById('chart-jan').value),
-            Number(document.getElementById('chart-feb').value),
-            Number(document.getElementById('chart-mar').value),
-            Number(document.getElementById('chart-apr').value),
-            Number(document.getElementById('chart-may').value),
-            Number(document.getElementById('chart-jun').value),
-        ],
-        _csrf_token: window.csrfToken
-    };
-
-    await window.backendReady;
-    const res = await window.apiCall('save_stats', updatedStats);
-    if (res && res.success === true) {
-        if (window.useSupabase) await window.fetchCSRFToken();
-        alert('Platform metrics successfully updated.');
-        await loadAnalyticsData();
-    } else {
-        alert('Failed to update stats.');
+        });
     }
-};
+
+    // 2. User Acquisitions Chart (Bar Chart)
+    const ctxUsers = document.getElementById('adminUsersChart');
+    if (ctxUsers) {
+        if (window.adminState.userChartInstance) {
+            window.adminState.userChartInstance.destroy();
+        }
+        window.adminState.userChartInstance = new Chart(ctxUsers, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'New Signups',
+                    data: userData,
+                    backgroundColor: '#111111',
+                    hoverBackgroundColor: '#000000',
+                    borderRadius: 4,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#F5F5F5' }, border: { display: false } },
+                    x: { grid: { display: false }, border: { display: false } }
+                }
+            }
+        });
+    }
+
+    // 3. Website Traffic Chart (Line Chart)
+    const ctxVisits = document.getElementById('adminVisitsChart');
+    if (ctxVisits) {
+        if (window.adminState.visitChartInstance) {
+            window.adminState.visitChartInstance.destroy();
+        }
+        window.adminState.visitChartInstance = new Chart(ctxVisits, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Visits',
+                    data: visitData,
+                    borderColor: '#666666',
+                    backgroundColor: 'rgba(102, 102, 102, 0.05)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#FFFFFF',
+                    pointBorderColor: '#666666',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#F5F5F5' }, border: { display: false } },
+                    x: { grid: { display: false }, border: { display: false } }
+                }
+            }
+        });
+    }
+}
 
 // --- 3. Blog Management Tab ---
 function initQuill() {

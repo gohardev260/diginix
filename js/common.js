@@ -365,19 +365,23 @@ window.apiCall = async function (action, data = null) {
                 const dbStats = Array.isArray(rows) ? rows[0] : rows;
                 if (!dbStats) {
                     return {
-                        revenue: "$0",
+                        revenue: "0 PKR",
                         activeUsers: "0",
-                        executions: "0",
+                        proUsers: "0",
                         visits: 0,
-                        revenueHistory: [0, 0, 0, 0, 0, 0]
+                        revenueHistory: [0, 0, 0, 0, 0, 0],
+                        userHistory: [0, 0, 0, 0, 0, 0],
+                        visitHistory: [0, 0, 0, 0, 0, 0]
                     };
                 }
                 return {
                     revenue: dbStats.revenue,
                     activeUsers: String(dbStats.activeusers),
-                    executions: dbStats.executions,
+                    proUsers: String(dbStats.pro_users || '0'),
                     visits: Number(dbStats.visits),
-                    revenueHistory: (dbStats.revenuehistory || '0,0,0,0,0,0').split(',').map(Number)
+                    revenueHistory: (dbStats.revenuehistory || '0,0,0,0,0,0').split(',').map(Number),
+                    userHistory: (dbStats.userhistory || '0,0,0,0,0,0').split(',').map(Number),
+                    visitHistory: (dbStats.visithistory || '0,0,0,0,0,0').split(',').map(Number)
                 };
             }
 
@@ -719,11 +723,50 @@ function apiCallLocalStorageFallback(action, data) {
                 break;
             case 'get_stats': {
                 const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
-                const anonLogs = visitLogs.filter(log => !log.email);
-                const userVisitsSum = users.reduce((sum, u) => sum + (Number(u.visits) || 0), 0);
+                const usersList = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                const totalUsers = usersList.length;
+                const proUsersCount = usersList.filter(u => u.plan === 'Pro').length;
+                const totalVisits = usersList.reduce((sum, u) => sum + (Number(u.visits) || 0), 0) + visitLogs.filter(log => !log.email).length;
+                
+                const months = [];
+                const today = new Date();
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                    months.push(d);
+                }
+                
+                const userHistory = months.map(m => {
+                    return usersList.filter(u => {
+                        const uDate = new Date(u.date);
+                        return uDate.getFullYear() === m.getFullYear() && uDate.getMonth() === m.getMonth();
+                    }).length;
+                });
+                
+                const visitHistory = months.map(m => {
+                    return visitLogs.filter(log => {
+                        const logDate = new Date(log.visited_at);
+                        return logDate.getFullYear() === m.getFullYear() && logDate.getMonth() === m.getMonth();
+                    }).length;
+                });
+                
+                const revenueHistory = months.map(m => {
+                    const endOfMonth = new Date(m.getFullYear(), m.getMonth() + 1, 0, 23, 59, 59, 999);
+                    const activeProUsers = usersList.filter(u => {
+                        const uDate = new Date(u.date);
+                        return u.plan === 'Pro' && uDate <= endOfMonth;
+                    }).length;
+                    return activeProUsers * 1000;
+                });
+                
                 resolve({
-                    ...stats,
-                    visits: userVisitsSum + anonLogs.length
+                    revenue: `${proUsersCount * 1000} PKR`,
+                    activeUsers: String(totalUsers),
+                    proUsers: String(proUsersCount),
+                    visits: totalVisits,
+                    revenueHistory: revenueHistory,
+                    userHistory: userHistory,
+                    visitHistory: visitHistory
                 });
                 break;
             }
