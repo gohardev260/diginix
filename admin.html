@@ -99,16 +99,10 @@
 
     <!-- Security Check (Redirect if not authenticated) -->
     <script>
-        window.csrfToken = null;
+        window.csrfToken = 'deprecated';
 
         async function fetchCSRFToken() {
-            const { data, error } = await window.supabase.rpc('generate_csrf_token');
-            if (error || !data || data.length === 0) {
-                console.error('Failed to generate CSRF token:', error);
-                alert('Security token generation failed. Please reload the page.');
-                return false;
-            }
-            window.csrfToken = data[0].csrf_token;
+            window.csrfToken = 'deprecated';
             return true;
         }
         window.fetchCSRFToken = fetchCSRFToken;
@@ -474,6 +468,13 @@
                                     <!-- Populated dynamically -->
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-surface border-t border-border text-xs">
+                            <span class="text-secondary font-medium" id="users-page-info">Showing 0-0 of 0 entries</span>
+                            <div class="flex space-x-2">
+                                <button id="users-prev-page" class="px-3.5 py-2 border border-border rounded-xl font-bold bg-white text-secondary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                                <button id="users-next-page" class="px-3.5 py-2 border border-border rounded-xl font-bold bg-white text-secondary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+                            </div>
                         </div>
                     </div>
                 </div>

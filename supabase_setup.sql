@@ -36,6 +36,9 @@ DROP FUNCTION IF EXISTS public.update_user_status_secure(TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.delete_user_secure(TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.save_settings_secure(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.migrate_legacy_users();
+DROP FUNCTION IF EXISTS public.get_filtered_users_admin_v2(TEXT, TIMESTAMPTZ, TIMESTAMPTZ, INT, INT);
+DROP FUNCTION IF EXISTS public.export_users_report_data(TEXT, TIMESTAMPTZ, TIMESTAMPTZ);
+DROP FUNCTION IF EXISTS public.handle_admin_role_assignment() CASCADE;
 
 -- Enable pgcrypto extension for secure password hashing and random bytes
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -317,7 +320,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 GRANT EXECUTE ON FUNCTION public.create_user_profile_from_auth(UUID, TEXT, TEXT) TO authenticated, anon;
 
--- Verify Admin Access based on JWT Email
+-- Verify Admin Access based on JWT Email and app_metadata Role claim
 CREATE OR REPLACE FUNCTION public.verify_admin_access(p_user_email TEXT)
 RETURNS TABLE (
     is_admin BOOLEAN,
@@ -326,7 +329,13 @@ RETURNS TABLE (
 BEGIN
     RETURN QUERY
     SELECT 
-        (EXISTS (SELECT 1 FROM public.admin_users WHERE LOWER(email) = LOWER(p_user_email)))::BOOLEAN,
+        (EXISTS (
+            SELECT 1 FROM public.admin_users WHERE LOWER(email) = LOWER(p_user_email)
+        ) AND EXISTS (
+            SELECT 1 FROM auth.users 
+            WHERE LOWER(email) = LOWER(p_user_email) 
+              AND COALESCE(raw_app_meta_data->>'role', '') = 'admin'
+        ))::BOOLEAN,
         p_user_email;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -391,32 +400,23 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Guard: Verify Admin Role only (Read Actions)
+-- Guard: Verify Admin Role only (Read Actions) via secure JWT claims
 CREATE OR REPLACE FUNCTION public.verify_admin_only()
 RETURNS BOOLEAN AS $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM public.admin_users 
-        WHERE LOWER(email) = LOWER(auth.jwt()->>'email') 
-           OR LOWER(email) = LOWER(COALESCE(auth.email(), ''))
-    ) THEN
+    -- Verify that the authenticated user has the 'admin' role in their app_metadata
+    IF auth.jwt()->'app_metadata'->>'role' IS DISTINCT FROM 'admin' THEN
         RAISE EXCEPTION 'Admin access required';
     END IF;
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Guard: Verify Admin Role and Validate CSRF (Write Actions)
-CREATE OR REPLACE FUNCTION public.verify_admin_and_csrf(p_csrf_token TEXT)
+-- Guard: Verify Admin Role (Write Actions) - CSRF check is deprecated for token-bearer security
+CREATE OR REPLACE FUNCTION public.verify_admin_and_csrf(p_csrf_token TEXT DEFAULT NULL)
 RETURNS BOOLEAN AS $$
 BEGIN
-    PERFORM public.verify_admin_only();
-
-    IF NOT public.verify_csrf_token(p_csrf_token) THEN
-        RAISE EXCEPTION 'Invalid or expired security token. Please reload the page and try again.';
-    END IF;
-
-    RETURN TRUE;
+    RETURN public.verify_admin_only();
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -790,3 +790,164 @@ ALTER TABLE public.stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.csrf_tokens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.visit_logs ENABLE ROW LEVEL SECURITY;
+
+-- 7. SECURITY TRIGGER: Block public registration of admin emails & assign role
+CREATE OR REPLACE FUNCTION public.handle_admin_role_assignment()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Block public sign-ups for admin emails
+    IF current_user = 'authenticator' AND EXISTS (
+        SELECT 1 FROM public.admin_users WHERE LOWER(email) = LOWER(NEW.email)
+    ) THEN
+        RAISE EXCEPTION 'Registration not allowed for this email address.';
+    END IF;
+
+    -- Assign 'admin' role in app_metadata if email is in admin_users
+    IF EXISTS (
+        SELECT 1 FROM public.admin_users WHERE LOWER(email) = LOWER(NEW.email)
+    ) THEN
+        NEW.raw_app_meta_data := jsonb_set(
+            COALESCE(NEW.raw_app_meta_data, '{}'::jsonb),
+            '{role}',
+            '"admin"'
+        );
+    ELSE
+        -- Remove role if not admin
+        NEW.raw_app_meta_data := COALESCE(NEW.raw_app_meta_data, '{}'::jsonb) - 'role';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trigger_handle_admin_role ON auth.users;
+CREATE TRIGGER trigger_handle_admin_role
+BEFORE INSERT OR UPDATE OF email ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_admin_role_assignment();
+
+
+-- 8. SECURE AGGREGATION & REPORTING RPC FUNCTIONS (SECURITY DEFINER)
+
+-- High performance paginated users list query RPC
+CREATE OR REPLACE FUNCTION public.get_filtered_users_admin_v2(
+    p_search TEXT DEFAULT NULL,
+    p_start_date TIMESTAMPTZ DEFAULT NULL,
+    p_end_date TIMESTAMPTZ DEFAULT NULL,
+    p_limit INT DEFAULT 50,
+    p_offset INT DEFAULT 0
+)
+RETURNS TABLE (
+    name TEXT,
+    email TEXT,
+    date TIMESTAMPTZ,
+    plan TEXT,
+    status TEXT,
+    total_visits INT8,
+    range_visits INT8,
+    total_count INT8
+) AS $$
+DECLARE
+    v_total_filtered_count INT8;
+BEGIN
+    PERFORM public.verify_admin_only();
+
+    -- Calculate total matching users first
+    SELECT COUNT(*) INTO v_total_filtered_count
+    FROM public.users u
+    WHERE (p_search IS NULL OR p_search = '' 
+           OR LOWER(u.name) LIKE LOWER('%' || p_search || '%')
+           OR LOWER(u.email) LIKE LOWER('%' || p_search || '%')
+           OR LOWER(u.plan) LIKE LOWER('%' || p_search || '%')
+           OR LOWER(u.status) LIKE LOWER('%' || p_search || '%'));
+
+    RETURN QUERY
+    WITH filtered_users AS (
+        SELECT u.name, u.email, u.date, u.plan, u.status, u.visits
+        FROM public.users u
+        WHERE (p_search IS NULL OR p_search = '' 
+               OR LOWER(u.name) LIKE LOWER('%' || p_search || '%')
+               OR LOWER(u.email) LIKE LOWER('%' || p_search || '%')
+               OR LOWER(u.plan) LIKE LOWER('%' || p_search || '%')
+               OR LOWER(u.status) LIKE LOWER('%' || p_search || '%'))
+        ORDER BY u.date DESC
+        LIMIT p_limit OFFSET p_offset
+    ),
+    stats_agg AS (
+        SELECT 
+            fu.email,
+            COALESCE((
+                SELECT COUNT(*) FROM public.visit_logs vl 
+                WHERE LOWER(vl.email) = LOWER(fu.email)
+                  AND (p_start_date IS NULL OR vl.visited_at >= p_start_date)
+                  AND (p_end_date IS NULL OR vl.visited_at <= p_end_date)
+            ), 0)::INT8 as r_visits
+        FROM filtered_users fu
+    )
+    SELECT 
+        fu.name,
+        fu.email,
+        fu.date,
+        fu.plan,
+        fu.status,
+        (COALESCE(fu.visits, 0))::INT8 as total_visits,
+        sa.r_visits as range_visits,
+        v_total_filtered_count as total_count
+    FROM filtered_users fu
+    LEFT JOIN stats_agg sa ON LOWER(sa.email) = LOWER(fu.email);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.get_filtered_users_admin_v2(TEXT, TIMESTAMPTZ, TIMESTAMPTZ, INT, INT) TO authenticated;
+
+
+-- Security definer reporting RPC for live PDF generation
+CREATE OR REPLACE FUNCTION public.export_users_report_data(
+    p_search TEXT DEFAULT NULL,
+    p_start_date TIMESTAMPTZ DEFAULT NULL,
+    p_end_date TIMESTAMPTZ DEFAULT NULL
+)
+RETURNS TABLE (
+    name TEXT,
+    email TEXT,
+    plan TEXT,
+    range_visits INT8,
+    total_visits INT8
+) AS $$
+BEGIN
+    PERFORM public.verify_admin_only();
+
+    RETURN QUERY
+    WITH filtered_users AS (
+        SELECT u.name, u.email, u.plan, u.visits
+        FROM public.users u
+        WHERE (p_search IS NULL OR p_search = '' 
+               OR LOWER(u.name) LIKE LOWER('%' || p_search || '%')
+               OR LOWER(u.email) LIKE LOWER('%' || p_search || '%')
+               OR LOWER(u.plan) LIKE LOWER('%' || p_search || '%')
+               OR LOWER(u.status) LIKE LOWER('%' || p_search || '%'))
+        ORDER BY u.name ASC
+    ),
+    stats_agg AS (
+        SELECT 
+            fu.email,
+            COALESCE((
+                SELECT COUNT(*) FROM public.visit_logs vl 
+                WHERE LOWER(vl.email) = LOWER(fu.email)
+                  AND (p_start_date IS NULL OR vl.visited_at >= p_start_date)
+                  AND (p_end_date IS NULL OR vl.visited_at <= p_end_date)
+            ), 0)::INT8 as r_visits
+        FROM filtered_users fu
+    )
+    SELECT 
+        fu.name,
+        fu.email,
+        fu.plan,
+        sa.r_visits as range_visits,
+        (COALESCE(fu.visits, 0))::INT8 as total_visits
+    FROM filtered_users fu
+    LEFT JOIN stats_agg sa ON LOWER(sa.email) = LOWER(fu.email);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.export_users_report_data(TEXT, TIMESTAMPTZ, TIMESTAMPTZ) TO authenticated;

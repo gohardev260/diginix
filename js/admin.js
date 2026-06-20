@@ -467,58 +467,28 @@ function formatLocalShortDate(dateStr) {
     }
 }
 
+let usersCurrentPage = 1;
+const usersPageSize = 10;
+let usersTotalCount = 0;
+
+function updatePaginationUI() {
+    const pageInfo = document.getElementById('users-page-info');
+    const prevBtn = document.getElementById('users-prev-page');
+    const nextBtn = document.getElementById('users-next-page');
+
+    if (!pageInfo || !prevBtn || !nextBtn) return;
+
+    const startEntry = usersTotalCount === 0 ? 0 : (usersCurrentPage - 1) * usersPageSize + 1;
+    const endEntry = Math.min(usersCurrentPage * usersPageSize, usersTotalCount);
+
+    pageInfo.innerText = `Showing ${startEntry}-${endEntry} of ${usersTotalCount} entries`;
+
+    prevBtn.disabled = usersCurrentPage <= 1;
+    nextBtn.disabled = usersCurrentPage * usersPageSize >= usersTotalCount;
+}
+
 async function loadUserData() {
     await window.backendReady;
-    const [usersRes, logsRes] = await Promise.all([
-        window.apiCall('get_users'),
-        window.apiCall('get_visit_logs')
-    ]);
-
-    if (usersRes && Array.isArray(usersRes)) {
-        usersList = deduplicateUsers(usersRes);
-    } else {
-        console.error("Failed to load users:", usersRes);
-        usersList = [];
-        const tbody = document.getElementById('users-table-body');
-        if (tbody) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="p-8 text-center text-red-500 font-bold">
-                        Error loading users: ${usersRes && usersRes.error ? window.escapeHtml(usersRes.error) : 'Unknown error'}
-                    </td>
-                </tr>
-            `;
-        }
-        return;
-    }
-
-    if (logsRes && Array.isArray(logsRes)) {
-        window.visitLogsList = logsRes;
-    } else {
-        console.error("Failed to load visit logs:", logsRes);
-        window.visitLogsList = [];
-    }
-
-    filterAndRenderUsers();
-}
-
-function getLocalDateBounds(dateStr, isEnd = false) {
-    if (!dateStr) return null;
-    const parts = dateStr.split('-');
-    if (parts.length !== 3) return null;
-    const year = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1;
-    const day = parseInt(parts[2], 10);
-    if (isEnd) {
-        return new Date(year, month, day, 23, 59, 59, 999);
-    } else {
-        return new Date(year, month, day, 0, 0, 0, 0);
-    }
-}
-
-function filterAndRenderUsers() {
-    const tbody = document.getElementById('users-table-body');
-    if (!tbody) return;
 
     const searchInput = document.getElementById('users-search-input');
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -528,84 +498,70 @@ function filterAndRenderUsers() {
     const startDateVal = startDateInput ? startDateInput.value : '';
     const endDateVal = endDateInput ? endDateInput.value : '';
 
-    const startDate = getLocalDateBounds(startDateVal, false);
-    const endDate = getLocalDateBounds(endDateVal, true);
+    let p_start_date = null;
+    let p_end_date = null;
+    if (startDateVal) {
+        const dateParts = startDateVal.split('-');
+        p_start_date = new Date(Date.UTC(parseInt(dateParts[0], 10), parseInt(dateParts[1], 10) - 1, parseInt(dateParts[2], 10), 0, 0, 0, 0)).toISOString();
+    }
+    if (endDateVal) {
+        const dateParts = endDateVal.split('-');
+        p_end_date = new Date(Date.UTC(parseInt(dateParts[0], 10), parseInt(dateParts[1], 10) - 1, parseInt(dateParts[2], 10), 23, 59, 59, 999)).toISOString();
+    }
 
-    // usersList is already deduplicated on load, but we ensure uniqueness again here to be safe
-    const uniqueUsers = deduplicateUsers(usersList);
+    const limit = usersPageSize;
+    const offset = (usersCurrentPage - 1) * usersPageSize;
 
-    // Compute range visits and total visits for all users
-    let mappedUsers = uniqueUsers.map(user => {
-        let rangeVisits = 0;
-        let totalVisits = Number(user.visits) || 0;
-        if (window.visitLogsList) {
-            const userLogs = window.visitLogsList.filter(log => log.email && log.email.toLowerCase() === user.email.toLowerCase());
-            // Align the baseline user.visits with database logs
-            totalVisits = Math.max(totalVisits, userLogs.length);
-            if (startDate || endDate) {
-                const logsInRange = userLogs.filter(log => {
-                    const logDate = new Date(log.visited_at);
-                    return (!startDate || logDate >= startDate) && (!endDate || logDate <= endDate);
-                });
-                rangeVisits = logsInRange.length;
-            } else {
-                rangeVisits = totalVisits;
-            }
-        } else {
-            rangeVisits = totalVisits;
-        }
-        return {
-            ...user,
-            totalVisits: totalVisits,
-            rangeVisits: rangeVisits
-        };
+    const usersRes = await window.apiCall('get_filtered_users_admin_v2', {
+        search: query,
+        startDate: p_start_date,
+        endDate: p_end_date,
+        limit: limit,
+        offset: offset
     });
 
-    let filteredUsers = mappedUsers;
-    if (query) {
-        filteredUsers = mappedUsers.filter(user => {
-            const name = (user.name || '').toLowerCase();
-            const email = (user.email || '').toLowerCase();
-            const plan = (user.plan || 'Community').toLowerCase();
-            const status = (user.status || 'Active').toLowerCase();
-            return name.includes(query) || email.includes(query) || plan.includes(query) || status.includes(query);
-        });
-    }
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
 
-    // Filter by date range (Joined in range OR Visited in range)
-    if (startDate || endDate) {
-        filteredUsers = filteredUsers.filter(user => {
-            const userJoinedDate = parseUserJoinedDate(user.date);
-            const joinedInRange = userJoinedDate && (!startDate || userJoinedDate >= startDate) && (!endDate || userJoinedDate <= endDate);
-            const visitedInRange = user.rangeVisits > 0;
-            return joinedInRange || visitedInRange;
-        });
-    }
-
-    // Cache filtered list for PDF export
-    window.currentFilteredUsers = filteredUsers;
-
-    if (filteredUsers.length === 0) {
+    if (!usersRes || !Array.isArray(usersRes)) {
+        console.error("Failed to load users:", usersRes);
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="p-8 text-center text-secondary font-light">No clients found matching the search criteria.</td>
+                <td colspan="7" class="p-8 text-center text-red-500 font-bold">
+                    Error loading users: ${usersRes && usersRes.error ? window.escapeHtml(usersRes.error) : 'Unknown error'}
+                </td>
             </tr>
         `;
         return;
     }
 
-    tbody.innerHTML = filteredUsers.map((user, idx) => `
+    usersList = usersRes;
+
+    if (usersRes.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="p-8 text-center text-secondary font-light">No clients found matching the search criteria.</td>
+            </tr>
+        `;
+        usersTotalCount = 0;
+        updatePaginationUI();
+        return;
+    }
+
+    usersTotalCount = Number(usersRes[0].total_count) || usersRes.length;
+
+    tbody.innerHTML = usersRes.map((user) => `
         <tr class="border-b border-border hover:bg-surface transition-colors">
             <td class="p-4 font-bold text-primary">${window.escapeHtml(user.name)}</td>
             <td class="p-4 text-xs font-mono text-secondary">${window.escapeHtml(user.email)}</td>
             <td class="p-4 text-xs text-secondary">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
             <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${window.escapeHtml(user.plan || 'Community')}</span></td>
             <td class="p-4 text-xs font-bold text-primary">
-                ${startDate || endDate ? `${user.rangeVisits || 0} <span class="text-secondary font-normal text-[10px]">/ ${user.totalVisits || 0}</span>` : (user.totalVisits || 0)}
+                ${startDateVal || endDateVal ? `${user.range_visits || 0} <span class="text-secondary font-normal text-[10px]">/ ${user.total_visits || 0}</span>` : (user.total_visits || 0)}
             </td>
             <td class="p-4">
                 <span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
-                    ${window.escapeHtml(user.status || 'Active')}
+                     ${window.escapeHtml(user.status || 'Active')}
                 </span>
             </td>
             <td class="p-4 text-right space-x-2">
@@ -629,12 +585,50 @@ function filterAndRenderUsers() {
             window.deleteUser(email);
         });
     });
+
+    updatePaginationUI();
 }
 
-window.exportUsersPDF = function () {
+// Deprecated in favor of server-side SQL aggregation
+function filterAndRenderUsers() {
+    loadUserData();
+}
+
+window.exportUsersPDF = async function () {
     const { jsPDF } = window.jspdf;
     if (!jsPDF) {
         alert("PDF library is still loading. Please try again in a moment.");
+        return;
+    }
+
+    const searchInput = document.getElementById('users-search-input');
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    const startDateVal = startDateInput ? startDateInput.value : '';
+    const endDateVal = endDateInput ? endDateInput.value : '';
+
+    let p_start_date = null;
+    let p_end_date = null;
+    if (startDateVal) {
+        const dateParts = startDateVal.split('-');
+        p_start_date = new Date(Date.UTC(parseInt(dateParts[0], 10), parseInt(dateParts[1], 10) - 1, parseInt(dateParts[2], 10), 0, 0, 0, 0)).toISOString();
+    }
+    if (endDateVal) {
+        const dateParts = endDateVal.split('-');
+        p_end_date = new Date(Date.UTC(parseInt(dateParts[0], 10), parseInt(dateParts[1], 10) - 1, parseInt(dateParts[2], 10), 23, 59, 59, 999)).toISOString();
+    }
+
+    await window.backendReady;
+    const reportData = await window.apiCall('export_users_report_data', {
+        search: query,
+        startDate: p_start_date,
+        endDate: p_end_date
+    });
+
+    if (!reportData || !Array.isArray(reportData)) {
+        alert("Failed to retrieve report data from the database.");
         return;
     }
 
@@ -651,11 +645,6 @@ window.exportUsersPDF = function () {
     doc.setTextColor(102, 102, 102);
     doc.text("User Analytics & Engagement Report", 14, 26);
     
-    // Add date range notice if any filters applied
-    const startDateInput = document.getElementById('users-start-date');
-    const endDateInput = document.getElementById('users-end-date');
-    const startDateVal = startDateInput ? startDateInput.value : '';
-    const endDateVal = endDateInput ? endDateInput.value : '';
     let separatorY = 38;
     let summaryY = 48;
     
@@ -673,13 +662,10 @@ window.exportUsersPDF = function () {
     doc.setDrawColor(229, 229, 229);
     doc.line(14, separatorY, 196, separatorY);
 
-    // Get the filtered users (deduplicated)
-    const filteredList = deduplicateUsers(window.currentFilteredUsers || usersList);
-
     // Summary Analytics
-    const totalUsers = filteredList.length;
+    const totalUsers = reportData.length;
     const isFiltered = !!(startDateVal || endDateVal);
-    const totalVisits = filteredList.reduce((sum, u) => sum + (Number(isFiltered ? u.rangeVisits : u.totalVisits) || 0), 0);
+    const totalVisits = reportData.reduce((sum, u) => sum + (Number(isFiltered ? u.range_visits : u.total_visits) || 0), 0);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -691,8 +677,8 @@ window.exportUsersPDF = function () {
     // Generate table contents
     const visitsHeader = isFiltered ? "Visits (Range / Total)" : "Total Visits";
     const headers = [["Client Name", "Email Address", "Tier Plan", visitsHeader]];
-    const data = filteredList.map(u => {
-        const visitsText = isFiltered ? `${u.rangeVisits || 0} / ${u.totalVisits || 0}` : String(u.totalVisits || 0);
+    const data = reportData.map(u => {
+        const visitsText = isFiltered ? `${u.range_visits || 0} / ${u.total_visits || 0}` : String(u.total_visits || 0);
         return [
             u.name || "N/A",
             u.email || "N/A",
@@ -735,7 +721,6 @@ window.toggleUserStatus = async function (email) {
     await window.backendReady;
     const res = await window.apiCall('update_user_status', { email, _csrf_token: window.csrfToken });
     if (res && res.success === true) {
-        if (window.useSupabase) await window.fetchCSRFToken();
         await loadUserData();
     } else {
         alert('Failed to update user status.');
@@ -747,12 +732,31 @@ window.deleteUser = async function (email) {
     await window.backendReady;
     const res = await window.apiCall('delete_user', { email, _csrf_token: window.csrfToken });
     if (res && res.success === true) {
-        if (window.useSupabase) await window.fetchCSRFToken();
         await loadUserData();
     } else {
         alert('Failed to delete user.');
     }
 };
+
+function subscribeToRealtimeVisits() {
+    if (!window.useSupabase || !window.supabase) return;
+
+    window.supabase
+        .channel('admin-realtime-visits')
+        .on(
+            'postgres_changes',
+            { event: 'INSERT', schema: 'public', table: 'visit_logs' },
+            (payload) => {
+                console.log('Real-time visit registered:', payload.new);
+                const visitsEl = document.getElementById('stat-visits');
+                if (visitsEl) {
+                    const currentVal = parseInt(visitsEl.innerText.replace(/,/g, ''), 10) || 0;
+                    visitsEl.innerText = (currentVal + 1).toLocaleString();
+                }
+            }
+        )
+        .subscribe();
+}
 
 // --- 5. Settings Tab Logic ---
 async function loadSettingsData() {
@@ -806,11 +810,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     await window.backendReady;
     initTabs();
     await loadAnalyticsData();
+    subscribeToRealtimeVisits();
 
     // Attach listener to search input
     const searchInput = document.getElementById('users-search-input');
+    const handleUsersSearchOrFilterChange = async () => {
+        usersCurrentPage = 1;
+        await loadUserData();
+    };
+
     if (searchInput) {
-        searchInput.addEventListener('input', filterAndRenderUsers);
+        searchInput.addEventListener('input', handleUsersSearchOrFilterChange);
+    }
+
+    // Bind users pagination button click events
+    const prevBtn = document.getElementById('users-prev-page');
+    const nextBtn = document.getElementById('users-next-page');
+    if (prevBtn) {
+        prevBtn.addEventListener('click', async () => {
+            if (usersCurrentPage > 1) {
+                usersCurrentPage--;
+                await loadUserData();
+            }
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', async () => {
+            if (usersCurrentPage * usersPageSize < usersTotalCount) {
+                usersCurrentPage++;
+                await loadUserData();
+            }
+        });
     }
 
     // Attach listeners to calendar date inputs and presets dropdown
@@ -821,7 +851,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const resetPresetToCustom = () => {
         if (presetSelect) presetSelect.value = 'custom';
-        filterAndRenderUsers();
+        handleUsersSearchOrFilterChange();
     };
 
     if (startDateInput) {
@@ -838,7 +868,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const { startStr, endStr } = getPresetDateRange(val);
             if (startDateInput) startDateInput.value = startStr;
             if (endDateInput) endDateInput.value = endStr;
-            filterAndRenderUsers();
+            handleUsersSearchOrFilterChange();
         });
     }
 
@@ -847,7 +877,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (startDateInput) startDateInput.value = '';
             if (endDateInput) endDateInput.value = '';
             if (presetSelect) presetSelect.value = 'all-time';
-            filterAndRenderUsers();
+            handleUsersSearchOrFilterChange();
         });
     }
 });

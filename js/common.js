@@ -264,6 +264,30 @@ window.apiCall = async function (action, data = null) {
                 return users || [];
             }
 
+            case 'get_filtered_users_admin_v2': {
+                const { data: users, error } = await window.supabase
+                    .rpc('get_filtered_users_admin_v2', {
+                        p_search: data.search || null,
+                        p_start_date: data.startDate || null,
+                        p_end_date: data.endDate || null,
+                        p_limit: data.limit || 50,
+                        p_offset: data.offset || 0
+                    });
+                if (error) throw error;
+                return users || [];
+            }
+
+            case 'export_users_report_data': {
+                const { data: users, error } = await window.supabase
+                    .rpc('export_users_report_data', {
+                        p_search: data.search || null,
+                        p_start_date: data.startDate || null,
+                        p_end_date: data.endDate || null
+                    });
+                if (error) throw error;
+                return users || [];
+            }
+
             case 'get_visit_logs': {
                 const { data: logs, error } = await window.supabase
                     .rpc('get_visit_logs_admin');
@@ -526,6 +550,77 @@ function apiCallLocalStorageFallback(action, data) {
             case 'get_users':
                 resolve(users);
                 break;
+            case 'get_filtered_users_admin_v2': {
+                const search = (data && data.search) ? data.search.toLowerCase() : '';
+                const startDate = (data && data.startDate) ? new Date(data.startDate) : null;
+                const endDate = (data && data.endDate) ? new Date(data.endDate) : null;
+                const limit = (data && data.limit) ? data.limit : 50;
+                const offset = (data && data.offset) ? data.offset : 0;
+
+                const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+                
+                let filtered = users.filter(u => {
+                    const name = (u.name || '').toLowerCase();
+                    const email = (u.email || '').toLowerCase();
+                    const plan = (u.plan || 'Community').toLowerCase();
+                    const status = (u.status || 'Active').toLowerCase();
+                    return name.includes(search) || email.includes(search) || plan.includes(search) || status.includes(search);
+                });
+
+                let mapped = filtered.map(u => {
+                    const uLogs = visitLogs.filter(log => log.email && log.email.toLowerCase() === u.email.toLowerCase());
+                    const rangeLogs = uLogs.filter(log => {
+                        const d = new Date(log.visited_at);
+                        return (!startDate || d >= startDate) && (!endDate || d <= endDate);
+                    });
+                    return {
+                        name: u.name,
+                        email: u.email,
+                        date: u.date,
+                        plan: u.plan,
+                        status: u.status,
+                        total_visits: Math.max(Number(u.visits) || 0, uLogs.length),
+                        range_visits: rangeLogs.length,
+                        total_count: filtered.length
+                    };
+                });
+
+                resolve(mapped.slice(offset, offset + limit));
+                break;
+            }
+            case 'export_users_report_data': {
+                const search = (data && data.search) ? data.search.toLowerCase() : '';
+                const startDate = (data && data.startDate) ? new Date(data.startDate) : null;
+                const endDate = (data && data.endDate) ? new Date(data.endDate) : null;
+
+                const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+
+                let filtered = users.filter(u => {
+                    const name = (u.name || '').toLowerCase();
+                    const email = (u.email || '').toLowerCase();
+                    const plan = (u.plan || 'Community').toLowerCase();
+                    const status = (u.status || 'Active').toLowerCase();
+                    return name.includes(search) || email.includes(search) || plan.includes(search) || status.includes(search);
+                });
+
+                let mapped = filtered.map(u => {
+                    const uLogs = visitLogs.filter(log => log.email && log.email.toLowerCase() === u.email.toLowerCase());
+                    const rangeLogs = uLogs.filter(log => {
+                        const d = new Date(log.visited_at);
+                        return (!startDate || d >= startDate) && (!endDate || d <= endDate);
+                    });
+                    return {
+                        name: u.name,
+                        email: u.email,
+                        plan: u.plan,
+                        range_visits: rangeLogs.length,
+                        total_visits: Math.max(Number(u.visits) || 0, uLogs.length)
+                    };
+                });
+
+                resolve(mapped);
+                break;
+            }
             case 'get_visit_logs': {
                 const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
                 resolve(visitLogs);
@@ -798,6 +893,9 @@ async function initializeAuth() {
         if (verified) {
             localStorage.setItem('currentUser', JSON.stringify(verified));
             updateNavbarAuth();
+            if (typeof window.checkAndRecordVisit === 'function') {
+                await window.checkAndRecordVisit(verified.email);
+            }
         } else {
             await window.supabase.auth.signOut();
             localStorage.removeItem('currentUser');
@@ -863,6 +961,38 @@ window.addEventListener('scroll', () => {
     }
 });
 
+async function checkAndRecordVisit(email) {
+    const path = window.location.pathname.toLowerCase();
+    const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
+    if (!isClientPage) return;
+
+    if (email) {
+        if (!sessionStorage.getItem('user_email_visit_tracked')) {
+            try {
+                const res = await window.apiCall('increment_user_visit', { email: email });
+                if (res && res.success) {
+                    sessionStorage.setItem('user_email_visit_tracked', 'true');
+                    sessionStorage.setItem('user_visit_tracked', 'true');
+                }
+            } catch (e) {
+                console.error("Failed to record logged-in website visit:", e);
+            }
+        }
+    } else {
+        if (!sessionStorage.getItem('user_visit_tracked')) {
+            try {
+                const res = await window.apiCall('increment_user_visit', { email: null });
+                if (res && res.success) {
+                    sessionStorage.setItem('user_visit_tracked', 'true');
+                }
+            } catch (e) {
+                console.error("Failed to record anonymous website visit:", e);
+            }
+        }
+    }
+}
+window.checkAndRecordVisit = checkAndRecordVisit;
+
 // Run shared initialization on load
 document.addEventListener('DOMContentLoaded', () => {
     initLocalStorage();
@@ -881,20 +1011,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         await applySiteSettings();
 
-        // Count visit once per session for all visitors when they visit public client pages
-        const path = window.location.pathname.toLowerCase();
-        const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
-        if (isClientPage) {
-            if (!sessionStorage.getItem('user_visit_tracked')) {
-                sessionStorage.setItem('user_visit_tracked', 'true');
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                const email = currentUser ? currentUser.email : null;
-                try {
-                    await window.apiCall('increment_user_visit', { email: email });
-                } catch (e) {
-                    console.error("Failed to record website visit:", e);
-                }
-            }
-        }
+        // Count visit securely once per session/state change
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        const email = currentUser ? currentUser.email : null;
+        await checkAndRecordVisit(email);
     })();
 });
