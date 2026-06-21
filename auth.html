@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Authentication Portal</title>
+    <meta name="description"
+        content="Sign in or register for a DiginixIT user account to access premium developer tools, contrast ratio checkers, HTML/CSS minifiers, and custom SaaS dashboards.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://diginixit.com/auth.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diginixit.com/auth.html">
+    <meta property="og:title" content="DiginixIT | Authentication Portal">
+    <meta property="og:description"
+        content="Sign in or register for a DiginixIT user account to access premium developer tools, contrast ratio checkers, HTML/CSS minifiers, and custom SaaS dashboards.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://diginixit.com/auth.html">
+    <meta name="twitter:title" content="DiginixIT | Authentication Portal">
+    <meta name="twitter:description"
+        content="Sign in or register for a DiginixIT user account to access premium developer tools, contrast ratio checkers, HTML/CSS minifiers, and custom SaaS dashboards.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <meta name="color-scheme" content="light">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind Configuration Inline (Avoid CLS & style shifts) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        black: '#000000',
+                        white: '#FFFFFF',
+                        surface: '#FAFAFA',
+                        card: '#F5F5F5',
+                        primary: '#111111',
+                        secondary: '#666666',
+                        border: '#E5E5E5'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries (Deferred to prevent rendering blocks) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-surface h-screen overflow-hidden">
+
+    <div class="noise"></div>
+
+    <!-- Container -->
+    <div class="flex h-full w-full">
+        <!-- Left Column: Branding (Hidden on mobile) -->
+        <div
+            class="hidden lg:flex lg:w-1/2 bg-primary text-white p-16 flex-col justify-between relative overflow-hidden">
+            <!-- Background element -->
+            <div class="absolute inset-0 opacity-20 flex justify-center items-center">
+                <div class="w-[500px] h-[500px] border border-white rounded-full animate-pulse"></div>
+            </div>
+
+            <a href="./" class="text-2xl font-bold tracking-tighter site-logo-text relative z-10">DIGINIXIT.</a>
+
+            <div class="space-y-6 relative z-10 max-w-lg">
+                <h1 class="text-5xl font-bold tracking-tight leading-tight">Create without limits. Analyze with
+                    precision.</h1>
+                <p class="text-gray-400 text-lg">Join the collective of designers and engineers developing the modern
+                    spatial web.</p>
+            </div>
+
+            <div class="flex flex-col space-y-3 relative z-10">
+                <div class="text-xs text-gray-500">&copy; 2026 DiginixIT Agency. All rights reserved.</div>
+            </div>
+        </div>
+
+        <!-- Right Column: Authentication Panel -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 relative overflow-y-auto">
+
+            <!-- Floating close button to go back home -->
+            <a href="./"
+                class="absolute top-8 right-8 p-3 hover:bg-white border border-transparent hover:border-border rounded-full transition-all duration-300"
+                aria-label="Go home">
+                <i data-lucide="x" class="w-5 h-5 text-primary"></i>
+            </a>
+
+            <div class="w-full max-w-md space-y-8">
+                <!-- Titles -->
+                <div class="text-center md:text-left">
+                    <h2 id="auth-title" class="text-3xl font-bold tracking-tight">Sign in to DiginixIT</h2>
+                    <p id="auth-subtitle" class="text-secondary text-sm mt-2">Enter details below to access your account
+                        dashboard.</p>
+                </div>
+
+                <!-- Form -->
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                    <div id="field-name" class="hidden">
+                        <label for="auth-name" class="text-xs font-bold text-secondary block mb-1">Full Name</label>
+                        <input type="text" id="auth-name" class="premium-input" placeholder="Sarah Connor">
+                    </div>
+                    <div>
+                        <label for="auth-email" class="text-xs font-bold text-secondary block mb-1">Email
+                            Address</label>
+                        <input type="email" id="auth-email" class="premium-input" placeholder="sarah@connor.com"
+                            required>
+                    </div>
+                    <div>
+                        <label for="auth-password" class="text-xs font-bold text-secondary block mb-1">Password</label>
+                        <input type="password" id="auth-password" class="premium-input"
+                            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="4">
+                    </div>
+
+                    <button type="submit" id="btn-auth-submit"
+                        class="w-full bg-primary text-white py-4 rounded-xl font-medium hover:bg-black transition-colors mt-6">Sign
+                        In</button>
+                </form>
+
+                <!-- Footer Switch -->
+                <div class="text-center text-sm text-secondary">
+                    <span id="auth-switch-text">Don't have an account?</span>
+                    <button id="btn-auth-switch" class="text-primary font-bold hover:underline ml-1">Sign Up</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script>
+        let mode = 'signin';
+
+        const authTitle = document.getElementById('auth-title');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const authForm = document.getElementById('auth-form');
+        const fieldName = document.getElementById('field-name');
+        const btnSubmit = document.getElementById('btn-auth-submit');
+        const switchText = document.getElementById('auth-switch-text');
+        const btnSwitch = document.getElementById('btn-auth-switch');
+
+        function setMode(newMode) {
+            mode = newMode;
+            if (mode === 'signup') {
+                authTitle.innerText = "Create your account";
+                authSubtitle.innerText = "Fill in your details below to get started immediately.";
+                fieldName.classList.remove('hidden');
+                document.getElementById('auth-name').required = true;
+                btnSubmit.innerText = "Register & Get Started";
+                switchText.innerText = "Already have an account?";
+                btnSwitch.innerText = "Sign In";
+            } else {
+                authTitle.innerText = "Sign in to DiginixIT";
+                authSubtitle.innerText = "Enter details below to access your account dashboard.";
+                fieldName.classList.add('hidden');
+                document.getElementById('auth-name').required = false;
+                btnSubmit.innerText = "Sign In";
+                switchText.innerText = "Don't have an account?";
+                btnSwitch.innerText = "Sign Up";
+            }
+        }
+
+        btnSwitch.addEventListener('click', () => {
+            setMode(mode === 'signin' ? 'signup' : 'signin');
+        });
+
+        // Initialize mode based on search parameters
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const initialMode = params.get('mode');
+            if (initialMode === 'signup' || initialMode === 'signin') {
+                setMode(initialMode);
+            }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // Form Submit Handler
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+
+            // Wait for backend validation
+            await window.backendReady;
+
+            if (mode === 'signup') {
+                const name = document.getElementById('auth-name').value.trim();
+                const plan = 'Community';
+
+                const res = await window.apiCall('register', { name, email, password, plan });
+                if (res && res.success === true) {
+                    localStorage.setItem('currentUser', JSON.stringify(res.user));
+                    alert(`Account created successfully! Logged in as ${res.user.name} on the ${res.user.plan} plan.`);
+
+                    if (res.user.plan === 'Pro') {
+                        window.location.href = 'pricing.html';
+                    } else {
+                        window.location.href = 'tools.html';
+                    }
+                } else {
+                    alert(res && res.error ? res.error : 'Registration failed.');
+                }
+            } else {
+                // Check if admin login credentials
+                if (email === 'admin@diginix.com') {
+                    alert('Admin accounts must log in via the Secure Admin Panel. Redirecting...');
+                    window.location.href = 'admin_login.html';
+                    return;
+                }
+
+                // Normal User Sign In
+                const res = await window.apiCall('login', { email, password });
+                if (res && res.success === true) {
+                    localStorage.setItem('currentUser', JSON.stringify(res.user));
+                    alert(`Welcome back, ${res.user.name}!`);
+                    window.location.href = 'tools.html';
+                } else {
+                    alert(res && res.error ? res.error : 'Invalid email or password. Please try again.');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
