@@ -249,7 +249,7 @@ html.lenis {
 }
 
 /* Hide on mobile viewports for clean layout */
-@media (max-width: 768px) {
+@media (max-width: 991px) {
     .social-sidebar {
         display: none !important;
     }
