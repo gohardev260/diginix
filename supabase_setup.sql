@@ -121,6 +121,8 @@ ALTER TABLE public.blogs DROP COLUMN IF EXISTS image;
 -- 2.6 CREATE INDEXES
 CREATE INDEX IF NOT EXISTS idx_visit_logs_visited_at ON public.visit_logs(visited_at);
 CREATE INDEX IF NOT EXISTS idx_visit_logs_email ON public.visit_logs(email);
+CREATE INDEX IF NOT EXISTS idx_visit_logs_lower_email ON public.visit_logs(LOWER(email));
+CREATE INDEX IF NOT EXISTS idx_users_lower_email ON public.users(LOWER(email));
 CREATE INDEX IF NOT EXISTS idx_visit_logs_session_id ON public.visit_logs(session_id);
 CREATE INDEX IF NOT EXISTS idx_csrf_tokens_user_id ON public.csrf_tokens(user_id);
 CREATE INDEX IF NOT EXISTS idx_csrf_tokens_expires ON public.csrf_tokens(expires_at);
@@ -519,7 +521,7 @@ BEGIN
             date_trunc('month', NOW()),
             '1 month'::interval
         ) AS gs(dt)
-        LEFT JOIN public.users u ON date_trunc('month', u.date) = gs.dt
+        LEFT JOIN public.users u ON u.date >= gs.dt AND u.date < gs.dt + INTERVAL '1 month'
         GROUP BY gs.dt
         ORDER BY gs.dt
     ) t;
@@ -534,7 +536,7 @@ BEGIN
             date_trunc('month', NOW()),
             '1 month'::interval
         ) AS gs(dt)
-        LEFT JOIN public.visit_logs v ON date_trunc('month', v.visited_at) = gs.dt
+        LEFT JOIN public.visit_logs v ON v.visited_at >= gs.dt AND v.visited_at < gs.dt + INTERVAL '1 month'
         GROUP BY gs.dt
         ORDER BY gs.dt
     ) t;
@@ -836,11 +838,19 @@ DECLARE
     v_status TEXT;
     v_already_tracked BOOLEAN := FALSE;
 BEGIN
-    IF p_session_id IS NOT NULL THEN
-        SELECT EXISTS (
-            SELECT 1 FROM public.visit_logs WHERE session_id = p_session_id
-        ) INTO v_already_tracked;
+    IF p_session_id IS NULL THEN
+        -- Avoid tracking visits with missing session IDs (prevents bot/crawlers/storage-disabled spam)
+        IF p_email IS NOT NULL AND p_email <> '' THEN
+            SELECT COALESCE(visits, 0) INTO v_visits
+            FROM public.users
+            WHERE LOWER(email) = LOWER(p_email);
+        END IF;
+        RETURN COALESCE(v_visits, 0);
     END IF;
+
+    SELECT EXISTS (
+        SELECT 1 FROM public.visit_logs WHERE session_id = p_session_id
+    ) INTO v_already_tracked;
 
     IF NOT v_already_tracked THEN
         -- Log the visit in visit_logs

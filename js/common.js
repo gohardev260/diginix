@@ -1167,6 +1167,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname.toLowerCase();
         const isClientPage = !path.includes('admin.html') && !path.includes('admin_login.html');
         if (isClientPage) {
+            // Ignore automated bots/crawlers to prevent visits count inflation
+            const botPattern = /bot|crawler|spider|crawling|slurp|transcoder|pingdom|uptime|lighthouse/i;
+            if (typeof navigator !== 'undefined' && navigator.userAgent && botPattern.test(navigator.userAgent)) {
+                return;
+            }
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             const email = currentUser ? currentUser.email : null;
             
