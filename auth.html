@@ -215,18 +215,12 @@
 
             if (mode === 'signup') {
                 const name = document.getElementById('auth-name').value.trim();
-                const plan = 'Community';
 
-                const res = await window.apiCall('register', { name, email, password, plan });
+                const res = await window.apiCall('register', { name, email, password });
                 if (res && res.success === true) {
                     localStorage.setItem('currentUser', JSON.stringify(res.user));
-                    alert(`Account created successfully! Logged in as ${res.user.name} on the ${res.user.plan} plan.`);
-
-                    if (res.user.plan === 'Pro') {
-                        window.location.href = 'pricing.html';
-                    } else {
-                        window.location.href = 'tools.html';
-                    }
+                    alert(`Account created successfully! Logged in as ${res.user.name}.`);
+                    window.location.href = 'profile.html';
                 } else {
                     alert(res && res.error ? res.error : 'Registration failed.');
                 }
@@ -243,7 +237,7 @@
                 if (res && res.success === true) {
                     localStorage.setItem('currentUser', JSON.stringify(res.user));
                     alert(`Welcome back, ${res.user.name}!`);
-                    window.location.href = 'tools.html';
+                    window.location.href = 'profile.html';
                 } else {
                     alert(res && res.error ? res.error : 'Invalid email or password. Please try again.');
                 }

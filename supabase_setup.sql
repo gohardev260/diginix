@@ -10,14 +10,11 @@ DROP TABLE IF EXISTS public.stats CASCADE;
 DROP FUNCTION IF EXISTS public.login_user_secure(TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.register_user_secure(TEXT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.update_profile_secure(TEXT);
-DROP FUNCTION IF EXISTS public.update_subscription_secure_jwt(TEXT);
 DROP FUNCTION IF EXISTS public.increment_user_visit_secure();
 DROP FUNCTION IF EXISTS public.increment_user_visit_secure(TEXT);
 DROP FUNCTION IF EXISTS public.increment_user_visit_secure(TEXT, UUID);
 DROP FUNCTION IF EXISTS public.get_visit_logs_admin();
 DROP FUNCTION IF EXISTS public.hash_user_password();
-DROP FUNCTION IF EXISTS public.enforce_default_plan();
-
 DROP FUNCTION IF EXISTS public.verify_session_from_jwt(UUID);
 DROP FUNCTION IF EXISTS public.get_filtered_users_admin(TEXT, TIMESTAMPTZ, TIMESTAMPTZ);
 DROP FUNCTION IF EXISTS public.associate_session_visits(UUID, TEXT);
@@ -72,7 +69,6 @@ CREATE TABLE IF NOT EXISTS public.users (
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT DEFAULT NULL, -- Nullable for users managed by Supabase Auth
-    plan TEXT NOT NULL DEFAULT 'Community',
     date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     status TEXT NOT NULL DEFAULT 'Active',
     visits INT DEFAULT 0,
@@ -111,6 +107,7 @@ CREATE TABLE IF NOT EXISTS public.csrf_tokens (
 -- 2.5 ALTER EXISTING TABLES (For non-destructive schema updates)
 -- Run this BEFORE indexes or triggers are compiled so the columns exist even if tables were already present.
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS auth_user_id UUID UNIQUE DEFAULT NULL;
+ALTER TABLE public.users DROP COLUMN IF EXISTS plan;
 ALTER TABLE public.users ALTER COLUMN password DROP NOT NULL;
 ALTER TABLE public.users ALTER COLUMN date TYPE TIMESTAMPTZ USING date::TIMESTAMPTZ;
 ALTER TABLE public.users ALTER COLUMN date SET DEFAULT NOW();
@@ -148,7 +145,9 @@ INSERT INTO public.settings (key_name, value_text) VALUES
 ('maintenanceMode', 'false'),
 ('linkedin', 'https://linkedin.com/'),
 ('instagram', 'https://instagram.com/'),
-('twitter', 'https://twitter.com/')
+('twitter', 'https://twitter.com/'),
+('facebook', 'https://facebook.com/'),
+('youtube', 'https://youtube.com/')
 ON CONFLICT (key_name) DO NOTHING;
 
 
@@ -186,20 +185,7 @@ BEFORE INSERT OR UPDATE ON public.users
 FOR EACH ROW
 EXECUTE FUNCTION public.hash_user_password();
 
--- Trigger function to enforce default 'Community' plan during registration
-CREATE OR REPLACE FUNCTION public.enforce_default_plan()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.plan := 'Community';
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-DROP TRIGGER IF EXISTS trigger_enforce_plan ON public.users;
-CREATE TRIGGER trigger_enforce_plan
-BEFORE INSERT ON public.users
-FOR EACH ROW
-EXECUTE FUNCTION public.enforce_default_plan();
+-- Trigger function removed (no default plan constraint needed)
 
 -- 5. SECURE RPC FUNCTIONS (SECURITY DEFINER to bypass table RLS selectively)
 
@@ -268,14 +254,13 @@ RETURNS TABLE (
     auth_user_id UUID,
     name TEXT,
     email TEXT,
-    plan TEXT,
     date TIMESTAMPTZ,
     status TEXT,
     visits INT
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT u.id, u.auth_user_id, u.name, u.email, u.plan, u.date, u.status, u.visits
+    SELECT u.id, u.auth_user_id, u.name, u.email, u.date, u.status, u.visits
     FROM public.users u
     WHERE u.auth_user_id = p_user_id
       AND u.status = 'Active';
@@ -310,7 +295,7 @@ BEGIN
         WHERE LOWER(email) = LOWER(p_email)
         RETURNING * INTO v_user;
     ELSE
-        -- Insert user profile. plan defaults to 'Community' via trigger
+        -- Insert user profile
         INSERT INTO public.users (auth_user_id, name, email, password, status, date)
         VALUES (p_auth_user_id, p_name, p_email, NULL, 'Active', CURRENT_DATE)
         RETURNING * INTO v_user;
@@ -348,12 +333,11 @@ BEGIN
         v_role := 'admin';
     END IF;
 
-    INSERT INTO public.users (auth_user_id, name, email, plan, status, role, date)
+    INSERT INTO public.users (auth_user_id, name, email, status, role, date)
     VALUES (
         NEW.id,
         COALESCE(NEW.raw_user_meta_data->>'full_name', 'User'),
         NEW.email,
-        'Community',
         'Active',
         v_role,
         NOW()
@@ -485,27 +469,19 @@ GRANT EXECUTE ON FUNCTION public.get_public_settings() TO anon, authenticated;
 
 CREATE OR REPLACE FUNCTION public.get_public_stats()
 RETURNS TABLE (
-    revenue TEXT,
     activeusers TEXT,
-    pro_users TEXT,
     visits INT8,
-    revenuehistory TEXT,
     userhistory TEXT,
     visithistory TEXT
 ) AS $$
 DECLARE
     v_user_count INT8;
-    v_pro_count INT8;
     v_total_visits INT8;
-    v_revenue_history TEXT;
     v_user_history TEXT;
     v_visit_history TEXT;
 BEGIN
     -- Count of total users
     SELECT COUNT(*) INTO v_user_count FROM public.users;
-    
-    -- Count of Pro users
-    SELECT COUNT(*) INTO v_pro_count FROM public.users WHERE plan = 'Pro';
     
     -- Count of total visits
     SELECT COALESCE(SUM(u.visits), 0) + (SELECT COUNT(*) FROM public.visit_logs WHERE email IS NULL OR email = '')
@@ -541,31 +517,10 @@ BEGIN
         ORDER BY gs.dt
     ) t;
 
-    -- Calculate Revenue History (Last 6 months cumulative Pro users * 1000 PKR, e.g. '2000,3000,5000,8000,10000,15000')
-    SELECT string_agg(amount_val::text, ',') INTO v_revenue_history
-    FROM (
-        SELECT 
-            (
-                SELECT COUNT(*) 
-                FROM public.users u 
-                WHERE u.plan = 'Pro' 
-                  AND u.date <= gs.dt + INTERVAL '1 month' - INTERVAL '1 second'
-            ) * 1000 AS amount_val
-        FROM generate_series(
-            date_trunc('month', NOW() - INTERVAL '5 months'),
-            date_trunc('month', NOW()),
-            '1 month'::interval
-        ) AS gs(dt)
-        ORDER BY gs.dt
-    ) t;
-
     RETURN QUERY
     SELECT 
-        (v_pro_count * 1000 || ' PKR')::TEXT,
         v_user_count::TEXT,
-        v_pro_count::TEXT,
         v_total_visits::INT8,
-        COALESCE(v_revenue_history, '0,0,0,0,0,0')::TEXT,
         COALESCE(v_user_history, '0,0,0,0,0,0')::TEXT,
         COALESCE(v_visit_history, '0,0,0,0,0,0')::TEXT;
 END;
@@ -579,14 +534,13 @@ RETURNS TABLE (
     name TEXT,
     email TEXT,
     date TIMESTAMPTZ,
-    plan TEXT,
     status TEXT,
     visits INT
 ) AS $$
 BEGIN
     PERFORM public.verify_admin_only();
     RETURN QUERY
-    SELECT u.name, u.email, u.date, u.plan, u.status, u.visits
+    SELECT u.name, u.email, u.date, u.status, u.visits
     FROM public.users u
     ORDER BY u.id DESC;
 END;
@@ -741,6 +695,8 @@ CREATE OR REPLACE FUNCTION public.save_settings_secure(
     p_linkedin TEXT,
     p_instagram TEXT,
     p_twitter TEXT,
+    p_facebook TEXT,
+    p_youtube TEXT,
     p_csrf_token TEXT
 )
 RETURNS BOOLEAN AS $$
@@ -754,14 +710,16 @@ BEGIN
     ('maintenanceMode', p_maintenance_mode),
     ('linkedin', p_linkedin),
     ('instagram', p_instagram),
-    ('twitter', p_twitter)
+    ('twitter', p_twitter),
+    ('facebook', p_facebook),
+    ('youtube', p_youtube)
     ON CONFLICT (key_name) DO UPDATE SET value_text = EXCLUDED.value_text;
 
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-GRANT EXECUTE ON FUNCTION public.save_settings_secure(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.save_settings_secure(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated;
 
 -- User Profile security definer mutations (requires valid authenticated JWT session)
 CREATE OR REPLACE FUNCTION public.update_profile_secure(p_name TEXT)
@@ -769,7 +727,6 @@ RETURNS TABLE (
     id BIGINT,
     name TEXT,
     email TEXT,
-    plan TEXT,
     date TIMESTAMPTZ,
     status TEXT,
     visits INT
@@ -793,7 +750,7 @@ BEGIN
     WHERE public.users.id = v_id;
     
     RETURN QUERY
-    SELECT u.id, u.name, u.email, u.plan, u.date, u.status, u.visits
+    SELECT u.id, u.name, u.email, u.date, u.status, u.visits
     FROM public.users u
     WHERE u.id = v_id;
 END;
@@ -801,30 +758,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 GRANT EXECUTE ON FUNCTION public.update_profile_secure(TEXT) TO authenticated;
 
--- simulated simulated plan upgrades
-CREATE OR REPLACE FUNCTION public.update_subscription_secure_jwt(p_plan TEXT)
-RETURNS public.users AS $$
-DECLARE
-    v_user public.users;
-BEGIN
-    IF p_plan IS NULL OR p_plan NOT IN ('Community', 'Pro') THEN
-        RAISE EXCEPTION 'Invalid plan value: %', p_plan;
-    END IF;
-
-    UPDATE public.users
-    SET plan = p_plan
-    WHERE auth_user_id = auth.uid()
-    RETURNING * INTO v_user;
-
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'User profile not found';
-    END IF;
-
-    RETURN v_user;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-GRANT EXECUTE ON FUNCTION public.update_subscription_secure_jwt(TEXT) TO authenticated;
+-- update_subscription function removed
 
 -- Secure increment visit
 CREATE OR REPLACE FUNCTION public.increment_user_visit_secure(
@@ -939,7 +873,6 @@ RETURNS TABLE (
     name TEXT,
     email TEXT,
     date TIMESTAMPTZ,
-    plan TEXT,
     status TEXT,
     range_visits INT,
     total_visits INT
@@ -952,7 +885,6 @@ BEGIN
         u.name,
         u.email,
         u.date,
-        u.plan,
         u.status,
         COALESCE((
             SELECT COUNT(*)::INT
@@ -967,7 +899,6 @@ BEGIN
         (p_search IS NULL OR p_search = '' OR
             LOWER(u.name) LIKE '%' || LOWER(p_search) || '%' OR
             LOWER(u.email) LIKE '%' || LOWER(p_search) || '%' OR
-            LOWER(u.plan) LIKE '%' || LOWER(p_search) || '%' OR
             LOWER(u.status) LIKE '%' || LOWER(p_search) || '%'
         )
         AND

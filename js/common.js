@@ -118,14 +118,16 @@ const defaultSettings = {
     maintenanceMode: false,
     linkedin: "https://linkedin.com/",
     instagram: "https://instagram.com/",
-    twitter: "https://twitter.com/"
+    twitter: "https://twitter.com/",
+    facebook: "https://facebook.com/",
+    youtube: "https://youtube.com/"
 };
 
 const defaultStats = {
-    revenue: "$124,500",
     activeUsers: "8,241",
-    executions: "142.3K",
-    revenueHistory: [42000, 58000, 65000, 89000, 105000, 124500]
+    visits: 142300,
+    userHistory: [100, 200, 300, 400, 500, 600],
+    visitHistory: [1000, 2000, 3000, 4000, 5000, 6000]
 };
 
 function initLocalStorage() {
@@ -352,6 +354,8 @@ window.apiCall = async function (action, data = null) {
                         p_linkedin: data.linkedin || '',
                         p_instagram: data.instagram || '',
                         p_twitter: data.twitter || '',
+                        p_facebook: data.facebook || '',
+                        p_youtube: data.youtube || '',
                         p_csrf_token: data._csrf_token
                     });
                 if (error) throw error;
@@ -365,21 +369,15 @@ window.apiCall = async function (action, data = null) {
                 const dbStats = Array.isArray(rows) ? rows[0] : rows;
                 if (!dbStats) {
                     return {
-                        revenue: "0 PKR",
                         activeUsers: "0",
-                        proUsers: "0",
                         visits: 0,
-                        revenueHistory: [0, 0, 0, 0, 0, 0],
                         userHistory: [0, 0, 0, 0, 0, 0],
                         visitHistory: [0, 0, 0, 0, 0, 0]
                     };
                 }
                 return {
-                    revenue: dbStats.revenue,
                     activeUsers: String(dbStats.activeusers),
-                    proUsers: String(dbStats.pro_users || '0'),
                     visits: Number(dbStats.visits),
-                    revenueHistory: (dbStats.revenuehistory || '0,0,0,0,0,0').split(',').map(Number),
                     userHistory: (dbStats.userhistory || '0,0,0,0,0,0').split(',').map(Number),
                     visitHistory: (dbStats.visithistory || '0,0,0,0,0,0').split(',').map(Number)
                 };
@@ -516,15 +514,7 @@ window.apiCall = async function (action, data = null) {
             }
 
             case 'update_subscription': {
-                const { data: user, error: rpcError } = await window.supabase
-                    .rpc('update_subscription_secure_jwt', {
-                        p_plan: data.plan
-                    });
-                if (rpcError) {
-                    return { success: false, error: rpcError.message || "Subscription upgrade failed" };
-                }
-                const returnedUser = Array.isArray(user) ? user[0] : user;
-                return { success: true, user: returnedUser };
+                return { success: true };
             }
 
             case 'verify_session': {
@@ -726,7 +716,6 @@ function apiCallLocalStorageFallback(action, data) {
                 const usersList = JSON.parse(localStorage.getItem('users') || '[]');
                 
                 const totalUsers = usersList.length;
-                const proUsersCount = usersList.filter(u => u.plan === 'Pro').length;
                 const totalVisits = usersList.reduce((sum, u) => sum + (Number(u.visits) || 0), 0) + visitLogs.filter(log => !log.email).length;
                 
                 const months = [];
@@ -750,21 +739,9 @@ function apiCallLocalStorageFallback(action, data) {
                     }).length;
                 });
                 
-                const revenueHistory = months.map(m => {
-                    const endOfMonth = new Date(m.getFullYear(), m.getMonth() + 1, 0, 23, 59, 59, 999);
-                    const activeProUsers = usersList.filter(u => {
-                        const uDate = new Date(u.date);
-                        return u.plan === 'Pro' && uDate <= endOfMonth;
-                    }).length;
-                    return activeProUsers * 1000;
-                });
-                
                 resolve({
-                    revenue: `${proUsersCount * 1000} PKR`,
                     activeUsers: String(totalUsers),
-                    proUsers: String(proUsersCount),
                     visits: totalVisits,
-                    revenueHistory: revenueHistory,
                     userHistory: userHistory,
                     visitHistory: visitHistory
                 });
@@ -906,6 +883,8 @@ function injectSocialSidebar() {
             <a id="sidebar-social-linkedin" href="#" target="_blank" title="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
             <a id="sidebar-social-instagram" href="#" target="_blank" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
             <a id="sidebar-social-twitter" href="#" target="_blank" title="Twitter/X"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a id="sidebar-social-facebook" href="#" target="_blank" title="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a id="sidebar-social-youtube" href="#" target="_blank" title="YouTube"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
         </div>
     `;
     document.body.appendChild(sidebar);
@@ -941,6 +920,16 @@ async function applySiteSettings() {
         if (twLink) {
             twLink.href = settings.twitter || 'https://twitter.com/';
             twLink.style.display = 'inline-flex';
+        }
+        const fbLink = document.getElementById('sidebar-social-facebook');
+        if (fbLink) {
+            fbLink.href = settings.facebook || 'https://facebook.com/';
+            fbLink.style.display = 'inline-flex';
+        }
+        const ytLink = document.getElementById('sidebar-social-youtube');
+        if (ytLink) {
+            ytLink.href = settings.youtube || 'https://youtube.com/';
+            ytLink.style.display = 'inline-flex';
         }
     }
 }
@@ -1061,8 +1050,6 @@ function highlightActiveNav() {
     const navMap = {
         'index.html': 'nav-home',
         'services.html': 'nav-services',
-        'tools.html': 'nav-tools',
-        'pricing.html': 'nav-pricing',
         'blog.html': 'nav-blog',
         'article.html': 'nav-blog',
         'profile.html': 'nav-profile',

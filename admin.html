@@ -254,24 +254,12 @@
                     </div>
 
                     <!-- Stats Cards Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
-                            <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Total Revenue
-                            </div>
-                            <div class="text-3xl font-bold" id="stat-revenue">0 PKR</div>
-                            <div class="text-[10px] text-green-500 font-bold" id="stat-revenue-change">+0% from last month</div>
-                        </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
                             <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Active Users
                             </div>
                             <div class="text-3xl font-bold" id="stat-users">0</div>
                             <div class="text-[10px] text-green-500 font-bold" id="stat-users-change">+0% from last month</div>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
-                            <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Pro Subscribers
-                            </div>
-                            <div class="text-3xl font-bold" id="stat-pro-users">0</div>
-                            <div class="text-[10px] text-green-500 font-bold" id="stat-executions-change">+0% from last month</div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-border flex flex-col justify-between h-32">
                             <div class="text-secondary text-xs font-semibold uppercase tracking-wider">Total Visits
@@ -282,18 +270,7 @@
                     </div>
 
                     <!-- Charts Grid -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Revenue Chart -->
-                        <div class="bg-white p-6 rounded-2xl border border-border h-[380px] flex flex-col justify-between">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-sm">Revenue Growth</h3>
-                                <span class="text-xs text-secondary">Last 6 Months (PKR)</span>
-                            </div>
-                            <div class="flex-1 min-h-0">
-                                <canvas id="adminRevenueChart"></canvas>
-                            </div>
-                        </div>
-
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Users Chart -->
                         <div class="bg-white p-6 rounded-2xl border border-border h-[380px] flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-4">
@@ -433,7 +410,6 @@
                                         <th class="p-4 font-semibold text-xs uppercase tracking-wider">Email Address
                                         </th>
                                         <th class="p-4 font-semibold text-xs uppercase tracking-wider">Joined Date</th>
-                                        <th class="p-4 font-semibold text-xs uppercase tracking-wider">Tier Plan</th>
                                         <th class="p-4 font-semibold text-xs uppercase tracking-wider">Visits</th>
                                         <th class="p-4 font-semibold text-xs uppercase tracking-wider">Access Status
                                         </th>
@@ -497,6 +473,18 @@
                                     class="text-xs font-bold text-secondary block mb-1">Twitter/X Profile URL</label>
                                 <input type="url" id="settings-twitter" class="premium-input"
                                     placeholder="https://twitter.com/diginix">
+                            </div>
+                            <div>
+                                <label for="settings-facebook"
+                                    class="text-xs font-bold text-secondary block mb-1">Facebook Profile URL</label>
+                                <input type="url" id="settings-facebook" class="premium-input"
+                                    placeholder="https://facebook.com/diginix">
+                            </div>
+                            <div>
+                                <label for="settings-youtube"
+                                    class="text-xs font-bold text-secondary block mb-1">YouTube Channel URL</label>
+                                <input type="url" id="settings-youtube" class="premium-input"
+                                    placeholder="https://youtube.com/c/diginix">
                             </div>
                             <div
                                 class="flex items-center justify-between p-4 bg-surface rounded-xl border border-border">

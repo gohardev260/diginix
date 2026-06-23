@@ -71,36 +71,17 @@ async function loadAnalyticsData() {
     if (!stats) return;
 
     // Set numbers
-    const revenueVal = stats.revenue || "0 PKR";
     const activeUsersVal = stats.activeUsers || "0";
-    const proUsersVal = stats.proUsers || "0";
     const visitsVal = stats.visits || 0;
 
-    document.getElementById('stat-revenue').innerText = revenueVal;
     document.getElementById('stat-users').innerText = activeUsersVal;
-    
-    const proEl = document.getElementById('stat-pro-users');
-    if (proEl) proEl.innerText = proUsersVal;
-    
     document.getElementById('stat-visits').innerText = Number(visitsVal).toLocaleString();
 
     // Dynamically show change texts (resetting to +0% / normal since manual overrides are removed)
-    const revChange = document.getElementById('stat-revenue-change');
-    if (revChange) {
-        revChange.innerText = "0% change from last month";
-        revChange.className = "text-[10px] text-gray-400 font-medium";
-    }
-
     const usersChange = document.getElementById('stat-users-change');
     if (usersChange) {
         usersChange.innerText = "0% change from last month";
         usersChange.className = "text-[10px] text-gray-400 font-medium";
-    }
-
-    const execsChange = document.getElementById('stat-executions-change');
-    if (execsChange) {
-        execsChange.innerText = "0% change from last month";
-        execsChange.className = "text-[10px] text-gray-400 font-medium";
     }
 
     const visitsChange = document.getElementById('stat-visits-change');
@@ -120,50 +101,13 @@ async function loadAnalyticsData() {
 
     renderCharts(
         labels,
-        stats.revenueHistory || [0, 0, 0, 0, 0, 0],
         stats.userHistory || [0, 0, 0, 0, 0, 0],
         stats.visitHistory || [0, 0, 0, 0, 0, 0]
     );
 }
 
-function renderCharts(labels, revenueData, userData, visitData) {
-    // 1. Revenue Growth Chart
-    const ctxRevenue = document.getElementById('adminRevenueChart');
-    if (ctxRevenue) {
-        if (window.adminState.revenueChartInstance) {
-            window.adminState.revenueChartInstance.destroy();
-        }
-        window.adminState.revenueChartInstance = new Chart(ctxRevenue, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Revenue (PKR)',
-                    data: revenueData,
-                    borderColor: '#111111',
-                    backgroundColor: 'rgba(17, 17, 17, 0.05)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#111111',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#F5F5F5' }, border: { display: false } },
-                    x: { grid: { display: false }, border: { display: false } }
-                }
-            }
-        });
-    }
-
-    // 2. User Acquisitions Chart (Bar Chart)
+function renderCharts(labels, userData, visitData) {
+    // 1. User Acquisitions Chart (Bar Chart)
     const ctxUsers = document.getElementById('adminUsersChart');
     if (ctxUsers) {
         if (window.adminState.userChartInstance) {
@@ -194,7 +138,7 @@ function renderCharts(labels, revenueData, userData, visitData) {
         });
     }
 
-    // 3. Website Traffic Chart (Line Chart)
+    // 2. Website Traffic Chart (Line Chart)
     const ctxVisits = document.getElementById('adminVisitsChart');
     if (ctxVisits) {
         if (window.adminState.visitChartInstance) {
@@ -522,7 +466,6 @@ async function loadUserData() {
                 name: u.name,
                 email: u.email,
                 date: u.date,
-                plan: u.plan,
                 status: u.status,
                 rangeVisits: u.range_visits,
                 totalVisits: u.total_visits
@@ -568,7 +511,7 @@ function filterAndRenderUsers() {
     if (filteredUsers.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="p-8 text-center text-secondary font-light">No clients found matching the search criteria.</td>
+                <td colspan="6" class="p-8 text-center text-secondary font-light">No clients found matching the search criteria.</td>
             </tr>
         `;
         return;
@@ -583,7 +526,6 @@ function filterAndRenderUsers() {
             <td class="p-4 font-bold text-primary">${window.escapeHtml(user.name)}</td>
             <td class="p-4 text-xs font-mono text-secondary">${window.escapeHtml(user.email)}</td>
             <td class="p-4 text-xs text-secondary">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
-            <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.plan === 'Pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}">${window.escapeHtml(user.plan || 'Community')}</span></td>
             <td class="p-4 text-xs font-bold text-primary">
                 ${isFiltered ? `${user.rangeVisits || 0} <span class="text-secondary font-normal text-[10px]">/ ${user.totalVisits || 0}</span>` : (user.totalVisits || 0)}
             </td>
@@ -674,13 +616,12 @@ window.exportUsersPDF = function () {
 
     // Generate table contents
     const visitsHeader = isFiltered ? "Visits (Range / Total)" : "Total Visits";
-    const headers = [["Client Name", "Email Address", "Tier Plan", visitsHeader]];
+    const headers = [["Client Name", "Email Address", visitsHeader]];
     const data = filteredList.map(u => {
         const visitsText = isFiltered ? `${u.rangeVisits || 0} / ${u.totalVisits || 0}` : String(u.totalVisits || 0);
         return [
             u.name || "N/A",
             u.email || "N/A",
-            u.plan || "Community",
             visitsText
         ];
     });
@@ -704,10 +645,9 @@ window.exportUsersPDF = function () {
             fillColor: [249, 249, 249]
         },
         columnStyles: {
-            0: { cellWidth: 50 },
-            1: { cellWidth: 70 },
-            2: { cellWidth: 32 },
-            3: { cellWidth: 30, halign: 'right' }
+            0: { cellWidth: 60 },
+            1: { cellWidth: 90 },
+            2: { cellWidth: 36, halign: 'right' }
         },
         margin: { top: 55, left: 14, right: 14 }
     });
@@ -749,6 +689,8 @@ async function loadSettingsData() {
     document.getElementById('settings-linkedin').value = settings.linkedin || '';
     document.getElementById('settings-instagram').value = settings.instagram || '';
     document.getElementById('settings-twitter').value = settings.twitter || '';
+    document.getElementById('settings-facebook').value = settings.facebook || '';
+    document.getElementById('settings-youtube').value = settings.youtube || '';
 }
 
 window.handleSettingsUpdate = async function (e) {
@@ -760,8 +702,10 @@ window.handleSettingsUpdate = async function (e) {
     const linkedin = document.getElementById('settings-linkedin').value.trim();
     const instagram = document.getElementById('settings-instagram').value.trim();
     const twitter = document.getElementById('settings-twitter').value.trim();
+    const facebook = document.getElementById('settings-facebook').value.trim();
+    const youtube = document.getElementById('settings-youtube').value.trim();
 
-    const newSettings = { siteName, contactEmail, contactPhone, maintenanceMode, linkedin, instagram, twitter, _csrf_token: window.csrfToken };
+    const newSettings = { siteName, contactEmail, contactPhone, maintenanceMode, linkedin, instagram, twitter, facebook, youtube, _csrf_token: window.csrfToken };
 
     await window.backendReady;
     const res = await window.apiCall('save_settings', newSettings);
