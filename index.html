@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Build, Protect & Scale Your Business</title>
+    <meta name="description" content="DiginixIT is a premium technology company specializing in web engineering, UI/UX design, SEO, legal consultancy, and corporate finance. Build, protect, and scale your business.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diginixit.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diginixit.com/">
+    <meta property="og:title" content="DiginixIT | Build, Protect & Scale Your Business">
+    <meta property="og:description" content="DiginixIT is a premium technology company. We engineer web products, design premium experiences, and provide legal and financial strategy for business growth.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://diginixit.com/">
+    <meta name="twitter:title" content="DiginixIT | Build, Protect & Scale Your Business">
+    <meta name="twitter:description" content="DiginixIT is a premium technology company. We engineer web products, design premium experiences, and provide legal and financial strategy for business growth.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <meta name="color-scheme" content="light">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Ads Popunder -->
+    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration Inline -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        'canvas-night-soft': '#202020',
+                        ink: '#171717',
+                        'ink-secondary': '#212121',
+                        'ink-mute': '#707070',
+                        'ink-mute-2': '#9a9a9a',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
+                    },
+                    letterSpacing: { 
+                        tighter: '-0.04em', 
+                        tight: '-0.02em',
+                        display: '-0.03em'
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "https://diginixit.com/#organization",
+                "name": "DiginixIT",
+                "url": "https://diginixit.com/",
+                "logo": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200",
+                "contactPoint": {
+                     "@type": "ContactPoint",
+                     "telephone": "+92-300-7960300",
+                     "contactType": "customer service",
+                     "email": "contact@diginix.com"
+                },
+                "sameAs": [
+                    "https://linkedin.com/",
+                    "https://instagram.com/",
+                    "https://twitter.com/"
+                ]
+            },
+            {
+                "@type": "LocalBusiness",
+                "@id": "https://diginixit.com/#localbusiness",
+                "name": "DiginixIT",
+                "image": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800",
+                "url": "https://diginixit.com/",
+                "telephone": "+923007960300",
+                "priceRange": "$$",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "Main Boulevard",
+                    "addressLocality": "Lahore",
+                    "postalCode": "54000",
+                    "addressCountry": "PK"
+                },
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 31.5204,
+                    "longitude": 74.3587
+                },
+                "openingHoursSpecification": {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+                    "opens": "09:00",
+                    "closes": "18:00"
+                }
+            },
+            {
+                "@type": "FAQPage",
+                "@id": "https://diginixit.com/#faq",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What web engineering services does DiginixIT offer?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "DiginixIT provides custom SaaS development, high-performance web engineering, spatial editorial layouts, database optimization, and secure API integration using modern tech stacks."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How does DiginixIT improve website performance?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "We optimize Core Web Vitals (LCP, FID, CLS) using server-side query processing, local caching systems, modern CSS structures, and streamlined database architectures."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are your SEO services localized?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes, we build robust topic clusters, structure local search business schemas, and construct advanced JSON-LD annotations to drive targeted traffic to client products."
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+</head>
+
+<body class="bg-canvas text-ink">
+
+    <!-- Noise Overlay -->
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
+        <div class="max-w-[1280px] mx-auto flex justify-between items-center">
+            <a href="./" class="text-xl font-medium tracking-tighter text-ink" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="./" class="nav-item-link" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link" id="nav-services">Services</a>
+                <a href="blog.html" class="nav-item-link" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link" id="nav-contact">Contact</a>
+            </div>
+
+            <!-- Desktop Auth / CTA -->
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="btn-primary" id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Mobile Controls -->
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-ink focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-medium" style="letter-spacing: -0.02em;">
+            <a href="./" class="mobile-nav-link hover:text-ink-mute transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Services</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Contact</a>
+        </div>
+
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm" id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content">
+
+        <div id="view-home" class="view-section active">
+
+            <!-- ============================================ -->
+            <!-- SECTION 01: HERO                             -->
+            <!-- ============================================ -->
+            <section class="hero-section">
+                <!-- Three.js Canvas -->
+                <div id="canvas-container" class="absolute inset-0 z-0 opacity-30"></div>
+
+                <div class="container-main relative z-10 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                        
+                        <!-- Left: Typography -->
+                        <div class="space-y-8">
+                            <div class="space-y-1">
+                                <div class="hero-title-line">
+                                    <span class="hero-title-word">BUILD.</span>
+                                </div>
+                                <div class="hero-title-line">
+                                    <span class="hero-title-word">PROTECT.</span>
+                                </div>
+                                <div class="hero-title-line">
+                                    <span class="hero-title-word">SCALE.</span>
+                                </div>
+                            </div>
+
+                            <p class="hero-subtitle opacity-0">
+                                Technology meets strategy. We engineer web products, design premium experiences, and provide legal & financial advisory to grow your business.
+                            </p>
+
+                            <div class="flex flex-wrap gap-4 hero-btns opacity-0">
+                                <div class="magnetic-wrap">
+                                    <a href="contact.html" class="btn-primary btn-primary-lg">Book a Consultation</a>
+                                </div>
+                                <div class="magnetic-wrap">
+                                    <a href="services.html" class="btn-secondary btn-secondary-lg">Explore Services</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: 3D Centerpiece area -->
+                        <div class="hidden lg:flex items-center justify-center relative h-[500px]">
+                            <!-- The Three.js scene fills this space via canvas-container -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 02: BUSINESS TRANSFORMATION          -->
+            <!-- ============================================ -->
+            <section class="section-padding">
+                <div class="container-main">
+                    <!-- Section Header -->
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">The Process</p>
+                        <h2 class="display-xl mb-6">Every business transformation follows a path. We architect yours.</h2>
+                        <p class="body-lg text-ink-mute">From discovery to scale, we guide your business through five critical phases — each designed to compound value and eliminate risk.</p>
+                    </div>
+
+                    <!-- Journey Steps (Cardless Timeline) -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+                        <!-- Step 1: Discover -->
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">01</div>
+                            <h3 class="heading-lg mb-3">Discover</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Deep audit of your business landscape, technical stack, and market positioning. We identify where the real leverage exists.</p>
+                        </div>
+
+                        <!-- Step 2: Build -->
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">02</div>
+                            <h3 class="heading-lg mb-3">Build</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Custom engineering of your digital infrastructure. No templates, no shortcuts — bespoke applications built from the ground up.</p>
+                        </div>
+
+                        <!-- Step 3: Launch -->
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">03</div>
+                            <h3 class="heading-lg mb-3">Launch</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Strategic deployment with performance optimization. Every pixel, every interaction, every metric calibrated for maximum impact.</p>
+                        </div>
+
+                        <!-- Step 4: Protect -->
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">04</div>
+                            <h3 class="heading-lg mb-3">Protect</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Legal compliance frameworks, IP protection, and privacy structures that safeguard your business at every growth stage.</p>
+                        </div>
+
+                        <!-- Step 5: Scale -->
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">05</div>
+                            <h3 class="heading-lg mb-3">Scale</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Financial strategy, growth analytics, and market expansion. We engineer the systems that turn momentum into exponential growth.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 03: TECHNOLOGY                       -->
+            <!-- ============================================ -->
+            <section class="section-padding bg-canvas-soft relative overflow-hidden">
+                <div class="container-main relative z-10">
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Engineering</p>
+                        <h2 class="display-xl mb-6">We don't build websites. We engineer digital infrastructure.</h2>
+                        <p class="body-lg text-ink-mute">Custom applications, scalable architectures, secure database integrations, and smooth web layouts. We build for speed, performance, and simplicity.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                        <!-- Left: Capabilities -->
+                        <div class="space-y-12 gsap-fade-up">
+                            <div class="space-y-4">
+                                <h3 class="heading-lg">Web Applications</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">High-performance applications built with modern frameworks. Rendered on edge, with local caching and real-time database endpoints.</p>
+                            </div>
+                            <div class="space-y-4">
+                                <h3 class="heading-lg">Platform Engineering</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Bespoke management portals, SaaS infrastructures, and customer databases. Built with modular, clean coding structures.</p>
+                            </div>
+                            <div class="space-y-4">
+                                <h3 class="heading-lg">Automation & Integration</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Workflow automations, database connections, and secure API links that connect your core operations smoothly.</p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Flat, borderless Vector Cartoon illustration -->
+                        <div class="gsap-fade-up flex justify-center w-full">
+                            <div class="w-full max-w-xl bg-canvas-soft rounded-2xl p-6 flex items-center justify-center relative overflow-hidden h-[480px]">
+                                <img src="images/engineering_cartoon.png" alt="Engineering Illustration" class="w-full h-full object-contain">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 04: GROWTH                           -->
+            <!-- ============================================ -->
+            <section class="section-padding">
+                <div class="container-main">
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Growth</p>
+                        <h2 class="display-xl mb-6">Visibility is engineered, not accidental.</h2>
+                        <p class="body-lg text-ink-mute">Search visibility audits, page speed optimizations, and clean analytics tracking designed to connect your company with clients.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 gsap-fade-up">
+                        <!-- Speed -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas-soft rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m12 14 4-4" />
+                                    <path d="M3.34 19a10 10 0 1 1 17.32 0" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Core Web Vitals</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Optimizing page loads, layouts, and image sizes so your users don't wait.</p>
+                            </div>
+                        </div>
+
+                        <!-- Visibility -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas-soft rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <path d="m21 21-4.3-4.3" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Search Rank Optimization</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Topic research, clean schemas, and semantic html formatting to rank naturally.</p>
+                            </div>
+                        </div>
+
+                        <!-- Conversion -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas-soft rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <circle cx="12" cy="12" r="6" />
+                                    <circle cx="12" cy="12" r="2" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Conversion Layouts</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Strategic calls to action and clean visual spacing to guide users easily.</p>
+                            </div>
+                        </div>
+
+                        <!-- Monitoring -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas-soft rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Platform Diagnostics</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Simple setup tracking, performance indicators, and client metrics dashboards.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 05: LEGAL & FINANCE                  -->
+            <!-- ============================================ -->
+            <section class="section-padding bg-canvas-soft">
+                <div class="container-main">
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Structure & Foundation</p>
+                        <h2 class="display-xl mb-6">Growth without protection is exposure. Revenue without strategy is waste.</h2>
+                        <p class="body-lg text-ink-mute">Legal and financial consulting built to support your core technology business. We secure your intellectual property and plan your growth strategy.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 gsap-fade-up">
+                        <!-- Legal Column (No card borders) -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-2">Legal Consultancy</p>
+                                <h3 class="display-md mb-4">Protect your architecture.</h3>
+                                <p class="body-lg text-ink-mute mb-6">Privacy policy auditing, data compliance (GDPR/CCPA), intellectual property filings, and clean service agreement structures.</p>
+                                <ul class="space-y-3 text-sm text-ink-mute">
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Technology compliance reviews</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> IP protection and contracts</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Privacy policy drafting</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Finance Column (No card borders) -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="20" x2="12" y2="10" />
+                                    <line x1="18" y1="20" x2="18" y2="4" />
+                                    <line x1="6" y1="20" x2="6" y2="16" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-2">Financial Consultancy</p>
+                                <h3 class="display-md mb-4">Engineer your growth capital.</h3>
+                                <p class="body-lg text-ink-mute mb-6">Fundraising projection models, company valuation reports, operational budget forecasting, and cash flow analysis.</p>
+                                <ul class="space-y-3 text-sm text-ink-mute">
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Budget projections and forecasting</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Valuations and capitalization consulting</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Cash flow management</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 06: INSIGHTS                         -->
+            <!-- ============================================ -->
+            <section class="section-padding">
+                <div class="container-main">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6 gsap-fade-up">
+                        <div>
+                            <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Journal</p>
+                            <h2 class="display-xl">Insights</h2>
+                        </div>
+                        <a href="blog.html" class="btn-link">
+                            View all articles
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+
+                    <!-- Cardless Typographical Blog Preview Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 gsap-fade-up" id="home-insights-grid">
+                        <!-- Dynamic articles populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 07: FINAL CTA                        -->
+            <!-- ============================================ -->
+            <section class="cta-section bg-canvas-soft border-t border-hairline gsap-fade-up">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="display-xxl mb-6">Let's construct your digital future.</h2>
+                    <p class="body-lg max-w-xl mx-auto mb-10 text-ink-mute">Collaborate with our team of engineers, designers, legal auditors, and financial strategists.</p>
+                    <div class="magnetic-wrap">
+                        <a href="contact.html" class="btn-primary btn-primary-lg">Book a Consultation</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-light">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
+            <div class="font-medium" style="letter-spacing: -0.04em;">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                <a href="./">Home</a>
+                <a href="services.html">Services</a>
+                <a href="blog.html">Blog</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+    
+    <!-- Dynamic Blog Previews Loading -->
+    <script>
+        function formatLocalShortDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            try {
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            } catch (e) {
+                return String(dateStr).substring(0, 10);
+            }
+        }
+
+        async function loadHomeBlogs() {
+            const grid = document.getElementById('home-insights-grid');
+            if (!grid) return;
+
+            await window.backendReady;
+            const blogs = await window.apiCall('get_blogs') || [];
+            
+            // Sort by date descending
+            const sortedBlogs = blogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const latest = sortedBlogs.slice(0, 2);
+
+            if (latest.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-10 text-xs text-ink-mute">
+                        No articles published yet.
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            
+            // First (Featured - 2/3 width)
+            if (latest[0]) {
+                const p = latest[0];
+                html += `
+                    <div class="col-span-1 md:col-span-2 flex flex-col justify-between py-4 border-b border-hairline pb-8">
+                        <div class="space-y-4">
+                            <span class="bg-canvas-soft border border-hairline text-ink text-[10px] font-medium px-3 py-1 rounded-full uppercase tracking-wider">${window.escapeHtml(p.category)}</span>
+                            <h3 class="display-md"><a href="article.html?id=${p.id}" class="hover:text-ink-mute transition-colors">${window.escapeHtml(p.title)}</a></h3>
+                            <p class="text-sm text-ink-mute leading-relaxed max-w-lg">${window.escapeHtml(p.summary)}</p>
+                        </div>
+                        <div class="flex items-center justify-between mt-6 text-xs text-ink-mute">
+                            <span>By ${window.escapeHtml(p.author)} &bull; ${formatLocalShortDate(p.date)}</span>
+                            <a href="article.html?id=${p.id}" class="font-medium text-ink hover:underline">Read Article</a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Second (Normal - 1/3 width)
+            if (latest[1]) {
+                const p = latest[1];
+                html += `
+                    <div class="flex flex-col justify-between py-4 border-b border-hairline pb-8">
+                        <div class="space-y-4">
+                            <span class="bg-canvas-soft border border-hairline text-ink text-[10px] font-medium px-3 py-1 rounded-full uppercase tracking-wider">${window.escapeHtml(p.category)}</span>
+                            <h3 class="heading-lg"><a href="article.html?id=${p.id}" class="hover:text-ink-mute transition-colors">${window.escapeHtml(p.title)}</a></h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">${window.escapeHtml(p.summary)}</p>
+                        </div>
+                        <div class="flex items-center justify-between mt-6 text-xs text-ink-mute">
+                            <span>By ${window.escapeHtml(p.author)} &bull; ${formatLocalShortDate(p.date)}</span>
+                            <a href="article.html?id=${p.id}" class="font-medium text-ink hover:underline">Read Article</a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadHomeBlogs);
+    </script>
+</body>
+</html>

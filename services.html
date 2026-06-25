@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Capabilities: Web Engineering, Design, Law & Finance | DiginixIT</title>
+    <meta name="description"
+        content="Explore our premium multidisciplinary services including custom web engineering, bespoke UI/UX design systems, performance SEO, technology law compliance, and corporate finance.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diginixit.com/services.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diginixit.com/services.html">
+    <meta property="og:title" content="DiginixIT | Core Capabilities: Web Engineering, Design, Law & Finance">
+    <meta property="og:description"
+        content="Explore our premium capabilities: custom high-performance web engineering, design systems, performance SEO, tech compliance audits, and financial modeling.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://diginixit.com/services.html">
+    <meta name="twitter:title" content="DiginixIT | Core Capabilities: Web Engineering, Design, Law & Finance">
+    <meta name="twitter:description"
+        content="Explore our premium capabilities: custom high-performance web engineering, design systems, performance SEO, tech compliance audits, and financial modeling.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <meta name="color-scheme" content="light">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Ads Popunder -->
+    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js"
+        async></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        ink: '#171717',
+                        'ink-mute': '#707070',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{"@type": "ListItem","position": 1,"name": "Home","item": "https://diginixit.com/"},{"@type": "ListItem","position": 2,"name": "Services","item": "https://diginixit.com/services.html"}]
+    }
+    </script>
+</head>
+
+<body class="bg-canvas text-ink">
+
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12"
+        aria-label="Main Navigation">
+        <div class="max-w-[1280px] mx-auto flex justify-between items-center">
+            <a href="./" class="text-xl font-medium tracking-tighter text-ink"
+                style="letter-spacing: -0.04em;">DIGINIXIT.</a>
+
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="./" class="nav-item-link" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link" id="nav-services">Services</a>
+                <a href="blog.html" class="nav-item-link" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link" id="nav-contact">Contact</a>
+            </div>
+
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin"
+                    class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign
+                    In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="btn-primary" id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-ink focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu"
+        class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-medium" style="letter-spacing: -0.02em;">
+            <a href="./" class="mobile-nav-link hover:text-ink-mute transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Services</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Contact</a>
+        </div>
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin"
+                class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm"
+                id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm"
+                id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-0">
+        <div class="container-main">
+            <!-- Breadcrumbs -->
+            <nav class="mb-8 flex items-center space-x-2 text-xs font-medium text-ink-mute uppercase tracking-widest"
+                aria-label="Breadcrumb">
+                <a href="./" class="hover:text-ink transition-colors">Home</a>
+                <span>/</span>
+                <span class="text-ink font-medium">Services</span>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="max-w-4xl mb-24">
+                <h1 class="display-xxl mb-6">Capabilities & Services</h1>
+                <p class="body-lg text-ink-mute max-w-2xl">We engineer custom web applications, design premium user
+                    experiences, optimize organic search visibility, audit legal compliance, and craft strategic
+                    financial models.</p>
+            </div>
+        </div>
+
+        <!-- Service 1: Web Engineering -->
+        <section class="section-padding border-t border-hairline">
+            <div class="container-main">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="space-y-8 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase">01 — Engineering</p>
+                        <h2 class="display-xl">Web Engineering</h2>
+                        <p class="body-lg text-ink-mute">We build elite web applications utilizing serverless
+                            architectures, custom API integrations, and robust database setups. Bespoke React and
+                            Next.js applications engineered for maximum performance, security, and responsive layouts.
+                        </p>
+                        <div class="space-y-3 pt-4">
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Next.js, React, Serverless API Integration
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Micro-Frontend & Modular Architecture
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                WebGL & Dynamic Layout Interactions
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gsap-fade-up flex justify-center w-full">
+                        <!-- Laptop cartoon mockup (flat, borderless) -->
+                        <div class="w-full max-w-md bg-canvas-soft rounded-2xl p-8 flex flex-col items-center justify-center relative overflow-hidden h-64">
+                            <!-- Flat background shapes -->
+                            <div class="absolute w-32 h-32 bg-primary/10 rounded-full -bottom-10 -right-10"></div>
+                            <!-- Flat cartoon layout mockup -->
+                            <div class="w-full bg-canvas rounded-xl p-4 flex flex-col gap-3.5 relative z-10">
+                                <div class="flex gap-1.5">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-primary/25"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-primary/25"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-primary/25"></div>
+                                </div>
+                                <div class="flex items-center justify-center bg-canvas-soft rounded-lg p-6 h-32">
+                                    <div class="w-16 h-12 bg-primary rounded flex items-center justify-center text-canvas">
+                                        <div class="flex flex-col items-center">
+                                            <div class="flex gap-1 mb-1">
+                                                <div class="w-1 h-1 bg-canvas rounded-full"></div>
+                                                <div class="w-1 h-1 bg-canvas rounded-full"></div>
+                                            </div>
+                                            <div class="w-3 h-1.5 bg-canvas rounded-b-full"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service 2: UX/UI Design -->
+        <section class="section-padding bg-canvas-soft border-t border-hairline">
+            <div class="container-main">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="order-last md:order-first gsap-fade-up flex justify-center">
+                        <!-- Creative palette/blocks (flat, borderless) -->
+                        <div class="relative w-48 h-48 flex items-center justify-center">
+                            <div class="absolute w-28 h-28 bg-primary/20 rounded-full -translate-x-6 -translate-y-4">
+                            </div>
+                            <div class="absolute w-24 h-24 bg-blue-100 rounded-full translate-x-8 -translate-y-6"></div>
+                            <div class="absolute w-20 h-20 bg-yellow-100 rounded-full translate-x-4 translate-y-8">
+                            </div>
+                            <div
+                                class="absolute w-16 h-16 bg-primary rounded-full flex items-center justify-center text-canvas text-xl font-medium">
+                                UI/UX</div>
+                        </div>
+                    </div>
+                    <div class="space-y-8 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase">02 — Design</p>
+                        <h2 class="display-xl">UX/UI Design</h2>
+                        <p class="body-lg text-ink-mute">High-fidelity digital interfaces driven by clean typography
+                            systems, custom interaction design, and tailored layouts. Visual spacing and comprehensive
+                            components that bridge aesthetics and clean user flows.</p>
+                        <div class="space-y-3 pt-4">
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                High-Fidelity Prototyping & Layouts
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Custom Typography & Design Tokens
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Responsive Layout Systems
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service 3: Technical SEO -->
+        <section class="section-padding border-t border-hairline">
+            <div class="container-main">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="space-y-8 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase">03 — Growth</p>
+                        <h2 class="display-xl">Technical SEO</h2>
+                        <p class="body-lg text-ink-mute">Core performance layers engineered for speed. Semantic html
+                            hierarchy, custom schema integrations, and optimized load paths for maximum organic
+                            visibility.</p>
+                        <div class="space-y-3 pt-4">
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Core Web Vitals Speed Optimization
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Advanced Schema Curation
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Structural Hierarchy & Semantic Indexing
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gsap-fade-up flex justify-center">
+                        <!-- Speed Dial / Metric Illustration (flat, borderless) -->
+                        <div class="relative w-36 h-36 flex items-center justify-center bg-primary/10 rounded-full">
+                            <div class="w-28 h-28 bg-primary/20 rounded-full flex items-center justify-center">
+                                <div
+                                    class="w-20 h-20 bg-primary rounded-full flex items-center justify-center text-canvas text-2xl font-semibold">
+                                    100</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service 4: Law & Tech Compliance -->
+        <section class="section-padding bg-canvas-soft border-t border-hairline">
+            <div class="container-main">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="order-last md:order-first gsap-fade-up flex justify-center">
+                        <!-- Shield Cartoon (flat, borderless) -->
+                        <div
+                            class="w-24 h-28 bg-primary/15 rounded-b-full rounded-t-md flex items-center justify-center relative">
+                            <div
+                                class="w-16 h-20 bg-primary rounded-b-full rounded-t-md flex items-center justify-center text-canvas">
+                                <div class="w-8 h-8 bg-canvas-soft/20 rounded-full flex items-center justify-center">
+                                    <div class="w-3.5 h-3.5 bg-canvas rounded-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-8 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase">04 — Protection</p>
+                        <h2 class="display-xl">Law & Tech Compliance</h2>
+                        <p class="body-lg text-ink-mute">Digital law consultation, IP protection parameters, service
+                            contract templates, and data privacy compliance reviews (GDPR/CCPA) tailored to software
+                            platforms.</p>
+                        <div class="space-y-3 pt-4">
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                GDPR & CCPA Compliance Reviews
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                IP Protection & SLA Consultation
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Terms & Service Conditions Audit
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service 5: Corporate Finance -->
+        <section class="section-padding border-t border-hairline">
+            <div class="container-main">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="space-y-8 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase">05 — Scale</p>
+                        <h2 class="display-xl">Corporate Finance</h2>
+                        <p class="body-lg text-ink-mute">Custom forecasting models, company valuation frameworks, and
+                            budget planning. We help software firms and businesses structure projections and manage
+                            capital allocation.</p>
+                        <div class="space-y-3 pt-4">
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Fundraising & Tech Valuation Models
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Custom Financial Forecast Projections
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                Cash Flow Planning
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gsap-fade-up flex justify-center">
+                        <!-- Finance Chart Cartoon (flat, borderless) -->
+                        <div class="flex items-end gap-3 h-40 w-full max-w-[280px]">
+                            <div class="flex-1 bg-primary/20 rounded-t-md" style="height: 35%"></div>
+                            <div class="flex-1 bg-primary/40 rounded-t-md" style="height: 50%"></div>
+                            <div class="flex-1 bg-primary/60 rounded-t-md" style="height: 70%"></div>
+                            <div class="flex-1 bg-primary rounded-t-md" style="height: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section bg-canvas-soft border-t border-hairline gsap-fade-up">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="display-xxl mb-6">Ready to build?</h2>
+                <p class="body-lg max-w-xl mx-auto mb-10 text-ink-mute">Let's discuss how our multidisciplinary team can
+                    engineer your next project.</p>
+                <div class="magnetic-wrap">
+                    <a href="contact.html" class="btn-primary btn-primary-lg">Book a Consultation</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-light">
+        <div
+            class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
+            <div class="font-medium" style="letter-spacing: -0.04em;">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                <a href="./">Home</a>
+                <a href="services.html">Services</a>
+                <a href="blog.html">Blog</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+</body>
+
+</html>

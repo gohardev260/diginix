@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | User Profile Panel</title>
+    <meta name="description" content="Manage your DiginixIT user account details, credentials, and billing tier levels.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://diginixit.com/profile.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diginixit.com/profile.html">
+    <meta property="og:title" content="DiginixIT | User Profile Panel">
+    <meta property="og:description" content="Manage your DiginixIT user account details, credentials, and billing tier levels.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://diginixit.com/profile.html">
+    <meta name="twitter:title" content="DiginixIT | User Profile Panel">
+    <meta name="twitter:description" content="Manage your DiginixIT user account details, credentials, and billing tier levels.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <meta name="color-scheme" content="light">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Ads Popunder -->
+    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration Inline -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        'canvas-night-soft': '#202020',
+                        ink: '#171717',
+                        'ink-mute': '#707070',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Hide body until verified -->
+    <style>body { visibility: hidden !important; }</style>
+</head>
+<body class="bg-canvas text-ink min-h-screen">
+
+    <div class="noise"></div>
+
+    <!-- Security Check (Redirect if not logged in) -->
+    <script>
+        (async function() {
+            const checkReady = setInterval(async () => {
+                if (window.backendReady) {
+                    clearInterval(checkReady);
+                    await window.backendReady;
+                    
+                    if (window.useSupabase) {
+                        try {
+                            const res = await window.apiCall('verify_session');
+                            if (!res || res.success !== true) {
+                                localStorage.removeItem('currentUser');
+                                alert('Session expired. Please sign in again.');
+                                window.location.replace('auth.html?mode=signin');
+                                return;
+                            }
+                            localStorage.setItem('currentUser', JSON.stringify(res.user));
+                        } catch (e) {
+                            console.error("Verification failed:", e);
+                            localStorage.removeItem('currentUser');
+                            window.location.replace('auth.html?mode=signin');
+                            return;
+                        }
+                    } else {
+                        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                        if (!currentUser || !currentUser.email) {
+                            window.location.replace('auth.html?mode=signin');
+                            return;
+                        }
+                    }
+                    
+                    document.body.style.setProperty('visibility', 'visible', 'important');
+                }
+            }, 50);
+        })();
+    </script>
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
+        <div class="max-w-[1280px] mx-auto flex justify-between items-center">
+            <a href="./" class="text-xl font-medium tracking-tighter text-ink" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
+            
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="./" class="nav-item-link" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link" id="nav-services">Services</a>
+                <a href="blog.html" class="nav-item-link" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link" id="nav-contact">Contact</a>
+            </div>
+
+            <!-- Desktop Auth / CTA -->
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="btn-primary" id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Mobile Navbar Controls -->
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-ink focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-medium" style="letter-spacing: -0.02em;">
+            <a href="./" class="mobile-nav-link hover:text-ink-mute transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Services</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Contact</a>
+        </div>
+        
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm" id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-[1280px] mx-auto">
+            <div class="max-w-4xl mx-auto">
+                <!-- Breadcrumbs -->
+                <nav class="mb-8 flex items-center space-x-2 text-xs font-medium text-ink-mute uppercase tracking-widest" aria-label="Breadcrumb">
+                    <a href="./" class="hover:text-ink transition-colors">Home</a>
+                    <span>/</span>
+                    <span class="text-ink font-medium">Profile</span>
+                </nav>
+                
+                <!-- Title -->
+                <div class="mb-12">
+                    <h1 class="display-xl mb-4">Profile & Settings</h1>
+                    <p class="body-lg text-ink-mute mt-1">Manage your developer credentials and custom account dashboard configuration.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                    
+                    <!-- Left Pane: Info Summary (Cardless) -->
+                    <div class="md:col-span-1 py-6 space-y-6 text-center">
+                        <div class="w-16 h-16 bg-canvas-soft text-ink text-2xl font-semibold rounded-full flex items-center justify-center mx-auto" id="profile-avatar">U</div>
+                        <div>
+                            <h2 class="font-medium text-lg text-ink" id="profile-display-name">Client Name</h2>
+                            <p class="text-ink-mute text-xs mt-1" id="profile-display-email">email@example.com</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Pane: Forms & Subscription (Cardless) -->
+                    <div class="md:col-span-2 space-y-8">
+                        <!-- Profile Form -->
+                        <div class="py-6">
+                            <h3 class="font-medium text-lg text-ink mb-6 flex items-center"><i data-lucide="user" class="w-5 h-5 mr-2 text-ink-mute"></i> Account Details</h3>
+                            <form onsubmit="handleProfileUpdate(event)" class="space-y-5">
+                                <div>
+                                    <label for="profile-name" class="text-xs font-medium text-ink-mute block mb-2">Full Name</label>
+                                    <input type="text" id="profile-name" class="premium-input text-sm" required style="border-radius: 6px;">
+                                </div>
+                                <div>
+                                    <label for="profile-email" class="text-xs font-medium text-ink-mute block mb-2">Email Address (Read-only)</label>
+                                    <input type="email" id="profile-email" class="premium-input text-sm bg-canvas-soft text-ink-mute cursor-not-allowed" readonly style="border-radius: 6px;">
+                                </div>
+                                <div>
+                                    <label for="profile-password" class="text-xs font-medium text-ink-mute block mb-2">Password</label>
+                                    <input type="password" id="profile-password" class="premium-input text-sm" required minlength="4" style="border-radius: 6px;">
+                                </div>
+                                <button type="submit" class="w-full btn-primary py-3 font-medium transition-colors mt-2">Save Profile Changes</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-light">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
+            <div class="font-medium" style="letter-spacing: -0.04em;">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                <a href="./">Home</a>
+                <a href="services.html">Services</a>
+                <a href="blog.html">Blog</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script>
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+        function loadProfileData() {
+            currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (!currentUser.email) return;
+
+            // Update displays
+            document.getElementById('profile-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
+            document.getElementById('profile-display-name').innerText = currentUser.name;
+            document.getElementById('profile-display-email').innerText = currentUser.email;
+            
+            // Fill forms
+            document.getElementById('profile-name').value = currentUser.name;
+            document.getElementById('profile-email').value = currentUser.email;
+            document.getElementById('profile-password').value = '';
+            document.getElementById('profile-password').placeholder = 'Leave blank to keep current password';
+        }
+
+        window.handleProfileUpdate = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('profile-name').value.trim();
+            const password = document.getElementById('profile-password').value;
+
+            await window.backendReady;
+            const res = await window.apiCall('update_profile', {
+                email: currentUser.email,
+                name: name,
+                password: password
+            });
+
+            if (res && res.success === true) {
+                // Update local storage session cache
+                currentUser = { ...currentUser, ...res.user };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                alert('Profile details updated successfully.');
+                loadProfileData();
+                
+                // Reload common navbar greeting
+                const greetingEl = document.getElementById('nav-profile');
+                if (greetingEl) {
+                    greetingEl.innerText = `Hello, ${currentUser.name}`;
+                }
+            } else {
+                alert(res && res.error ? res.error : 'Profile update failed.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.backendReady;
+            loadProfileData();
+        });
+    </script>
+</body>
+</html>

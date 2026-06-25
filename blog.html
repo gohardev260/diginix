@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT Insights Blog | Web Development, SEO & Design Articles</title>
+    <meta name="description" content="Read DiginixIT Insights Blog. Our engineers share technical audits, web development insights, design guidelines, and Core Web Vitals optimization guides.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://diginixit.com/blog.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://diginixit.com/blog.html">
+    <meta property="og:title" content="DiginixIT | Insights Blog">
+    <meta property="og:description" content="Read the DiginixIT Insights Blog. Our senior engineers share bespoke technical audits, WebGL interactive designs, and Core Web Vitals optimization guidelines.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://diginixit.com/blog.html">
+    <meta name="twitter:title" content="DiginixIT | Insights Blog">
+    <meta name="twitter:description" content="Read the DiginixIT Insights Blog. Our senior engineers share bespoke technical audits, WebGL interactive designs, and Core Web Vitals optimization guidelines.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <meta name="color-scheme" content="light">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Ads Popunder -->
+    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        ink: '#171717',
+                        'ink-mute': '#707070',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [{"@type": "ListItem","position": 1,"name": "Home","item": "https://diginixit.com/"},{"@type": "ListItem","position": 2,"name": "Blog","item": "https://diginixit.com/blog.html"}]
+            },
+            {
+                "@type": "Blog",
+                "@id": "https://diginixit.com/blog.html#blog",
+                "name": "DiginixIT Insights Blog",
+                "url": "https://diginixit.com/blog.html",
+                "description": "Read DiginixIT Insights Blog. Our engineers share technical audits, web development insights, design guidelines, and Core Web Vitals optimization guides.",
+                "publisher": {"@type": "Organization","name": "DiginixIT","logo": {"@type": "ImageObject","url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200"}}
+            }
+        ]
+    }
+    </script>
+</head>
+<body class="bg-canvas text-ink">
+
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
+        <div class="max-w-[1280px] mx-auto flex justify-between items-center">
+            <a href="./" class="text-xl font-medium tracking-tighter text-ink" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
+            
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="./" class="nav-item-link" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link" id="nav-services">Services</a>
+                <a href="blog.html" class="nav-item-link" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link" id="nav-contact">Contact</a>
+            </div>
+
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap"><a href="auth.html?mode=signup" class="btn-primary" id="btn-signup">Get Started</a></div>
+            </div>
+
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-ink focus:outline-none" aria-label="Toggle Menu"><i data-lucide="menu" class="w-6 h-6"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-medium" style="letter-spacing: -0.02em;">
+            <a href="./" class="mobile-nav-link hover:text-ink-mute transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Services</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Contact</a>
+        </div>
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm" id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20">
+        <div class="container-main">
+            <!-- Breadcrumbs -->
+            <nav class="mb-8 flex items-center space-x-2 text-xs font-medium text-ink-mute uppercase tracking-widest" aria-label="Breadcrumb">
+                <a href="./" class="hover:text-ink transition-colors">Home</a>
+                <span>/</span>
+                <span class="text-ink font-medium">Blog</span>
+            </nav>
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+                <div>
+                    <h1 class="display-xxl mb-3">Insights</h1>
+                    <p class="body-lg text-ink-mute">Analysis, UI principles, and strategy guides for business growth.</p>
+                </div>
+                <div class="relative w-full md:w-80">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-faint w-4 h-4"></i>
+                    <input type="text" id="blog-search-input" aria-label="Search articles" placeholder="Search articles..." class="premium-input pl-11 pr-4 py-3 text-sm" style="border-radius: 6px;">
+                </div>
+            </div>
+
+            <!-- Categories and Grid -->
+            <div class="space-y-10">
+                <!-- Filters -->
+                <div class="flex flex-wrap gap-3" id="blog-category-filter"></div>
+
+                <!-- Blog Grid (Typographical cardless listing) -->
+                <section id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" aria-label="Insights Blog Articles Grid">
+                    <!-- Populated dynamically -->
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-light">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
+            <div class="font-medium" style="letter-spacing: -0.04em;">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                <a href="./">Home</a>
+                <a href="services.html">Services</a>
+                <a href="blog.html">Blog</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+    
+    <!-- Blog rendering script (PRESERVED — all dynamic JS intact) -->
+    <script>
+        let blogs = [];
+        let activeCategory = 'All';
+        let searchQuery = '';
+
+        const grid = document.getElementById('blog-grid');
+        const searchInput = document.getElementById('blog-search-input');
+        const filterContainer = document.getElementById('blog-category-filter');
+
+        function formatLocalShortDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            try {
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            } catch (e) {
+                return String(dateStr).substring(0, 10);
+            }
+        }
+
+        function renderCategoryFilters(allBlogs) {
+            if (!filterContainer) return;
+            
+            const uniqueCategories = ['All', ...new Set(allBlogs.map(post => post.category).filter(Boolean))];
+            
+            filterContainer.innerHTML = uniqueCategories.map(cat => {
+                const match = activeCategory === cat;
+                return `
+                    <button class="px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        match 
+                            ? 'bg-canvas-soft border border-hairline text-ink' 
+                            : 'bg-canvas border border-hairline text-ink-mute hover:text-ink hover:border-hairline-strong'
+                    }" style="border-radius: 6px;" data-category="${window.escapeHtml(cat)}">
+                        ${window.escapeHtml(cat === 'All' ? 'All Articles' : cat)}
+                    </button>
+                `;
+            }).join('');
+
+            filterContainer.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    activeCategory = btn.getAttribute('data-category');
+                    await renderBlogs();
+                });
+            });
+        }
+
+        async function renderBlogs() {
+            if (!grid) return;
+            
+            blogs = await window.apiCall('get_blogs') || [];
+            renderCategoryFilters(blogs);
+
+            const filtered = blogs.filter(post => {
+                const matchesCat = activeCategory === 'All' || post.category === activeCategory;
+                const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                     post.summary.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-20">
+                        <i data-lucide="info" class="w-10 h-10 text-ink-faint mx-auto mb-4"></i>
+                        <h2 class="heading-lg mb-2">No articles found</h2>
+                        <p class="text-sm text-ink-mute">Try expanding your search query or switching categories.</p>
+                    </div>
+                `;
+            } else {
+                grid.innerHTML = filtered.map(post => `
+                    <a href="article.html?id=${post.id}" class="flex flex-col justify-between py-6 border-b border-hairline group">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="bg-canvas-soft border border-hairline text-ink text-[10px] font-medium px-3 py-1 rounded-full uppercase tracking-wider">${window.escapeHtml(post.category)}</span>
+                                <div class="text-[10px] text-ink-mute font-medium">${window.escapeHtml(formatLocalShortDate(post.date))}</div>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <h3 class="display-md group-hover:text-ink-mute transition-colors">${window.escapeHtml(post.title)}</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed line-clamp-3">${window.escapeHtml(post.summary)}</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-xs mt-2 text-ink-mute">
+                            <span>By ${window.escapeHtml(post.author)}</span>
+                            <span class="font-medium text-ink group-hover:underline">Read Article &rarr;</span>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', async (e) => {
+                searchQuery = e.target.value;
+                await renderBlogs();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.backendReady;
+            await renderBlogs();
+            window.addEventListener('storage', async () => {
+                await renderBlogs();
+            });
+        });
+    </script>
+</body>
+</html>

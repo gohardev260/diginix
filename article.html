@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="meta-title-tag">DiginixIT Insights Blog | Read Article</title>
+    <meta name="description" id="meta-desc-tag" content="Read developer audits, technical web development insights, design guidelines, and Core Web Vitals optimization guides on DiginixIT Insights Blog.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" id="canonical-link" href="https://diginixit.com/article.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="og-url-tag" content="https://diginixit.com/blog.html">
+    <meta property="og:title" id="og-title-tag" content="DiginixIT | Read Insight">
+    <meta property="og:description" id="og-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
+    <meta property="og:image" id="og-image-tag" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" id="twitter-url-tag" content="https://diginixit.com/blog.html">
+    <meta name="twitter:title" id="twitter-title-tag" content="DiginixIT | Read Insight">
+    <meta name="twitter:description" id="twitter-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
+    <meta name="twitter:image" id="twitter-image-tag" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <meta name="color-scheme" content="light">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Ads Popunder -->
+    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
+
+    <!-- DOMPurify for XSS Protection -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration Inline -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Lora', 'serif']
+                    },
+                    colors: {
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        ink: '#171717',
+                        'ink-mute': '#707070',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Article typography customization to follow design.md -->
+    <style>
+        #article-content {
+            font-family: 'Lora', Georgia, serif;
+            color: var(--color-ink);
+            font-size: 1.125rem;
+            line-height: 1.8;
+            letter-spacing: -0.003em;
+        }
+        @media (min-width: 640px) {
+            #article-content {
+                font-size: 1.25rem;
+            }
+        }
+        #article-content p {
+            margin-bottom: 1.75rem;
+            font-weight: 400;
+        }
+        #article-content h1, #article-content h2, #article-content h3 {
+            font-family: 'Inter', sans-serif;
+            color: var(--color-ink);
+            font-weight: 500;
+            line-height: 1.2;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        #article-content h1 { font-size: 2rem; }
+        #article-content h2 { font-size: 1.75rem; }
+        #article-content h3 { font-size: 1.4rem; }
+        #article-content a {
+            color: var(--color-ink);
+            text-decoration: underline;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+        }
+        #article-content a:hover {
+            opacity: 0.8;
+        }
+        #article-content ul, #article-content ol {
+            margin-bottom: 1.75rem;
+            padding-left: 1.5rem;
+        }
+        #article-content ul {
+            list-style-type: disc;
+        }
+        #article-content ol {
+            list-style-type: decimal;
+        }
+        #article-content li {
+            margin-bottom: 0.5rem;
+        }
+        #article-content blockquote {
+            border-left: 3px solid var(--color-primary);
+            padding-left: 1.5rem;
+            font-style: italic;
+            color: var(--color-ink-mute);
+            margin: 2rem 0;
+        }
+        #article-content pre, #article-content code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--color-canvas-soft);
+            padding: 0.2em 0.4em;
+            border-radius: var(--radius-xs);
+            font-size: 0.85em;
+        }
+        #article-content pre {
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1.75rem;
+            background-color: var(--color-canvas-night);
+            color: var(--color-on-dark);
+            border-radius: var(--radius-sm);
+        }
+        #article-content pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 0.9em;
+            color: inherit;
+        }
+    </style>
+
+    <!-- Structured Data (Breadcrumb Schema) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://diginixit.com/"
+        },{
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://diginixit.com/blog.html"
+        },{
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Article",
+            "item": "https://diginixit.com/article.html"
+        }]
+    }
+    </script>
+</head>
+<body class="bg-canvas text-ink">
+
+    <div class="noise"></div>
+
+    <!-- Reading Progress Pinned to Top -->
+    <div id="reading-progress" class="fixed top-0 left-0 h-1 bg-primary z-[110] w-0 transition-all duration-75"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
+        <div class="max-w-[1280px] mx-auto flex justify-between items-center">
+            <a href="./" class="text-xl font-medium tracking-tighter text-ink" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
+            
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="./" class="nav-item-link" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link" id="nav-services">Services</a>
+                <a href="blog.html" class="nav-item-link" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link" id="nav-contact">Contact</a>
+            </div>
+
+            <!-- Desktop Auth / CTA -->
+            <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
+                <a href="auth.html?mode=signin" class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign In</a>
+                <div class="magnetic-wrap">
+                    <a href="auth.html?mode=signup" class="btn-primary" id="btn-signup">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Mobile Navbar Controls -->
+            <div class="flex md:hidden items-center space-x-3">
+                <button id="hamburger-btn" class="p-2 text-ink focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-medium" style="letter-spacing: -0.02em;">
+            <a href="./" class="mobile-nav-link hover:text-ink-mute transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Services</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Contact</a>
+        </div>
+        
+        <div class="flex flex-col space-y-4" id="mobile-auth-container">
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm" id="mobile-btn-signup">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-[1280px] mx-auto">
+            <div class="max-w-3xl mx-auto" id="main-article-view">
+                
+                <!-- Breadcrumbs -->
+                <div class="mb-8 flex items-center space-x-2 text-xs font-medium text-ink-mute uppercase tracking-widest">
+                    <a href="blog.html" class="hover:text-ink transition-colors flex items-center gap-1 group">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform"></i>
+                        Back to Insights
+                    </a>
+                    <span>/</span>
+                    <span id="article-category-breadcrumb" class="text-ink font-medium">Tech</span>
+                </div>
+
+                <!-- Article Body Wrapper (Centered max-w-2xl mx-auto) -->
+                <div class="max-w-2xl mx-auto">
+                    <!-- Article Title -->
+                    <h1 id="article-title" class="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-6 leading-tight text-ink" style="letter-spacing: -0.03em;">
+                        Loading article...
+                    </h1>
+
+                    <!-- Horizontal Metadata Row (Borderless) -->
+                    <div class="flex items-center justify-between border-b border-hairline pb-6 mb-8">
+                        <div class="flex items-center space-x-3">
+                            <div id="author-initials" class="w-10 h-10 rounded-full bg-canvas-soft border border-hairline flex items-center justify-center font-medium text-xs text-ink uppercase">
+                                DI
+                            </div>
+                            <div>
+                                <div id="article-author" class="font-medium text-sm text-ink">DiginixIT</div>
+                                <div class="flex items-center space-x-2 text-xs text-ink-mute mt-0.5">
+                                    <span id="article-date">2026-06-01</span>
+                                    <span>&bull;</span>
+                                    <span id="article-readtime" class="font-normal">-- min read</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sharing Toolbar (Borderless text links) -->
+                        <div class="flex items-center space-x-4 text-xs text-ink-mute font-medium">
+                            <a href="#" id="share-twitter" target="_blank" class="hover:text-ink transition-colors">Twitter</a>
+                            <a href="#" id="share-linkedin" target="_blank" class="hover:text-ink transition-colors">LinkedIn</a>
+                            <button id="share-copy" class="hover:text-ink transition-colors relative">
+                                Copy Link
+                                <span id="copy-toast" class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-primary text-ink text-[10px] font-medium rounded-sm opacity-0 pointer-events-none transition-opacity duration-200 whitespace-nowrap">Link Copied!</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Article Body Content -->
+                    <article id="article-content" class="space-y-6">
+                        <!-- Content Paragraphs Populated Dynamically -->
+                    </article>
+                </div>
+
+                <!-- Related Articles (Cardless List) -->
+                <section class="border-t border-hairline mt-20 pt-16" aria-label="Related Insights">
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 class="text-2xl font-medium tracking-tight" style="letter-spacing: -0.02em;">Related Insights</h2>
+                        </div>
+                        <a href="blog.html" class="text-xs font-medium text-ink hover:text-ink-mute flex items-center gap-1 group">
+                            View all insights
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                    <div id="related-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <!-- Dynamically populated related blogs -->
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-light">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
+            <div class="font-medium" style="letter-spacing: -0.04em;">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                <a href="./">Home</a>
+                <a href="services.html">Services</a>
+                <a href="blog.html">Blog</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div>&copy; 2026 DiginixIT. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+
+    <!-- Page Loading and Rendering JS -->
+    <script>
+        function formatLocalShortDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            try {
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            } catch (e) {
+                return String(dateStr).substring(0, 10);
+            }
+        }
+
+        async function loadArticleDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const articleId = params.get('id');
+
+            if (!articleId) {
+                renderNotFound("No article ID was provided.");
+                return;
+            }
+
+            await window.backendReady;
+            const blogs = await window.apiCall('get_blogs') || [];
+            const post = blogs.find(b => String(b.id) === String(articleId));
+
+            if (!post) {
+                renderNotFound("The requested article could not be found.");
+                return;
+            }
+
+            // Set Title & Meta tags dynamically for SEO & Social Cards
+            const currentUrl = `https://diginixit.com/article.html?id=${post.id}`;
+            const postImage = 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200';
+            
+            document.title = `DiginixIT | ${post.title}`;
+            
+            const metaTitle = document.getElementById('meta-title-tag');
+            if (metaTitle) metaTitle.innerText = `DiginixIT | ${post.title}`;
+            
+            const metaDesc = document.getElementById('meta-desc-tag');
+            if (metaDesc) metaDesc.content = post.summary;
+
+            const canonical = document.getElementById('canonical-link');
+            if (canonical) canonical.href = currentUrl;
+
+            // Open Graph Override
+            const ogUrl = document.getElementById('og-url-tag');
+            if (ogUrl) ogUrl.content = currentUrl;
+            const ogTitle = document.getElementById('og-title-tag');
+            if (ogTitle) ogTitle.content = post.title;
+            const ogDesc = document.getElementById('og-desc-tag');
+            if (ogDesc) ogDesc.content = post.summary;
+            const ogImage = document.getElementById('og-image-tag');
+            if (ogImage) ogImage.content = postImage;
+
+            // Twitter Card Override
+            const twitterUrl = document.getElementById('twitter-url-tag');
+            if (twitterUrl) twitterUrl.content = currentUrl;
+            const twitterTitle = document.getElementById('twitter-title-tag');
+            if (twitterTitle) twitterTitle.content = post.title;
+            const twitterDesc = document.getElementById('twitter-desc-tag');
+            if (twitterDesc) twitterDesc.content = post.summary;
+            const twitterImage = document.getElementById('twitter-image-tag');
+            if (twitterImage) twitterImage.content = postImage;
+
+            // Inject Dynamic JSON-LD Article Schema
+            try {
+                const schema = {
+                    "@context": "https://schema.org",
+                    "@type": "Article",
+                    "headline": post.title,
+                    "description": post.summary,
+                    "image": [postImage],
+                    "datePublished": post.date,
+                    "dateModified": post.date,
+                    "author": [{
+                        "@type": "Person",
+                        "name": post.author || "DiginixIT Staff",
+                        "url": "https://diginixit.com/blog.html"
+                    }],
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "DiginixIT",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200"
+                        }
+                    }
+                };
+                const schemaScript = document.createElement('script');
+                schemaScript.type = 'application/ld+json';
+                schemaScript.text = JSON.stringify(schema);
+                document.head.appendChild(schemaScript);
+            } catch (e) {
+                console.error("Failed to inject article schema:", e);
+            }
+
+            const titleEl = document.getElementById('article-title');
+            if (titleEl) titleEl.innerText = post.title;
+            
+            // Set Categories
+            const breadcrumbEl = document.getElementById('article-category-breadcrumb');
+            if (breadcrumbEl) breadcrumbEl.innerText = post.category;
+            
+            // Date & Author details
+            const dateEl = document.getElementById('article-date');
+            if (dateEl) dateEl.innerText = formatLocalShortDate(post.date);
+            
+            const authorEl = document.getElementById('article-author');
+            if (authorEl) authorEl.innerText = post.author;
+
+            // Author initials
+            if (post.author) {
+                const initials = post.author.split(' ').map(name => name[0]).join('').substring(0, 2).toUpperCase();
+                const initialsEl = document.getElementById('author-initials');
+                if (initialsEl) initialsEl.innerText = initials;
+            }
+
+            // Calculate Reading Time (avg 200 words per minute)
+            const words = post.content ? post.content.split(/\s+/).length : 0;
+            const readingTime = Math.max(1, Math.ceil(words / 200));
+            const readTimeEl = document.getElementById('article-readtime');
+            if (readTimeEl) readTimeEl.innerText = `${readingTime} min read`;
+
+            // Render rich content or paragraphs
+            const contentsContainer = document.getElementById('article-content');
+            if (post.content && contentsContainer) {
+                const hasHtml = /<[a-z][\s\S]*>/i.test(post.content);
+                if (hasHtml) {
+                    contentsContainer.innerHTML = DOMPurify.sanitize(post.content, {
+                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'span', 'blockquote'],
+                        ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'class'],
+                        FORCE_HTTPS: true
+                    });
+                } else {
+                    const paragraphs = post.content.split('\n\n');
+                    contentsContainer.innerHTML = paragraphs.map((p) => {
+                        const cleanP = DOMPurify.sanitize(p, {
+                            ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre'],
+                            ALLOWED_ATTR: ['href', 'target', 'rel'],
+                            FORCE_HTTPS: true
+                        });
+                        return `<p>${cleanP}</p>`;
+                    }).join('');
+                }
+            } else if (contentsContainer) {
+                contentsContainer.innerHTML = `<p class="italic text-ink-mute">No content available for this article.</p>`;
+            }
+
+            // Initialize Share Toolbar links
+            const shareUrl = window.location.href;
+            const shareTwitter = document.getElementById('share-twitter');
+            if (shareTwitter) shareTwitter.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`;
+            
+            const shareLinkedin = document.getElementById('share-linkedin');
+            if (shareLinkedin) shareLinkedin.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+
+            // Copy to Clipboard Action
+            const copyBtn = document.getElementById('share-copy');
+            const copyToast = document.getElementById('copy-toast');
+            if (copyBtn && copyToast) {
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        copyToast.classList.remove('opacity-0');
+                        copyToast.classList.add('opacity-100');
+                        setTimeout(() => {
+                            copyToast.classList.remove('opacity-100');
+                            copyToast.classList.add('opacity-0');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy link: ', err);
+                    });
+                });
+            }
+
+            // Reading scroll progress bar logic
+            window.addEventListener('scroll', () => {
+                const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                if (height > 0) {
+                    const scrolled = (winScroll / height) * 100;
+                    const progressEl = document.getElementById('reading-progress');
+                    if (progressEl) progressEl.style.width = scrolled + "%";
+                }
+            });
+
+            // Populate Related Articles
+            renderRelatedArticles(blogs, post);
+
+            // Trigger lucide icon creation
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // GSAP Entry Animation
+            if (typeof gsap !== 'undefined') {
+                gsap.from("#article-title", { y: 20, opacity: 0, duration: 0.8, ease: "power3.out" });
+                gsap.from(".border-b", { y: 15, opacity: 0, duration: 0.8, delay: 0.2, ease: "power3.out" });
+                gsap.from("#article-content", { y: 15, opacity: 0, duration: 0.8, delay: 0.4, ease: "power3.out" });
+            }
+        }
+
+        function renderNotFound(message) {
+            const viewEl = document.getElementById('main-article-view');
+            if (viewEl) {
+                viewEl.innerHTML = `
+                    <div class="max-w-md mx-auto text-center py-20">
+                        <div class="w-16 h-16 bg-canvas-soft text-ink rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="alert-triangle" class="w-8 h-8 text-ink-mute"></i>
+                        </div>
+                        <h2 class="text-2xl font-medium mb-2 text-ink">Article Not Found</h2>
+                        <p class="text-ink-mute text-sm mb-8 leading-relaxed">${message}</p>
+                        <a href="blog.html" class="btn-primary inline-flex items-center justify-center px-6 py-3 text-sm">
+                            Back to Insights Blog
+                        </a>
+                    </div>
+                `;
+            }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function renderRelatedArticles(allBlogs, currentPost) {
+            const relatedContainer = document.getElementById('related-grid');
+            if (!relatedContainer) return;
+
+            const filterList = allBlogs.filter(b => String(b.id) !== String(currentPost.id));
+
+            // Select related posts (same category first, then fallback to others)
+            let matchingCategory = filterList.filter(b => b.category === currentPost.category);
+            let otherCategories = filterList.filter(b => b.category !== currentPost.category);
+            
+            let relatedBlogs = [...matchingCategory, ...otherCategories].slice(0, 3);
+
+            if (relatedBlogs.length === 0) {
+                relatedContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-ink-mute text-sm font-light">
+                        No other insights published yet.
+                    </div>
+                `;
+            } else {
+                relatedContainer.innerHTML = relatedBlogs.map(item => `
+                    <a href="article.html?id=${item.id}" class="flex flex-col justify-between py-6 border-b border-hairline group">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="bg-canvas-soft border border-hairline text-ink text-[10px] font-medium px-3 py-1 rounded-full uppercase tracking-wider">${window.escapeHtml(item.category)}</span>
+                                <div class="text-[10px] text-ink-mute font-medium">${window.escapeHtml(formatLocalShortDate(item.date))}</div>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <h3 class="display-md group-hover:text-ink-mute transition-colors line-clamp-2">${window.escapeHtml(item.title)}</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed line-clamp-3">${window.escapeHtml(item.summary || '')}</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-xs mt-2 text-ink-mute">
+                            <span>By ${window.escapeHtml(item.author)}</span>
+                            <span class="font-medium text-ink group-hover:underline">Read Article &rarr;</span>
+                        </div>
+                    </a>
+                `).join('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadArticleDetail();
+        });
+    </script>
+</body>
+</html>

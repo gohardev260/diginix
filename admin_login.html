@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiginixIT | Admin Portal Secure Access</title>
+    <meta name="description" content="Secure staff authentication portal for the DiginixIT administration terminal session.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://diginixit.com/admin_login.html">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <meta name="color-scheme" content="light">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration Inline -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        'canvas-night-soft': '#202020',
+                        ink: '#171717',
+                        'ink-mute': '#707070',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
+                    },
+                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-canvas text-ink h-screen overflow-hidden">
+
+    <div class="noise"></div>
+
+    <!-- Container -->
+    <div class="flex h-full w-full">
+        <!-- Left Column: Branding (canvas-night theme, hidden on mobile, borderless split) -->
+        <div class="hidden lg:flex lg:w-1/2 bg-canvas-night text-white p-16 flex-col justify-between relative overflow-hidden">
+            <!-- Flat opacity circles background (no borders) -->
+            <div class="absolute inset-0 opacity-15 flex justify-center items-center">
+                <div class="w-[450px] h-[450px] bg-white/5 rounded-full flex items-center justify-center">
+                    <div class="w-72 h-72 bg-white/5 rounded-full"></div>
+                </div>
+            </div>
+
+            <a href="./" class="text-xl font-medium tracking-tighter text-white relative z-10" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
+
+            <div class="space-y-6 relative z-10 max-w-lg">
+                <h1 class="text-5xl font-medium tracking-tight leading-tight" style="letter-spacing: -0.03em;">Secure Staff Area</h1>
+                <p class="text-white/60 text-lg">Establish a secure administrative session to manage public platforms and configurations.</p>
+            </div>
+
+            <div class="relative z-10">
+                <div class="text-xs text-white/40">DiginixIT Terminal &bull; Security Level B5</div>
+            </div>
+        </div>
+
+        <!-- Right Column: Authentication Panel (canvas theme, no card boundaries) -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 relative overflow-y-auto bg-canvas">
+
+            <!-- Floating close button (borderless layout) -->
+            <a href="./" class="absolute top-8 right-8 p-3 hover:bg-canvas-soft rounded-full transition-colors" aria-label="Go home">
+                <i data-lucide="x" class="w-5 h-5 text-ink"></i>
+            </a>
+
+            <div class="w-full max-w-md space-y-8">
+                <!-- Titles -->
+                <div class="text-center md:text-left">
+                    <span class="text-[10px] font-medium tracking-wider text-ink bg-canvas-soft px-3 py-1 border border-hairline rounded-md">Authorized Access Only</span>
+                    <h2 class="text-3xl font-medium tracking-tight mt-4" style="letter-spacing: -0.02em;">Admin Access</h2>
+                    <p class="text-ink-mute text-sm mt-2">Enter credentials to authenticate your session.</p>
+                </div>
+
+                <!-- Form (Borderless inputs) -->
+                <form onsubmit="handleAdminLogin(event)" class="space-y-5">
+                    <div>
+                        <label for="admin-user" class="text-xs font-medium text-ink-mute block mb-2">Admin Email</label>
+                        <input type="email" id="admin-user" class="premium-input text-sm" placeholder="e.g. admin@diginix.com" required style="border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label for="admin-pass" class="text-xs font-medium text-ink-mute block mb-2">Password</label>
+                        <input type="password" id="admin-pass" class="premium-input text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required style="border-radius: 6px;">
+                    </div>
+
+                    <button type="submit" class="w-full btn-primary py-4 font-medium transition-colors mt-6">Authenticate Session</button>
+                </form>
+
+                <!-- Footer Switch -->
+                <div class="text-center text-xs text-ink-mute">
+                    Authentication logs are monitored &bull; Security Level B5
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script>
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+
+            // Client-side rate limiting (defense-in-depth)
+            const now = Date.now();
+            const attempts = JSON.parse(sessionStorage.getItem('admin_login_attempts') || '{"count":0,"first":0}');
+            if (attempts.count >= 5 && (now - attempts.first) < 15 * 60 * 1000) {
+                const remainingMin = Math.ceil((15 * 60 * 1000 - (now - attempts.first)) / (60 * 1000));
+                alert(`Too many failed login attempts. Please wait ${remainingMin} minute(s) before trying again.`);
+                return;
+            }
+
+            const email = document.getElementById('admin-user').value.trim();
+            const pass = document.getElementById('admin-pass').value;
+
+            await window.backendReady;
+            if (!window.useSupabase) {
+                alert('Database connection not established. Admin sign-in is disabled in offline mode. Please configure Supabase URL and Anon Key in common.js.');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying Credentials...';
+
+            try {
+                const { data, error } = await window.supabase.auth.signInWithPassword({
+                    email: email,
+                    password: pass
+                });
+
+                if (error) {
+                    // Track failed attempts
+                    attempts.count = (attempts.count || 0) + 1;
+                    if (attempts.count === 1) attempts.first = now;
+                    sessionStorage.setItem('admin_login_attempts', JSON.stringify(attempts));
+                    alert('Access Denied. Invalid email or password.');
+                    return;
+                }
+
+                // Verify the role BEFORE redirecting on the backend
+                const { data: adminCheck, error: adminError } = await window.supabase
+                    .rpc('verify_admin_access', {
+                        p_user_email: email
+                    });
+
+                const is_admin = adminCheck && adminCheck.length > 0 && adminCheck[0].is_admin;
+
+                if (adminError || !is_admin) {
+                    await window.supabase.auth.signOut();
+                    
+                    // Track failed attempts for unauthorized roles as well
+                    attempts.count = (attempts.count || 0) + 1;
+                    if (attempts.count === 1) attempts.first = now;
+                    sessionStorage.setItem('admin_login_attempts', JSON.stringify(attempts));
+                    
+                    alert('Access Denied. Admin privileges required.');
+                    return;
+                }
+
+                // Clear attempt counter on success
+                sessionStorage.removeItem('admin_login_attempts');
+                alert('Session authenticated successfully. Welcome to DiginixIT Console.');
+                window.location.replace('admin.html');
+            } catch (err) {
+                console.error("Login exception:", err);
+                alert("An error occurred during authentication.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        }
+    </script>
+</body>
+</html>
