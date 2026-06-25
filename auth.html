@@ -121,20 +121,27 @@
                         <label for="auth-name" class="text-xs font-medium text-ink-mute block mb-2">Full Name</label>
                         <input type="text" id="auth-name" class="premium-input text-sm" placeholder="Sarah Connor" style="border-radius: 6px;">
                     </div>
-                    <div>
+                    <div id="field-email">
                         <label for="auth-email" class="text-xs font-medium text-ink-mute block mb-2">Email Address</label>
                         <input type="email" id="auth-email" class="premium-input text-sm" placeholder="sarah@connor.com" required style="border-radius: 6px;">
                     </div>
-                    <div>
-                        <label for="auth-password" class="text-xs font-medium text-ink-mute block mb-2">Password</label>
+                    <div id="field-password">
+                        <div class="flex justify-between items-center mb-2">
+                            <label id="auth-password-label" for="auth-password" class="text-xs font-medium text-ink-mute block">Password</label>
+                            <button type="button" id="btn-forgot-password" class="text-xs text-primary hover:underline hover:text-primary-deep font-semibold">Forgot password?</button>
+                        </div>
                         <input type="password" id="auth-password" class="premium-input text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="4" style="border-radius: 6px;">
+                    </div>
+                    <div id="field-confirm-password" class="hidden">
+                        <label for="auth-confirm-password" class="text-xs font-medium text-ink-mute block mb-2">Confirm New Password</label>
+                        <input type="password" id="auth-confirm-password" class="premium-input text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" minlength="4" style="border-radius: 6px;">
                     </div>
 
                     <button type="submit" id="btn-auth-submit" class="w-full btn-primary py-4 font-medium transition-colors mt-6">Sign In</button>
                 </form>
 
                 <!-- Footer Switch -->
-                <div class="text-center text-sm text-ink-mute">
+                <div id="auth-switch-container" class="text-center text-sm text-ink-mute">
                     <span id="auth-switch-text">Don't have an account?</span>
                     <button id="btn-auth-switch" class="text-primary hover:text-primary-deep font-semibold hover:underline ml-1">Sign Up</button>
                 </div>
@@ -152,69 +159,173 @@
         const authTitle = document.getElementById('auth-title');
         const authSubtitle = document.getElementById('auth-subtitle');
         const authForm = document.getElementById('auth-form');
+        
         const fieldName = document.getElementById('field-name');
+        const fieldEmail = document.getElementById('field-email');
+        const fieldPassword = document.getElementById('field-password');
+        const fieldConfirmPassword = document.getElementById('field-confirm-password');
+        
+        const inputName = document.getElementById('auth-name');
+        const inputEmail = document.getElementById('auth-email');
+        const inputPassword = document.getElementById('auth-password');
+        const inputConfirmPassword = document.getElementById('auth-confirm-password');
+        
+        const labelPassword = document.getElementById('auth-password-label');
+        const btnForgotPassword = document.getElementById('btn-forgot-password');
+        
         const btnSubmit = document.getElementById('btn-auth-submit');
+        const switchContainer = document.getElementById('auth-switch-container');
         const switchText = document.getElementById('auth-switch-text');
         const btnSwitch = document.getElementById('btn-auth-switch');
 
         function setMode(newMode) {
             mode = newMode;
+            
+            // Default reset attributes
+            inputName.required = false;
+            inputEmail.required = false;
+            inputPassword.required = false;
+            inputConfirmPassword.required = false;
+            
+            // Reset input values to prevent bleeding passwords between states
+            if (mode !== 'reset' && mode !== 'signin' && mode !== 'signup') {
+                inputPassword.value = '';
+                inputConfirmPassword.value = '';
+            }
+
             if (mode === 'signup') {
                 authTitle.innerText = "Create your account";
                 authSubtitle.innerText = "Fill in your details below to get started immediately.";
                 fieldName.classList.remove('hidden');
-                document.getElementById('auth-name').required = true;
+                fieldEmail.classList.remove('hidden');
+                fieldPassword.classList.remove('hidden');
+                fieldConfirmPassword.classList.add('hidden');
+                
+                inputName.required = true;
+                inputEmail.required = true;
+                inputPassword.required = true;
+                
+                labelPassword.innerText = "Password";
+                btnForgotPassword.classList.add('hidden');
                 btnSubmit.innerText = "Register & Get Started";
+                switchContainer.classList.remove('hidden');
                 switchText.innerText = "Already have an account?";
                 btnSwitch.innerText = "Sign In";
-            } else {
+            } else if (mode === 'signin') {
                 authTitle.innerText = "Sign in to DiginixIT";
                 authSubtitle.innerText = "Enter details below to access your account dashboard.";
                 fieldName.classList.add('hidden');
-                document.getElementById('auth-name').required = false;
+                fieldEmail.classList.remove('hidden');
+                fieldPassword.classList.remove('hidden');
+                fieldConfirmPassword.classList.add('hidden');
+                
+                inputEmail.required = true;
+                inputPassword.required = true;
+                
+                labelPassword.innerText = "Password";
+                btnForgotPassword.classList.remove('hidden');
                 btnSubmit.innerText = "Sign In";
+                switchContainer.classList.remove('hidden');
                 switchText.innerText = "Don't have an account?";
                 btnSwitch.innerText = "Sign Up";
+            } else if (mode === 'forgot') {
+                authTitle.innerText = "Reset your password";
+                authSubtitle.innerText = "Enter your email address and we'll send you a password reset link.";
+                fieldName.classList.add('hidden');
+                fieldEmail.classList.remove('hidden');
+                fieldPassword.classList.add('hidden');
+                fieldConfirmPassword.classList.add('hidden');
+                
+                inputEmail.required = true;
+                
+                btnSubmit.innerText = "Send Reset Link";
+                switchContainer.classList.remove('hidden');
+                switchText.innerText = "Remembered your password?";
+                btnSwitch.innerText = "Sign In";
+            } else if (mode === 'reset') {
+                authTitle.innerText = "Update your password";
+                authSubtitle.innerText = "Create a secure new password for your account.";
+                fieldName.classList.add('hidden');
+                fieldEmail.classList.add('hidden');
+                fieldPassword.classList.remove('hidden');
+                fieldConfirmPassword.classList.remove('hidden');
+                
+                inputPassword.required = true;
+                inputConfirmPassword.required = true;
+                
+                labelPassword.innerText = "New Password";
+                btnForgotPassword.classList.add('hidden');
+                btnSubmit.innerText = "Update Password";
+                switchContainer.classList.add('hidden');
             }
         }
 
         btnSwitch.addEventListener('click', () => {
-            setMode(mode === 'signin' ? 'signup' : 'signin');
+            if (mode === 'signin') {
+                setMode('signup');
+            } else {
+                setMode('signin');
+            }
+        });
+
+        btnForgotPassword.addEventListener('click', () => {
+            setMode('forgot');
         });
 
         // Initialize mode based on search parameters
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
             const initialMode = params.get('mode');
-            if (initialMode === 'signup' || initialMode === 'signin') {
+            if (initialMode === 'signup' || initialMode === 'signin' || initialMode === 'forgot' || initialMode === 'reset') {
                 setMode(initialMode);
             }
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
+            }
+
+            // Wait for backend (Supabase client init)
+            await window.backendReady;
+
+            if (window.useSupabase && window.supabase) {
+                // Listen for PASSWORD_RECOVERY auth event
+                window.supabase.auth.onAuthStateChange((event, session) => {
+                    if (event === 'PASSWORD_RECOVERY') {
+                        console.log("Supabase: PASSWORD_RECOVERY event received.");
+                        setMode('reset');
+                    }
+                });
             }
         });
 
         // Form Submit Handler
         async function handleAuthSubmit(e) {
             e.preventDefault();
-            const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').value;
 
             // Wait for backend validation
             await window.backendReady;
 
             if (mode === 'signup') {
                 const name = document.getElementById('auth-name').value.trim();
+                const email = document.getElementById('auth-email').value.trim();
+                const password = document.getElementById('auth-password').value;
 
                 const res = await window.apiCall('register', { name, email, password });
                 if (res && res.success === true) {
-                    localStorage.setItem('currentUser', JSON.stringify(res.user));
-                    alert(`Account created successfully! Logged in as ${res.user.name}.`);
-                    window.location.href = 'profile.html';
+                    if (res.requiresVerification) {
+                        alert(`Registration successful! We have sent a confirmation link to ${email}. Please check your email to verify your account before logging in.`);
+                        setMode('signin');
+                    } else {
+                        localStorage.setItem('currentUser', JSON.stringify(res.user));
+                        alert(`Account created successfully! Logged in as ${res.user.name}.`);
+                        window.location.href = 'profile.html';
+                    }
                 } else {
                     alert(res && res.error ? res.error : 'Registration failed.');
                 }
-            } else {
+            } else if (mode === 'signin') {
+                const email = document.getElementById('auth-email').value.trim();
+                const password = document.getElementById('auth-password').value;
+
                 // Check if admin login credentials
                 if (email === 'admin@diginix.com') {
                     alert('Admin accounts must log in via the Secure Admin Panel. Redirecting...');
@@ -230,6 +341,51 @@
                     window.location.href = 'profile.html';
                 } else {
                     alert(res && res.error ? res.error : 'Invalid email or password. Please try again.');
+                }
+            } else if (mode === 'forgot') {
+                const email = document.getElementById('auth-email').value.trim();
+                
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "Sending...";
+
+                const res = await window.apiCall('reset_password_request', { email });
+                
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Send Reset Link";
+
+                if (res && res.success === true) {
+                    alert("A password reset link has been sent to your email address.");
+                    setMode('signin');
+                } else {
+                    alert(res && res.error ? res.error : 'Failed to send password reset link. Please check the email.');
+                }
+            } else if (mode === 'reset') {
+                const password = document.getElementById('auth-password').value;
+                const confirmPassword = document.getElementById('auth-confirm-password').value;
+
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match. Please verify.");
+                    return;
+                }
+
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "Updating...";
+
+                const res = await window.apiCall('update_forgotten_password', { password });
+
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Update Password";
+
+                if (res && res.success === true) {
+                    alert("Your password has been successfully updated! Please log in with your new password.");
+                    // Log out the temporary recovery session
+                    if (window.useSupabase && window.supabase) {
+                        await window.supabase.auth.signOut();
+                    }
+                    localStorage.removeItem('currentUser');
+                    setMode('signin');
+                } else {
+                    alert(res && res.error ? res.error : 'Failed to update password. Please try again.');
                 }
             }
         }

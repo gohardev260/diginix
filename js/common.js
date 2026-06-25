@@ -456,20 +456,46 @@ window.apiCall = async function (action, data = null) {
                     return { success: false, error: rpcError.message || "Profile creation failed" };
                 }
                 const returnedUser = Array.isArray(user) ? user[0] : user;
-                const sessionId = sessionStorage.getItem('session_id');
-                if (sessionId) {
-                    try {
-                        await window.supabase.rpc('associate_session_visits', {
-                            p_session_id: sessionId,
-                            p_email: returnedUser.email
-                        });
-                        sessionStorage.setItem('user_logged_visit_tracked', returnedUser.email);
-                        sessionStorage.setItem('user_visit_tracked', 'true');
-                    } catch (e) {
-                        console.error("Failed to associate session on registration:", e);
+                
+                const requiresVerification = !authData.session;
+
+                if (!requiresVerification) {
+                    const sessionId = sessionStorage.getItem('session_id');
+                    if (sessionId) {
+                        try {
+                            await window.supabase.rpc('associate_session_visits', {
+                                p_session_id: sessionId,
+                                p_email: returnedUser.email
+                            });
+                            sessionStorage.setItem('user_logged_visit_tracked', returnedUser.email);
+                            sessionStorage.setItem('user_visit_tracked', 'true');
+                        } catch (e) {
+                            console.error("Failed to associate session on registration:", e);
+                        }
                     }
                 }
-                return { success: true, user: returnedUser };
+                return { success: true, user: returnedUser, requiresVerification };
+            }
+
+            case 'reset_password_request': {
+                const redirectToUrl = window.location.origin + window.location.pathname + '?mode=reset';
+                const { error } = await window.supabase.auth.resetPasswordForEmail(data.email, {
+                    redirectTo: redirectToUrl
+                });
+                if (error) {
+                    return { success: false, error: error.message };
+                }
+                return { success: true };
+            }
+
+            case 'update_forgotten_password': {
+                const { error } = await window.supabase.auth.updateUser({
+                    password: data.password
+                });
+                if (error) {
+                    return { success: false, error: error.message };
+                }
+                return { success: true };
             }
 
             case 'associate_session_visits': {
@@ -823,6 +849,27 @@ function apiCallLocalStorageFallback(action, data) {
                     resolve({ success: true, user: safeUser });
                 }
                 break;
+            case 'reset_password_request': {
+                const userExists = users.some(u => u.email.toLowerCase() === data.email.toLowerCase());
+                if (!userExists) {
+                    resolve({ success: false, error: "Email address not found." });
+                } else {
+                    resolve({ success: true });
+                }
+                break;
+            }
+            case 'update_forgotten_password': {
+                const email = data.email || (JSON.parse(localStorage.getItem('currentUser') || '{}')).email;
+                const idx = users.findIndex(u => u.email.toLowerCase() === email?.toLowerCase());
+                if (idx !== -1) {
+                    users[idx].password = data.password;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    resolve({ success: true });
+                } else {
+                    resolve({ success: false, error: "User not found to update password." });
+                }
+                break;
+            }
             case 'update_profile': {
                 const profIdx = users.findIndex(u => u.email === data.email);
                 if (profIdx !== -1) {

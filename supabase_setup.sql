@@ -997,3 +997,36 @@ CREATE POLICY "Allow admin read access on csrf_tokens" ON public.csrf_tokens
 DROP POLICY IF EXISTS "Allow admin read access on visit_logs" ON public.visit_logs;
 CREATE POLICY "Allow admin read access on visit_logs" ON public.visit_logs
     FOR SELECT TO authenticated USING (public.is_admin());
+
+-- 8. FAKE/DISPOSABLE EMAIL REGISTRATION PROTECTION
+-- Trigger on auth.users (Supabase Auth schema) to block disposable/fake email domains.
+CREATE OR REPLACE FUNCTION public.block_disposable_emails()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_domain TEXT;
+BEGIN
+    v_domain := LOWER(SUBSTRING(NEW.email FROM '@(.*)$'));
+    
+    -- List of common disposable email domains
+    IF v_domain IN (
+        'mailinator.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org',
+        'yopmail.com', 'sharklasers.com', 'guerrillamail.com', 'dispostable.com',
+        'getairmail.com', 'maildrop.cc', 'throwawaymail.com', 'tempmailaddress.com',
+        'binkmail.com', 'safetymail.info', 'discardmail.com', 'mailnull.com',
+        'generator.email', 'tempmail.dev', 'temp-mail.io', '10minutemail.co.uk',
+        '10minutemail.net', 'tempmail.net'
+    ) THEN
+        RAISE EXCEPTION 'Disposable email addresses are not allowed.';
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Apply trigger to auth.users
+DROP TRIGGER IF EXISTS trigger_block_disposable_emails ON auth.users;
+CREATE TRIGGER trigger_block_disposable_emails
+    BEFORE INSERT ON auth.users
+    FOR EACH ROW
+    EXECUTE FUNCTION public.block_disposable_emails();
+
