@@ -4,23 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiginixIT | Web Engineering, UI/UX Design, Law & Corporate Finance Studio</title>
-    <meta name="description" content="Elite multidisciplinary agency specializing in custom web engineering, bespoke UI/UX design, performance SEO, tech compliance law, and corporate finance models.">
+    <title>DiginixIT | Build, Protect & Scale Your Business</title>
+    <meta name="description" content="DiginixIT is a premium technology company specializing in web engineering, UI/UX design, SEO, legal consultancy, and corporate finance. Build, protect, and scale your business.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://diginixit.com/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://diginixit.com/">
-    <meta property="og:title" content="DiginixIT | Web Engineering, UI/UX Design, Law & Corporate Finance Studio">
-    <meta property="og:description" content="DiginixIT is an elite multidisciplinary agency. We build bespoke high-performance web products, design premium user flows, and provide expert tech law and corporate finance advisory.">
+    <meta property="og:title" content="DiginixIT | Build, Protect & Scale Your Business">
+    <meta property="og:description" content="DiginixIT is a premium technology company. We engineer web products, design premium experiences, and provide legal and financial strategy for business growth.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://diginixit.com/">
-    <meta name="twitter:title" content="DiginixIT | Web Engineering, UI/UX Design, Law & Corporate Finance Studio">
-    <meta name="twitter:description" content="DiginixIT is an elite multidisciplinary agency. We build bespoke high-performance web products, design premium user flows, and provide expert tech law and corporate finance advisory.">
+    <meta name="twitter:title" content="DiginixIT | Build, Protect & Scale Your Business">
+    <meta name="twitter:description" content="DiginixIT is a premium technology company. We engineer web products, design premium experiences, and provide legal and financial strategy for business growth.">
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
 
     <!-- DNS Prefetch & Preconnect -->
@@ -42,30 +42,40 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind Configuration Inline (Avoid CLS & style shifts) -->
+    <!-- Tailwind Configuration Inline -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        black: '#000000',
-                        white: '#FFFFFF',
-                        surface: '#FAFAFA',
-                        card: '#F5F5F5',
-                        primary: '#111111',
-                        secondary: '#666666',
-                        border: '#E5E5E5'
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        'canvas-night-soft': '#202020',
+                        ink: '#171717',
+                        'ink-secondary': '#212121',
+                        'ink-mute': '#707070',
+                        'ink-mute-2': '#9a9a9a',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
                     },
-                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                    letterSpacing: { 
+                        tighter: '-0.04em', 
+                        tight: '-0.02em',
+                        display: '-0.03em'
+                    }
                 }
             }
         };
     </script>
 
-    <!-- Core Libraries (Deferred to prevent rendering blocks) -->
+    <!-- Core Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js" defer></script>
@@ -75,7 +85,7 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- Structured Data (Organization, LocalBusiness & FAQ Schema) -->
+    <!-- Structured Data -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -120,13 +130,7 @@
                 },
                 "openingHoursSpecification": {
                     "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": [
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday"
-                    ],
+                    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
                     "opens": "09:00",
                     "closes": "18:00"
                 }
@@ -168,495 +172,411 @@
 
 <body>
 
-    <!-- UI Overlays -->
+    <!-- Noise Overlay -->
     <div class="noise"></div>
 
     <!-- Navigation -->
     <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="./" class="text-2xl font-bold tracking-tighter site-logo-text">DIGINIXIT.</a>
+        <div class="max-w-[1280px] mx-auto flex justify-between items-center">
+            <a href="./" class="text-xl font-medium tracking-tighter text-ink" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
-                <a href="./" class="nav-item-link hover:text-secondary transition-colors" id="nav-home">Home</a>
-                <a href="services.html" class="nav-item-link hover:text-secondary transition-colors"
-                    id="nav-services">Services</a>
-                <a href="blog.html" class="nav-item-link hover:text-secondary transition-colors" id="nav-blog">Blog</a>
-                <a href="contact.html" class="nav-item-link hover:text-secondary transition-colors"
-                    id="nav-contact">Contact</a>
+                <a href="./" class="nav-item-link" id="nav-home">Home</a>
+                <a href="services.html" class="nav-item-link" id="nav-services">Services</a>
+                <a href="blog.html" class="nav-item-link" id="nav-blog">Blog</a>
+                <a href="contact.html" class="nav-item-link" id="nav-contact">Contact</a>
             </div>
 
             <!-- Desktop Auth / CTA -->
             <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
-                <a href="auth.html?mode=signin" class="text-sm font-medium hover:text-secondary transition-colors"
-                    id="btn-signin">Sign In</a>
+                <a href="auth.html?mode=signin" class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign In</a>
                 <div class="magnetic-wrap">
-                    <a href="auth.html?mode=signup"
-                        class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black transition-colors inline-block"
-                        id="btn-signup">Get Started</a>
+                    <a href="auth.html?mode=signup" class="btn-primary" id="btn-signup">Get Started</a>
                 </div>
             </div>
 
-            <!-- Mobile Navbar Controls -->
+            <!-- Mobile Controls -->
             <div class="flex md:hidden items-center space-x-3">
-                <button id="hamburger-btn" class="p-2 text-primary focus:outline-none" aria-label="Toggle Menu">
+                <button id="hamburger-btn" class="p-2 text-ink focus:outline-none" aria-label="Toggle Menu">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Drawer Overlay Menu -->
-    <div id="mobile-menu"
-        class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
-        <div class="flex flex-col space-y-6 text-2xl font-bold tracking-tight">
-            <a href="./" class="mobile-nav-link hover:text-secondary transition-colors">Home</a>
-            <a href="services.html" class="mobile-nav-link hover:text-secondary transition-colors">Services</a>
-            <a href="blog.html" class="mobile-nav-link hover:text-secondary transition-colors">Blog</a>
-            <a href="contact.html" class="mobile-nav-link hover:text-secondary transition-colors">Contact</a>
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+        <div class="flex flex-col space-y-6 text-2xl font-medium" style="letter-spacing: -0.02em;">
+            <a href="./" class="mobile-nav-link hover:text-ink-mute transition-colors">Home</a>
+            <a href="services.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Services</a>
+            <a href="blog.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Blog</a>
+            <a href="contact.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Contact</a>
         </div>
 
         <div class="flex flex-col space-y-4" id="mobile-auth-container">
-            <a href="auth.html?mode=signin"
-                class="w-full text-center py-4 border border-border rounded-full font-medium hover:bg-surface transition-colors"
-                id="mobile-btn-signin">Sign In</a>
-            <a href="auth.html?mode=signup"
-                class="w-full text-center py-4 bg-primary text-white rounded-full font-medium hover:bg-black transition-colors"
-                id="mobile-btn-signup">Get Started</a>
+            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm" id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm" id="mobile-btn-signup">Get Started</a>
         </div>
     </div>
 
-    <!-- Main Content Container -->
+    <!-- Main Content -->
     <main id="main-content">
 
-        <!-- ========================================== -->
-        <!-- VIEW: HOME (Landing Page)                  -->
-        <!-- ========================================== -->
         <div id="view-home" class="view-section active">
 
-            <!-- Hero Section -->
-            <section class="relative h-screen flex flex-col justify-center items-center overflow-hidden pt-20">
-                <!-- Three.js Canvas Container -->
-                <div id="canvas-container" class="absolute inset-0 z-0 opacity-40"></div>
+            <!-- ============================================ -->
+            <!-- SECTION 01: HERO                             -->
+            <!-- ============================================ -->
+            <section class="hero-section">
+                <!-- Three.js Canvas -->
+                <div id="canvas-container" class="absolute inset-0 z-0 opacity-30"></div>
 
-                <div class="z-10 text-center max-w-5xl px-6">
-                    <div class="overflow-hidden mb-2">
-                        <h1
-                            class="hero-title text-5xl sm:text-7xl md:text-8xl lg:text-[9rem] font-bold tracking-tighter leading-none text-primary">
-                            DIGINIXIT</h1>
-                    </div>
-                    <div class="overflow-hidden mb-10">
-                        <p class="hero-subtitle text-lg sm:text-xl md:text-2xl lg:text-3xl text-secondary font-light">
-                            Web Engineering. Design. SEO. Law & Compliance. Corporate Finance.
-                        </p>
-                    </div>
+                <div class="container-main relative z-10 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                        
+                        <!-- Left: Typography -->
+                        <div class="space-y-8">
+                            <div class="space-y-1">
+                                <div class="hero-title-line">
+                                    <span class="hero-title-word">BUILD.</span>
+                                </div>
+                                <div class="hero-title-line">
+                                    <span class="hero-title-word">PROTECT.</span>
+                                </div>
+                                <div class="hero-title-line">
+                                    <span class="hero-title-word">SCALE.</span>
+                                </div>
+                            </div>
 
-                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 hero-btns opacity-0">
-                        <div class="magnetic-wrap w-full sm:w-auto flex justify-center">
-                            <a href="contact.html"
-                                class="bg-primary text-white w-full max-w-[280px] sm:w-auto text-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:scale-105 transition-transform duration-300 shadow-xl inline-block">Book
-                                a Consultation</a>
+                            <p class="hero-subtitle opacity-0">
+                                Technology meets strategy. We engineer web products, design premium experiences, and provide legal & financial advisory to grow your business.
+                            </p>
+
+                            <div class="flex flex-wrap gap-4 hero-btns opacity-0">
+                                <div class="magnetic-wrap">
+                                    <a href="contact.html" class="btn-primary btn-primary-lg">Book a Consultation</a>
+                                </div>
+                                <div class="magnetic-wrap">
+                                    <a href="services.html" class="btn-secondary btn-secondary-lg">Explore Services</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="magnetic-wrap w-full sm:w-auto flex justify-center">
-                            <a href="services.html"
-                                class="bg-surface border border-border text-primary w-full max-w-[280px] sm:w-auto text-center px-6 py-3.5 sm:px-8 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:bg-gray-50 transition-colors inline-block">Explore
-                                Services</a>
+
+                        <!-- Right: 3D Centerpiece area (Three.js renders behind, this is a compositional anchor) -->
+                        <div class="hidden lg:flex items-center justify-center relative h-[500px]">
+                            <!-- The Three.js scene fills this space via canvas-container -->
                         </div>
                     </div>
                 </div>
 
                 <!-- Scroll Indicator -->
-                <div
-                    class="flex absolute bottom-10 left-1/2 transform -translate-x-1/2 flex-col items-center opacity-50 hero-btns">
-                    <span class="text-xs tracking-widest uppercase mb-2">Scroll</span>
-                    <div class="w-[1px] h-12 bg-primary overflow-hidden">
-                        <div
-                            class="w-full h-full bg-white transform -translate-y-full animate-[scrollDown_1.5s_ease-in-out_infinite]">
-                        </div>
-                    </div>
+                <div class="scroll-indicator absolute bottom-10 left-1/2 transform -translate-x-1/2 hero-btns opacity-0">
+                    <span class="scroll-indicator-label">Scroll</span>
+                    <div class="scroll-indicator-line"></div>
                 </div>
             </section>
 
-            <!-- Clients Section -->
-            <section class="py-20 border-y border-border bg-surface overflow-hidden">
-                <div class="max-w-7xl mx-auto px-6 md:px-12 mb-12 text-center gsap-fade-up">
-                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">Trusted by industry leaders worldwide</h2>
+            <!-- ============================================ -->
+            <!-- CLIENT LOGOS MARQUEE                         -->
+            <!-- ============================================ -->
+            <section class="py-16 border-y border-hairline overflow-hidden">
+                <div class="container-main mb-10 gsap-fade-up">
+                    <p class="text-xs font-medium tracking-widest text-ink-mute uppercase">Trusted by industry leaders</p>
                 </div>
                 <div class="relative flex marquee-content items-center">
-                    <!-- Repeated logos for infinite effect -->
-                    <div
-                        class="flex flex-shrink-0 items-center justify-around gap-12 md:gap-24 px-4 text-2xl font-bold tracking-tighter min-w-full">
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9h3.56v11.45zM5.34 7.43c-1.14 0-2.06-.92-2.06-2.06 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.06-2.06 2.06zm15.11 13.02h-3.56v-5.6c0-1.34-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95v5.7H9.33V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">LinkedIn</span>
-                        </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-9 w-auto fill-current" viewBox="0 0 76 65" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M37.5 0L75 65H0L37.5 0Z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Vercel</span>
-                        </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M18.8 9.35l-5.68-5.67a1.69 1.69 0 0 0-2.4 0L5.04 9.35a1.69 1.69 0 0 0 0 2.4l5.68 5.67a1.69 1.69 0 0 0 2.4 0l5.68-5.67a1.69 1.69 0 0 0 0-2.4zm-6.8 6.72l-4.3-4.3 4.3-4.3 4.3 4.3-4.3 4.3z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Netlify</span>
-                        </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M13.962 11.107c-2.408-.544-3.528-1.026-3.528-2.023 0-.825.795-1.31 2.052-1.31 2.66 0 4.195.96 4.908 1.487l1.32-3.14c-.958-.696-2.883-1.425-5.328-1.425-4.148 0-7.07 2.146-7.07 5.672 0 5.485 5.068 6.446 7.848 7.07 2.593.58 3.528 1.153 3.528 2.213 0 .977-.925 1.46-2.32 1.46-3.085 0-5.112-1.218-5.918-1.89l-1.365 3.14c1.173.916 3.655 1.785 6.368 1.785 4.61 0 8.016-2.142 8.016-5.83 0-5.834-5.02-6.702-7.82-7.31z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Stripe</span>
-                        </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Figma</span>
-                        </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">OpenAI</span>
-                        </div>
+                    <div class="flex flex-shrink-0 items-center justify-around gap-16 md:gap-24 px-4 min-w-full">
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">LinkedIn</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Vercel</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Netlify</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Stripe</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Figma</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">OpenAI</span>
                     </div>
-                    <div
-                        class="flex flex-shrink-0 items-center justify-around gap-12 md:gap-24 px-4 text-2xl font-bold tracking-tighter min-w-full">
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9h3.56v11.45zM5.34 7.43c-1.14 0-2.06-.92-2.06-2.06 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.06-2.06 2.06zm15.11 13.02h-3.56v-5.6c0-1.34-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95v5.7H9.33V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">LinkedIn</span>
+                    <div class="flex flex-shrink-0 items-center justify-around gap-16 md:gap-24 px-4 min-w-full">
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">LinkedIn</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Vercel</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Netlify</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Stripe</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Figma</span>
+                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">OpenAI</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 02: BUSINESS TRANSFORMATION          -->
+            <!-- ============================================ -->
+            <section class="section-padding">
+                <div class="container-main">
+                    <!-- Section Header -->
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">The Process</p>
+                        <h2 class="display-xl mb-6">Every business transformation follows a path. We architect yours.</h2>
+                        <p class="body-lg">From discovery to scale, we guide your business through five critical phases — each designed to compound value and eliminate risk.</p>
+                    </div>
+
+                    <!-- Journey Steps -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-0">
+                        <!-- Step 1: Discover -->
+                        <div class="step-item py-8 md:py-12 gsap-fade-up">
+                            <div class="step-number mb-4">01</div>
+                            <h3 class="heading-lg mb-3">Discover</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Deep audit of your business landscape, technical stack, and market positioning. We identify where the real leverage exists.</p>
                         </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-9 w-auto fill-current" viewBox="0 0 76 65" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M37.5 0L75 65H0L37.5 0Z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Vercel</span>
+
+                        <!-- Step 2: Build -->
+                        <div class="step-item py-8 md:py-12 gsap-fade-up">
+                            <div class="step-number mb-4">02</div>
+                            <h3 class="heading-lg mb-3">Build</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Custom engineering of your digital infrastructure. No templates, no shortcuts — bespoke applications built from the ground up.</p>
                         </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M18.8 9.35l-5.68-5.67a1.69 1.69 0 0 0-2.4 0L5.04 9.35a1.69 1.69 0 0 0 0 2.4l5.68 5.67a1.69 1.69 0 0 0 2.4 0l5.68-5.67a1.69 1.69 0 0 0 0-2.4zm-6.8 6.72l-4.3-4.3 4.3-4.3 4.3 4.3-4.3 4.3z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Netlify</span>
+
+                        <!-- Step 3: Launch -->
+                        <div class="step-item py-8 md:py-12 gsap-fade-up">
+                            <div class="step-number mb-4">03</div>
+                            <h3 class="heading-lg mb-3">Launch</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Strategic deployment with performance optimization. Every pixel, every interaction, every metric calibrated for maximum impact.</p>
                         </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M13.962 11.107c-2.408-.544-3.528-1.026-3.528-2.023 0-.825.795-1.31 2.052-1.31 2.66 0 4.195.96 4.908 1.487l1.32-3.14c-.958-.696-2.883-1.425-5.328-1.425-4.148 0-7.07 2.146-7.07 5.672 0 5.485 5.068 6.446 7.848 7.07 2.593.58 3.528 1.153 3.528 2.213 0 .977-.925 1.46-2.32 1.46-3.085 0-5.112-1.218-5.918-1.89l-1.365 3.14c1.173.916 3.655 1.785 6.368 1.785 4.61 0 8.016-2.142 8.016-5.83 0-5.834-5.02-6.702-7.82-7.31z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Stripe</span>
+
+                        <!-- Step 4: Protect -->
+                        <div class="step-item py-8 md:py-12 gsap-fade-up">
+                            <div class="step-number mb-4">04</div>
+                            <h3 class="heading-lg mb-3">Protect</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Legal compliance frameworks, IP protection, and privacy structures that safeguard your business at every growth stage.</p>
                         </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">Figma</span>
-                        </div>
-                        <div
-                            class="flex items-center space-x-4 text-gray-400 hover:text-black transition-colors cursor-default">
-                            <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" />
-                            </svg>
-                            <span class="text-2xl font-bold tracking-tight">OpenAI</span>
+
+                        <!-- Step 5: Scale -->
+                        <div class="step-item py-8 md:py-12 gsap-fade-up">
+                            <div class="step-number mb-4">05</div>
+                            <h3 class="heading-lg mb-3">Scale</h3>
+                            <p class="text-sm text-ink-mute leading-relaxed">Financial strategy, growth analytics, and market expansion. We engineer the systems that turn momentum into exponential growth.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Core Services Section -->
-            <section class="py-32 px-6 md:px-12 max-w-7xl mx-auto border-t border-border">
-                <div class="max-w-3xl mb-20 gsap-fade-up">
-                    <h2 class="text-xs font-semibold tracking-widest text-secondary uppercase mb-3">Our Capabilities</h2>
-                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-primary mb-6">
-                        Elite capabilities across technology, design, law, and finance.
-                    </h3>
-                    <p class="text-lg text-secondary leading-relaxed">
-                        We deliver specialized execution and premium advisory across five distinct disciplines. Each practice area operates with absolute precision, replacing generic structures with bespoke solutions tailored for enterprise growth.
-                    </p>
+            <!-- ============================================ -->
+            <!-- SECTION 03: TECHNOLOGY                       -->
+            <!-- ============================================ -->
+            <section class="section-padding section-band-soft relative overflow-hidden">
+                <!-- Watermark -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 watermark-text whitespace-nowrap select-none">
+                    TECHNOLOGY
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-8 gsap-fade-up">
-                    <!-- Card 1: Web Engineering (Col Span 3) -->
-                    <div class="service-card rounded-3xl p-8 flex flex-col justify-between group md:col-span-3 min-h-[380px]">
-                        <div class="space-y-6">
-                            <!-- Animated SVG -->
-                            <div class="w-16 h-16 bg-white border border-border rounded-2xl flex items-center justify-center relative overflow-hidden">
-                                <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Code Window Mock -->
-                                    <rect x="10" y="15" width="80" height="70" rx="8" stroke="#e5e5e5" stroke-width="2" fill="#fafafa"/>
-                                    <circle cx="20" cy="25" r="3" fill="#ef4444"/>
-                                    <circle cx="30" cy="25" r="3" fill="#f59e0b"/>
-                                    <circle cx="40" cy="25" r="3" fill="#10b981"/>
-                                    <!-- Code Lines -->
-                                    <rect class="code-line code-line-1" x="20" y="40" width="40" height="4" rx="2" fill="#9ca3af"/>
-                                    <rect class="code-line code-line-2" x="20" y="52" width="55" height="4" rx="2" fill="#e5e7eb"/>
-                                    <rect class="code-line code-line-3" x="20" y="64" width="30" height="4" rx="2" fill="#d1d5db"/>
-                                    <rect class="code-line code-line-4" x="20" y="76" width="45" height="4" rx="2" fill="#9ca3af"/>
-                                    <!-- Pulsing Cursor -->
-                                    <rect class="code-cursor" x="68" y="76" width="2" height="6" fill="#111111"/>
-                                </svg>
+                <div class="container-main relative z-10">
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Engineering</p>
+                        <h2 class="display-xl mb-6">We don't build websites. We engineer digital infrastructure.</h2>
+                        <p class="body-lg">Custom React and Next.js applications, serverless architectures, secure API integrations, and cinematic WebGL interactions. Every product is built for speed, security, and scale.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+                        <!-- Left: Capabilities -->
+                        <div class="space-y-12 gsap-fade-up">
+                            <div class="space-y-4">
+                                <h3 class="heading-lg">Web Applications</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">High-performance applications built with modern frameworks. Server-side rendering, edge functions, and real-time data architectures that handle millions of requests.</p>
                             </div>
-                            <h4 class="text-2xl font-bold tracking-tight text-primary">Web Engineering</h4>
-                            <p class="text-secondary leading-relaxed text-sm max-w-md">
-                                Custom React and Next.js applications, serverless systems, and secure API architectures built for speed, safety, and scale.
-                            </p>
-                        </div>
-                        <a href="services.html" class="inline-flex items-center text-sm font-semibold text-primary mt-8 group-hover:translate-x-1 transition-transform duration-300">
-                            Learn More <i data-lucide="arrow-up-right" class="w-4 h-4 ml-1"></i>
-                        </a>
-                    </div>
-
-                    <!-- Card 2: UX/UI Design (Col Span 3) -->
-                    <div class="service-card rounded-3xl p-8 flex flex-col justify-between group md:col-span-3 min-h-[380px]">
-                        <div class="space-y-6">
-                            <!-- Animated SVG -->
-                            <div class="w-16 h-16 bg-white border border-border rounded-2xl flex items-center justify-center relative overflow-hidden">
-                                <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Grid lines -->
-                                    <line x1="10" y1="50" x2="90" y2="50" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="2 2"/>
-                                    <line x1="50" y1="10" x2="50" y2="90" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="2 2"/>
-                                    <!-- Bezier Curve Path -->
-                                    <path class="bezier-path" d="M 20 60 Q 50 60 80 60" stroke="#111111" stroke-width="2" fill="none"/>
-                                    <!-- Anchor Handle lines -->
-                                    <line class="bezier-handle-line bezier-handle-line-1" x1="50" y1="60" x2="50" y2="60" stroke="#9ca3af" stroke-width="1.5"/>
-                                    <!-- Anchor Nodes -->
-                                    <circle class="bezier-node bezier-node-left" cx="20" cy="60" r="4" stroke="#111111" stroke-width="2" fill="#ffffff"/>
-                                    <circle class="bezier-node bezier-node-ctrl" cx="50" cy="60" r="4" stroke="#111111" stroke-width="2" fill="#ffffff"/>
-                                    <circle class="bezier-node bezier-node-right" cx="80" cy="60" r="4" stroke="#111111" stroke-width="2" fill="#ffffff"/>
-                                </svg>
+                            <div class="section-divider"></div>
+                            <div class="space-y-4">
+                                <h3 class="heading-lg">Platform Engineering</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Custom SaaS platforms, marketplace systems, and enterprise tools. Micro-frontend architecture with modular, scalable codebases designed for long-term evolution.</p>
                             </div>
-                            <h4 class="text-2xl font-bold tracking-tight text-primary">UX/UI Design</h4>
-                            <p class="text-secondary leading-relaxed text-sm max-w-md">
-                                High-fidelity visual patterns, spatial editorial layouts, and cohesive design tokens that elevate brand aesthetics.
-                            </p>
-                        </div>
-                        <a href="services.html" class="inline-flex items-center text-sm font-semibold text-primary mt-8 group-hover:translate-x-1 transition-transform duration-300">
-                            Learn More <i data-lucide="arrow-up-right" class="w-4 h-4 ml-1"></i>
-                        </a>
-                    </div>
-
-                    <!-- Card 3: Technical SEO (Col Span 2) -->
-                    <div class="service-card rounded-3xl p-8 flex flex-col justify-between group md:col-span-2 min-h-[360px]">
-                        <div class="space-y-6">
-                            <!-- Animated SVG -->
-                            <div class="w-16 h-16 bg-white border border-border rounded-2xl flex items-center justify-center relative overflow-hidden">
-                                <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Outer Circle -->
-                                    <circle cx="50" cy="50" r="40" stroke="#fafafa" stroke-width="4" fill="#fafafa"/>
-                                    <!-- Progress Circle -->
-                                    <circle class="seo-ring" cx="50" cy="50" r="40" stroke="#111111" stroke-width="3" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-                                    <!-- Radar Sweeper -->
-                                    <line class="seo-radar" x1="50" y1="50" x2="50" y2="10" stroke="#9ca3af" stroke-width="1.5"/>
-                                    <!-- Score Text -->
-                                    <text x="50" y="55" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#111111">100</text>
-                                </svg>
+                            <div class="section-divider"></div>
+                            <div class="space-y-4">
+                                <h3 class="heading-lg">Automation & Infrastructure</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">CI/CD pipelines, serverless deployments, database optimization, and workflow automation. The invisible systems that make everything else possible.</p>
                             </div>
-                            <h4 class="text-xl font-bold tracking-tight text-primary">Technical SEO</h4>
-                            <p class="text-secondary leading-relaxed text-sm">
-                                Core Web Vitals optimization, semantic hierarchy structure, and structured schemas for organic authority.
-                            </p>
                         </div>
-                        <a href="services.html" class="inline-flex items-center text-sm font-semibold text-primary mt-8 group-hover:translate-x-1 transition-transform duration-300">
-                            Learn More <i data-lucide="arrow-up-right" class="w-4 h-4 ml-1"></i>
-                        </a>
-                    </div>
 
-                    <!-- Card 4: Law & Compliance (Col Span 2) -->
-                    <div class="service-card rounded-3xl p-8 flex flex-col justify-between group md:col-span-2 min-h-[360px]">
-                        <div class="space-y-6">
-                            <!-- Animated SVG -->
-                            <div class="w-16 h-16 bg-white border border-border rounded-2xl flex items-center justify-center relative overflow-hidden">
-                                <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Scale base -->
-                                    <path d="M 35 80 L 65 80 M 50 80 L 50 35" stroke="#fafafa" stroke-width="4"/>
-                                    <path d="M 35 80 L 65 80 M 50 80 L 50 35" stroke="#e5e5e5" stroke-width="2"/>
-                                    <!-- Balance Beam (Rotating) -->
-                                    <line class="scale-beam" x1="25" y1="35" x2="75" y2="35" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
-                                    <!-- Hanging Scales Left -->
-                                    <g class="scale-plate-left">
-                                        <line x1="25" y1="35" x2="15" y2="60" stroke="#9ca3af" stroke-width="1"/>
-                                        <line x1="25" y1="35" x2="35" y2="60" stroke="#9ca3af" stroke-width="1"/>
-                                        <path d="M 10 60 C 10 65 40 65 40 60 Z" fill="#e5e5e5" stroke="#111111" stroke-width="1.5"/>
-                                    </g>
-                                    <!-- Hanging Scales Right -->
-                                    <g class="scale-plate-right">
-                                        <line x1="75" y1="35" x2="65" y2="60" stroke="#9ca3af" stroke-width="1"/>
-                                        <line x1="75" y1="35" x2="85" y2="60" stroke="#9ca3af" stroke-width="1"/>
-                                        <path d="M 60 60 C 60 65 90 65 90 60 Z" fill="#e5e5e5" stroke="#111111" stroke-width="1.5"/>
-                                    </g>
-                                </svg>
+                        <!-- Right: Composited Mockup -->
+                        <div class="gsap-fade-up">
+                            <div class="mockup-container p-6 md:p-8">
+                                <!-- Code Editor Mockup -->
+                                <div class="bg-canvas-night rounded-lg p-5 space-y-3">
+                                    <div class="flex items-center space-x-2 mb-4">
+                                        <div class="w-3 h-3 rounded-full bg-[#ef4444]"></div>
+                                        <div class="w-3 h-3 rounded-full bg-[#f59e0b]"></div>
+                                        <div class="w-3 h-3 rounded-full bg-primary"></div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="h-3 bg-[#2a2a2a] rounded w-3/4"></div>
+                                        <div class="h-3 bg-[#2a2a2a] rounded w-1/2"></div>
+                                        <div class="h-3 bg-primary/20 rounded w-5/6"></div>
+                                        <div class="h-3 bg-[#2a2a2a] rounded w-2/3"></div>
+                                        <div class="h-3 bg-[#2a2a2a] rounded w-4/5"></div>
+                                        <div class="h-3 bg-primary/10 rounded w-1/3"></div>
+                                        <div class="h-3 bg-[#2a2a2a] rounded w-3/5"></div>
+                                    </div>
+                                </div>
+                                <!-- Status Bar -->
+                                <div class="mt-4 flex items-center justify-between text-xs text-ink-mute">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-primary"></span>
+                                        <span>Build passing</span>
+                                    </div>
+                                    <span>TypeScript · Next.js 14</span>
+                                </div>
                             </div>
-                            <h4 class="text-xl font-bold tracking-tight text-primary">Law & Compliance</h4>
-                            <p class="text-secondary leading-relaxed text-sm">
-                                Digital contract auditing, technology compliance auditing, IP protection, and privacy frameworks.
-                            </p>
-                        </div>
-                        <a href="services.html" class="inline-flex items-center text-sm font-semibold text-primary mt-8 group-hover:translate-x-1 transition-transform duration-300">
-                            Learn More <i data-lucide="arrow-up-right" class="w-4 h-4 ml-1"></i>
-                        </a>
-                    </div>
-
-                    <!-- Card 5: Corporate Finance (Col Span 2) -->
-                    <div class="service-card rounded-3xl p-8 flex flex-col justify-between group md:col-span-2 min-h-[360px]">
-                        <div class="space-y-6">
-                            <!-- Animated SVG -->
-                            <div class="w-16 h-16 bg-white border border-border rounded-2xl flex items-center justify-center relative overflow-hidden">
-                                <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Finance Bars -->
-                                    <rect class="finance-bar finance-bar-1" x="25" y="45" width="8" height="35" rx="2" fill="#e5e5e5" transform="translate(0, 0)"/>
-                                    <rect class="finance-bar finance-bar-2" x="45" y="35" width="8" height="45" rx="2" fill="#9ca3af" transform="translate(0, 0)"/>
-                                    <rect class="finance-bar finance-bar-3" x="65" y="25" width="8" height="55" rx="2" fill="#111111" transform="translate(0, 0)"/>
-                                    <!-- Growth Trend Line -->
-                                    <path class="finance-line" d="M 20 70 L 40 50 L 60 40 L 80 20" stroke="#111111" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-                                    <circle cx="80" cy="20" r="3.5" fill="#ef4444"/>
-                                </svg>
-                            </div>
-                            <h4 class="text-xl font-bold tracking-tight text-primary">Corporate Finance</h4>
-                            <p class="text-secondary leading-relaxed text-sm">
-                                Strategic fundraising modeling, growth capitalization audit, tech valuation, and fiscal operations.
-                            </p>
-                        </div>
-                        <a href="services.html" class="inline-flex items-center text-sm font-semibold text-primary mt-8 group-hover:translate-x-1 transition-transform duration-300">
-                            Learn More <i data-lucide="arrow-up-right" class="w-4 h-4 ml-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- About Section (Editorial Layout) -->
-            <section class="pt-32 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                    <div class="gsap-fade-up">
-                        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-8">Bespoke solutions across technology, law, and finance.</h2>
-                        <p class="text-xl text-secondary leading-relaxed mb-6">
-                            We merge high-performance web engineering and state-of-the-art UI/UX design with strategic technology law compliance and expert corporate financial modeling. As a multidisciplinary collective, we replace generic templates with custom-coded applications and elite professional advisory to drive growth for high-scale digital enterprises.
-                        </p>
-                        <a href="services.html"
-                            class="inline-flex items-center text-primary font-medium border-b border-primary pb-1 hover:text-secondary transition-colors">
-                            Our Philosophy <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
-                        </a>
-                    </div>
-                    <div class="relative h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden gsap-fade-up">
-                        <!-- Growing Network Tree Visualizer Container -->
-                        <div id="network-visual-container" class="absolute inset-0 w-full h-full flex items-center justify-center">
-                            <svg class="network-svg w-[90%] h-[90%] max-w-[500px] max-h-[500px]" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Root Node to Gen 1 Lines -->
-                                <line class="network-line gen-1-line" x1="300" y1="50" x2="165" y2="120" />
-                                <line class="network-line gen-1-line" x1="300" y1="50" x2="435" y2="120" />
-
-                                <!-- Gen 1 to Gen 2 Lines -->
-                                <line class="network-line gen-2-line" x1="165" y1="120" x2="100" y2="190" />
-                                <line class="network-line gen-2-line" x1="165" y1="120" x2="230" y2="190" />
-                                <line class="network-line gen-2-line" x1="435" y1="120" x2="370" y2="190" />
-                                <line class="network-line gen-2-line" x1="435" y1="120" x2="500" y2="190" />
-
-                                <!-- Gen 2 to Gen 3 Lines -->
-                                <line class="network-line gen-3-line" x1="100" y1="190" x2="60" y2="260" />
-                                <line class="network-line gen-3-line" x1="100" y1="190" x2="130" y2="260" />
-                                <line class="network-line gen-3-line" x1="230" y1="190" x2="200" y2="260" />
-                                <line class="network-line gen-3-line" x1="230" y1="190" x2="270" y2="260" />
-                                <line class="network-line gen-3-line" x1="370" y1="190" x2="330" y2="260" />
-                                <line class="network-line gen-3-line" x1="370" y1="190" x2="400" y2="260" />
-                                <line class="network-line gen-3-line" x1="500" y1="190" x2="470" y2="260" />
-                                <line class="network-line gen-3-line" x1="500" y1="190" x2="540" y2="260" />
-
-                                <!-- Gen 3 to Gen 4 Lines -->
-                                <line class="network-line gen-4-line" x1="60" y1="260" x2="40" y2="330" />
-                                <line class="network-line gen-4-line" x1="60" y1="260" x2="80" y2="330" />
-                                <line class="network-line gen-4-line" x1="130" y1="260" x2="110" y2="330" />
-                                <line class="network-line gen-4-line" x1="130" y1="260" x2="150" y2="330" />
-                                <line class="network-line gen-4-line" x1="200" y1="260" x2="180" y2="330" />
-                                <line class="network-line gen-4-line" x1="200" y1="260" x2="220" y2="330" />
-                                <line class="network-line gen-4-line" x1="270" y1="260" x2="250" y2="330" />
-                                <line class="network-line gen-4-line" x1="270" y1="260" x2="290" y2="330" />
-                                <line class="network-line gen-4-line" x1="330" y1="260" x2="310" y2="330" />
-                                <line class="network-line gen-4-line" x1="330" y1="260" x2="350" y2="330" />
-                                <line class="network-line gen-4-line" x1="400" y1="260" x2="380" y2="330" />
-                                <line class="network-line gen-4-line" x1="400" y1="260" x2="420" y2="330" />
-                                <line class="network-line gen-4-line" x1="470" y1="260" x2="450" y2="330" />
-                                <line class="network-line gen-4-line" x1="470" y1="260" x2="490" y2="330" />
-                                <line class="network-line gen-4-line" x1="540" y1="260" x2="520" y2="330" />
-                                <line class="network-line gen-4-line" x1="540" y1="260" x2="560" y2="330" />
-
-                                <!-- Nodes -->
-                                <!-- Gen 0 Root -->
-                                <circle class="network-node gen-0-node" cx="300" cy="50" r="8" />
-
-                                <!-- Gen 1 -->
-                                <circle class="network-node gen-1-node" cx="165" cy="120" r="7" />
-                                <circle class="network-node gen-1-node" cx="435" cy="120" r="7" />
-
-                                <!-- Gen 2 -->
-                                <circle class="network-node gen-2-node" cx="100" cy="190" r="6" />
-                                <circle class="network-node gen-2-node" cx="230" cy="190" r="6" />
-                                <circle class="network-node gen-2-node" cx="370" cy="190" r="6" />
-                                <circle class="network-node gen-2-node" cx="500" cy="190" r="6" />
-
-                                <!-- Gen 3 -->
-                                <circle class="network-node gen-3-node" cx="60" cy="260" r="5" />
-                                <circle class="network-node gen-3-node" cx="130" cy="260" r="5" />
-                                <circle class="network-node gen-3-node" cx="200" cy="260" r="5" />
-                                <circle class="network-node gen-3-node" cx="270" cy="260" r="5" />
-                                <circle class="network-node gen-3-node" cx="330" cy="260" r="5" />
-                                <circle class="network-node gen-3-node" cx="400" cy="260" r="5" />
-                                <circle class="network-node gen-3-node" cx="470" cy="260" r="5" />
-                                <circle class="network-node gen-3-node" cx="540" cy="260" r="5" />
-
-                                <!-- Gen 4 -->
-                                <circle class="network-node gen-4-node" cx="40" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="80" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="110" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="150" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="180" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="220" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="250" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="290" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="310" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="350" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="380" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="420" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="450" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="490" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="520" cy="330" r="4" />
-                                <circle class="network-node gen-4-node" cx="560" cy="330" r="4" />
-                            </svg>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Section / CTA -->
-            <section class="pt-12 pb-32 px-6 text-center max-w-4xl mx-auto">
-                <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter mb-8 gsap-fade-up">Let's construct your digital future.</h2>
-                <p class="text-xl text-secondary mb-12 gsap-fade-up">Collaborate with our elite team of engineers, designers, legal compliance auditors, and financial strategists.</p>
-                <div class="magnetic-wrap gsap-fade-up w-full sm:w-auto flex justify-center">
-                    <a href="contact.html"
-                        class="bg-primary text-white w-full max-w-[280px] sm:w-auto text-center px-6 py-4 sm:px-10 sm:py-5 rounded-full text-lg sm:text-xl font-medium hover:bg-black transition-colors shadow-2xl inline-block">Book
-                        a Consultation</a>
+            <!-- ============================================ -->
+            <!-- SECTION 04: GROWTH                           -->
+            <!-- ============================================ -->
+            <section class="section-padding">
+                <div class="container-main">
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Growth</p>
+                        <h2 class="display-xl mb-6">Visibility is engineered, not accidental.</h2>
+                        <p class="body-lg">Technical SEO, performance analytics, and growth strategy designed to put your product in front of the right audience at the right time.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 gsap-fade-up">
+                        <div class="space-y-4">
+                            <div class="metric-number">100</div>
+                            <div class="metric-label">Core Web Vitals Score</div>
+                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Perfect performance scores through semantic HTML, optimized load paths, and structured schemas.</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="metric-number">3x</div>
+                            <div class="metric-label">Organic Traffic Growth</div>
+                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Topic cluster architecture and JSON-LD annotations that build domain authority systematically.</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="metric-number">40%</div>
+                            <div class="metric-label">Conversion Improvement</div>
+                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Data-driven UX optimization, A/B testing frameworks, and funnel analysis that turn visitors into customers.</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="metric-number">24/7</div>
+                            <div class="metric-label">Analytics Monitoring</div>
+                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Real-time dashboards, automated reporting, and proactive alerts that keep your growth trajectory on course.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 05: LEGAL & FINANCE                  -->
+            <!-- ============================================ -->
+            <section class="section-padding section-band-soft">
+                <div class="container-main">
+                    <div class="max-w-3xl mb-20 gsap-fade-up">
+                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Structure & Foundation</p>
+                        <h2 class="display-xl mb-6">Growth without protection is exposure. Revenue without strategy is waste.</h2>
+                        <p class="body-lg">Legal and financial advisory designed specifically for technology companies. We protect what you build and optimize how you grow.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 gsap-fade-up">
+                        <!-- Legal -->
+                        <div class="card-feature space-y-8">
+                            <div>
+                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Legal Consultancy</p>
+                                <h3 class="display-md mb-4">Protect your architecture.</h3>
+                                <p class="body-lg">Digital contract auditing, technology compliance (GDPR/CCPA), intellectual property protection, and privacy frameworks tailored for modern software platforms.</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
+                                    Technology Compliance Audits
+                                </div>
+                                <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
+                                    IP Protection & SLA Curation
+                                </div>
+                                <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
+                                    Privacy Framework Architecture
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Finance -->
+                        <div class="card-feature space-y-8">
+                            <div>
+                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Financial Consultancy</p>
+                                <h3 class="display-md mb-4">Engineer your growth capital.</h3>
+                                <p class="body-lg">Strategic fundraising modeling, growth capitalization analysis, tech valuations, financial forecasting, and operational cash flow optimization for scale-ups.</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
+                                    Fundraising & Valuation Models
+                                </div>
+                                <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
+                                    Financial Forecast Architecture
+                                </div>
+                                <div class="flex items-center gap-3 text-sm text-ink-mute">
+                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
+                                    Cash Flow Optimization
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 06: INSIGHTS                         -->
+            <!-- ============================================ -->
+            <section class="section-padding">
+                <div class="container-main">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6 gsap-fade-up">
+                        <div>
+                            <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Journal</p>
+                            <h2 class="display-xl">Insights</h2>
+                        </div>
+                        <a href="blog.html" class="btn-link">
+                            View all articles
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+
+                    <!-- Editorial Blog Preview Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 gsap-fade-up" id="home-insights-grid">
+                        <!-- Populated by JS from blog data -->
+                        <div class="insight-card col-span-1 md:col-span-2 flex flex-col justify-between min-h-[280px]">
+                            <div>
+                                <span class="pill-green text-[10px] font-medium uppercase tracking-wider mb-4 inline-block">Engineering</span>
+                                <h3 class="display-md mb-3">The Future of Web Development in 2026</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed max-w-lg">Exploring the shift towards minimal frameworks, spatial interfaces, and cinematic web experiences that capture user attention instantly.</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-hairline-cool">
+                                <span class="text-xs text-ink-mute">DiginixIT Engineering</span>
+                                <a href="blog.html" class="text-xs font-medium text-ink flex items-center gap-1 hover:text-ink-mute transition-colors">Read <i data-lucide="arrow-right" class="w-3 h-3"></i></a>
+                            </div>
+                        </div>
+                        <div class="insight-card flex flex-col justify-between min-h-[280px]">
+                            <div>
+                                <span class="pill-soft text-[10px] font-medium uppercase tracking-wider mb-4 inline-block">SEO</span>
+                                <h3 class="heading-lg mb-3">Technical SEO Architecture for High-Performance Applications</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Structured schemas, semantic HTML, and Core Web Vitals optimization for maximum organic authority.</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-hairline-cool">
+                                <span class="text-xs text-ink-mute">DiginixIT Engineering</span>
+                                <a href="blog.html" class="text-xs font-medium text-ink flex items-center gap-1 hover:text-ink-mute transition-colors">Read <i data-lucide="arrow-right" class="w-3 h-3"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 07: FINAL CTA                        -->
+            <!-- ============================================ -->
+            <section class="cta-section gsap-fade-up">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="display-xxl mb-6">Let's construct your digital future.</h2>
+                    <p class="body-lg max-w-xl mx-auto mb-10">Collaborate with our team of engineers, designers, legal auditors, and financial strategists.</p>
+                    <div class="magnetic-wrap">
+                        <a href="contact.html" class="btn-primary btn-primary-lg">Book a Consultation</a>
+                    </div>
                 </div>
             </section>
         </div>
@@ -664,17 +584,16 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-12 border-t border-border bg-surface px-6">
-        <div
-            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-secondary gap-y-4 md:gap-y-0">
-            <div class="font-bold tracking-tighter site-logo-text md:mb-0">DIGINIXIT.</div>
-            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:mb-0">
-                <a href="./" class="hover:text-primary transition-colors">Home</a>
-                <a href="services.html" class="hover:text-primary transition-colors">Services</a>
-                <a href="blog.html" class="hover:text-primary transition-colors">Blog</a>
-                <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
+    <footer class="footer-light">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
+            <div class="font-medium" style="letter-spacing: -0.04em;">DIGINIXIT.</div>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                <a href="./">Home</a>
+                <a href="services.html">Services</a>
+                <a href="blog.html">Blog</a>
+                <a href="contact.html">Contact</a>
             </div>
-            <div>&copy; 2026 DiginixIT Agency. All rights reserved.</div>
+            <div>&copy; 2026 DiginixIT. All rights reserved.</div>
         </div>
     </footer>
 
