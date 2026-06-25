@@ -124,15 +124,20 @@ CREATE INDEX IF NOT EXISTS idx_visit_logs_session_id ON public.visit_logs(sessio
 CREATE INDEX IF NOT EXISTS idx_csrf_tokens_user_id ON public.csrf_tokens(user_id);
 CREATE INDEX IF NOT EXISTS idx_csrf_tokens_expires ON public.csrf_tokens(expires_at);
 
--- Safely add foreign key reference if not already present
+-- NOTE: The FK constraint users_auth_user_id_fkey on public.users(auth_user_id)
+-- referencing auth.users(id) has been intentionally REMOVED. Supabase's GoTrue
+-- auth service fires the on_auth_user_created trigger before the auth.users row
+-- is fully committed, causing a foreign key violation during signup. The
+-- relationship is still maintained correctly by the handle_new_auth_user trigger
+-- and the create_user_profile_from_auth RPC function.
+-- Safely drop the foreign key constraint if it exists from a previous setup.
 DO $$
 BEGIN
-    IF NOT EXISTS (
+    IF EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'users_auth_user_id_fkey'
     ) THEN
         ALTER TABLE public.users 
-        ADD CONSTRAINT users_auth_user_id_fkey 
-        FOREIGN KEY (auth_user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+        DROP CONSTRAINT users_auth_user_id_fkey;
     END IF;
 END;
 $$;
