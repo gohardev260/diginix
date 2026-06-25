@@ -62,11 +62,13 @@
 
     <!-- Container -->
     <div class="flex h-full w-full">
-        <!-- Left Column: Branding (canvas-night theme, hidden on mobile) -->
-        <div class="hidden lg:flex lg:w-1/2 bg-canvas-night text-white p-16 flex-col justify-between relative overflow-hidden border-r border-hairline/10">
-            <!-- Subtle wireframe background element -->
-            <div class="absolute inset-0 opacity-10 flex justify-center items-center">
-                <div class="w-[500px] h-[500px] border border-white rounded-full"></div>
+        <!-- Left Column: Branding (canvas-night theme, hidden on mobile, borderless split) -->
+        <div class="hidden lg:flex lg:w-1/2 bg-canvas-night text-white p-16 flex-col justify-between relative overflow-hidden">
+            <!-- Flat opacity circles background (no borders) -->
+            <div class="absolute inset-0 opacity-15 flex justify-center items-center">
+                <div class="w-[450px] h-[450px] bg-white/5 rounded-full flex items-center justify-center">
+                    <div class="w-72 h-72 bg-white/5 rounded-full"></div>
+                </div>
             </div>
 
             <a href="./" class="text-xl font-medium tracking-tighter text-white relative z-10" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
@@ -81,11 +83,11 @@
             </div>
         </div>
 
-        <!-- Right Column: Authentication Panel (canvas theme) -->
+        <!-- Right Column: Authentication Panel (canvas theme, no card boundaries) -->
         <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 relative overflow-y-auto bg-canvas">
 
-            <!-- Floating close button to go back home -->
-            <a href="./" class="absolute top-8 right-8 p-3 bg-canvas border border-hairline hover:border-hairline-strong rounded-full transition-colors" aria-label="Go home">
+            <!-- Floating close button (borderless layout) -->
+            <a href="./" class="absolute top-8 right-8 p-3 hover:bg-canvas-soft rounded-full transition-colors" aria-label="Go home">
                 <i data-lucide="x" class="w-5 h-5 text-ink"></i>
             </a>
 
@@ -97,7 +99,7 @@
                     <p class="text-ink-mute text-sm mt-2">Enter credentials to authenticate your session.</p>
                 </div>
 
-                <!-- Form -->
+                <!-- Form (Borderless inputs) -->
                 <form onsubmit="handleAdminLogin(event)" class="space-y-5">
                     <div>
                         <label for="admin-user" class="text-xs font-medium text-ink-mute block mb-2">Admin Email</label>

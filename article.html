@@ -259,8 +259,8 @@
                         Loading article...
                     </h1>
 
-                    <!-- Horizontal Metadata Row -->
-                    <div class="flex items-center justify-between border-y border-hairline py-4 my-8">
+                    <!-- Horizontal Metadata Row (Borderless) -->
+                    <div class="flex items-center justify-between border-b border-hairline pb-6 mb-8">
                         <div class="flex items-center space-x-3">
                             <div id="author-initials" class="w-10 h-10 rounded-full bg-canvas-soft border border-hairline flex items-center justify-center font-medium text-xs text-ink uppercase">
                                 DI
@@ -274,16 +274,12 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Sharing Toolbar -->
-                        <div class="flex items-center space-x-2">
-                            <a href="#" id="share-twitter" target="_blank" class="p-2 border border-hairline hover:border-ink rounded-full transition-all text-ink-mute hover:text-ink flex items-center justify-center w-9 h-9" title="Share on Twitter/X">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                            </a>
-                            <a href="#" id="share-linkedin" target="_blank" class="p-2 border border-hairline hover:border-ink rounded-full transition-all text-ink-mute hover:text-ink flex items-center justify-center w-9 h-9" title="Share on LinkedIn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-                            </a>
-                            <button id="share-copy" class="p-2 border border-hairline hover:border-ink rounded-full transition-all text-ink-mute hover:text-ink flex items-center justify-center w-9 h-9 relative" title="Copy Link">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        <!-- Sharing Toolbar (Borderless text links) -->
+                        <div class="flex items-center space-x-4 text-xs text-ink-mute font-medium">
+                            <a href="#" id="share-twitter" target="_blank" class="hover:text-ink transition-colors">Twitter</a>
+                            <a href="#" id="share-linkedin" target="_blank" class="hover:text-ink transition-colors">LinkedIn</a>
+                            <button id="share-copy" class="hover:text-ink transition-colors relative">
+                                Copy Link
                                 <span id="copy-toast" class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-primary text-ink text-[10px] font-medium rounded-sm opacity-0 pointer-events-none transition-opacity duration-200 whitespace-nowrap">Link Copied!</span>
                             </button>
                         </div>
@@ -295,7 +291,7 @@
                     </article>
                 </div>
 
-                <!-- Related Articles -->
+                <!-- Related Articles (Cardless List) -->
                 <section class="border-t border-hairline mt-20 pt-16" aria-label="Related Insights">
                     <div class="flex justify-between items-end mb-8">
                         <div>
@@ -306,7 +302,7 @@
                             <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
-                    <div id="related-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div id="related-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
                         <!-- Dynamically populated related blogs -->
                     </div>
                 </section>
@@ -534,7 +530,7 @@
             // GSAP Entry Animation
             if (typeof gsap !== 'undefined') {
                 gsap.from("#article-title", { y: 20, opacity: 0, duration: 0.8, ease: "power3.out" });
-                gsap.from(".border-y", { y: 15, opacity: 0, duration: 0.8, delay: 0.2, ease: "power3.out" });
+                gsap.from(".border-b", { y: 15, opacity: 0, duration: 0.8, delay: 0.2, ease: "power3.out" });
                 gsap.from("#article-content", { y: 15, opacity: 0, duration: 0.8, delay: 0.4, ease: "power3.out" });
             }
         }
@@ -543,7 +539,7 @@
             const viewEl = document.getElementById('main-article-view');
             if (viewEl) {
                 viewEl.innerHTML = `
-                    <div class="max-w-md mx-auto text-center py-20 bg-canvas border border-hairline rounded-xl p-8 shadow-sm my-12">
+                    <div class="max-w-md mx-auto text-center py-20">
                         <div class="w-16 h-16 bg-canvas-soft text-ink rounded-full flex items-center justify-center mx-auto mb-6">
                             <i data-lucide="alert-triangle" class="w-8 h-8 text-ink-mute"></i>
                         </div>
@@ -580,23 +576,20 @@
                 `;
             } else {
                 relatedContainer.innerHTML = relatedBlogs.map(item => `
-                    <a href="article.html?id=${item.id}" class="blog-card flex flex-col justify-between p-6 group">
+                    <a href="article.html?id=${item.id}" class="flex flex-col justify-between py-6 border-b border-hairline group">
                         <div>
-                            <div class="flex justify-between items-center mb-5">
-                                <span class="pill-green text-[10px] font-medium uppercase tracking-wider">${window.escapeHtml(item.category)}</span>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="bg-canvas-soft border border-hairline text-ink text-[10px] font-medium px-3 py-1 rounded-full uppercase tracking-wider">${window.escapeHtml(item.category)}</span>
                                 <div class="text-[10px] text-ink-mute font-medium">${window.escapeHtml(formatLocalShortDate(item.date))}</div>
                             </div>
-                            <div class="space-y-3">
-                                <h3 class="heading-lg group-hover:text-ink-mute transition-colors line-clamp-2">${window.escapeHtml(item.title)}</h3>
+                            <div class="space-y-2 mb-4">
+                                <h3 class="display-md group-hover:text-ink-mute transition-colors line-clamp-2">${window.escapeHtml(item.title)}</h3>
                                 <p class="text-sm text-ink-mute leading-relaxed line-clamp-3">${window.escapeHtml(item.summary || '')}</p>
                             </div>
                         </div>
-                        <div class="pt-5 border-t border-hairline-cool flex justify-between items-center text-xs mt-6">
-                            <span class="text-ink-mute">By ${window.escapeHtml(item.author)}</span>
-                            <div class="flex items-center gap-1 font-medium text-ink">
-                                <span>Read</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
-                            </div>
+                        <div class="flex justify-between items-center text-xs mt-2 text-ink-mute">
+                            <span>By ${window.escapeHtml(item.author)}</span>
+                            <span class="font-medium text-ink group-hover:underline">Read Article &rarr;</span>
                         </div>
                     </a>
                 `).join('');

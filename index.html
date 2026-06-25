@@ -170,7 +170,7 @@
     </script>
 </head>
 
-<body>
+<body class="bg-canvas text-ink">
 
     <!-- Noise Overlay -->
     <div class="noise"></div>
@@ -263,43 +263,10 @@
                             </div>
                         </div>
 
-                        <!-- Right: 3D Centerpiece area (Three.js renders behind, this is a compositional anchor) -->
+                        <!-- Right: 3D Centerpiece area -->
                         <div class="hidden lg:flex items-center justify-center relative h-[500px]">
                             <!-- The Three.js scene fills this space via canvas-container -->
                         </div>
-                    </div>
-                </div>
-
-                <!-- Scroll Indicator -->
-                <div class="scroll-indicator absolute bottom-10 left-1/2 transform -translate-x-1/2 hero-btns opacity-0">
-                    <span class="scroll-indicator-label">Scroll</span>
-                    <div class="scroll-indicator-line"></div>
-                </div>
-            </section>
-
-            <!-- ============================================ -->
-            <!-- CLIENT LOGOS MARQUEE                         -->
-            <!-- ============================================ -->
-            <section class="py-16 border-y border-hairline overflow-hidden">
-                <div class="container-main mb-10 gsap-fade-up">
-                    <p class="text-xs font-medium tracking-widest text-ink-mute uppercase">Trusted by industry leaders</p>
-                </div>
-                <div class="relative flex marquee-content items-center">
-                    <div class="flex flex-shrink-0 items-center justify-around gap-16 md:gap-24 px-4 min-w-full">
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">LinkedIn</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Vercel</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Netlify</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Stripe</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Figma</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">OpenAI</span>
-                    </div>
-                    <div class="flex flex-shrink-0 items-center justify-around gap-16 md:gap-24 px-4 min-w-full">
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">LinkedIn</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Vercel</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Netlify</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Stripe</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">Figma</span>
-                        <span class="text-xl font-medium tracking-tight text-ink-faint hover:text-ink transition-colors cursor-default whitespace-nowrap">OpenAI</span>
                     </div>
                 </div>
             </section>
@@ -313,42 +280,42 @@
                     <div class="max-w-3xl mb-20 gsap-fade-up">
                         <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">The Process</p>
                         <h2 class="display-xl mb-6">Every business transformation follows a path. We architect yours.</h2>
-                        <p class="body-lg">From discovery to scale, we guide your business through five critical phases — each designed to compound value and eliminate risk.</p>
+                        <p class="body-lg text-ink-mute">From discovery to scale, we guide your business through five critical phases — each designed to compound value and eliminate risk.</p>
                     </div>
 
-                    <!-- Journey Steps -->
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-0">
+                    <!-- Journey Steps (Cardless Timeline) -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
                         <!-- Step 1: Discover -->
-                        <div class="step-item py-8 md:py-12 gsap-fade-up">
-                            <div class="step-number mb-4">01</div>
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">01</div>
                             <h3 class="heading-lg mb-3">Discover</h3>
                             <p class="text-sm text-ink-mute leading-relaxed">Deep audit of your business landscape, technical stack, and market positioning. We identify where the real leverage exists.</p>
                         </div>
 
                         <!-- Step 2: Build -->
-                        <div class="step-item py-8 md:py-12 gsap-fade-up">
-                            <div class="step-number mb-4">02</div>
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">02</div>
                             <h3 class="heading-lg mb-3">Build</h3>
                             <p class="text-sm text-ink-mute leading-relaxed">Custom engineering of your digital infrastructure. No templates, no shortcuts — bespoke applications built from the ground up.</p>
                         </div>
 
                         <!-- Step 3: Launch -->
-                        <div class="step-item py-8 md:py-12 gsap-fade-up">
-                            <div class="step-number mb-4">03</div>
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">03</div>
                             <h3 class="heading-lg mb-3">Launch</h3>
                             <p class="text-sm text-ink-mute leading-relaxed">Strategic deployment with performance optimization. Every pixel, every interaction, every metric calibrated for maximum impact.</p>
                         </div>
 
                         <!-- Step 4: Protect -->
-                        <div class="step-item py-8 md:py-12 gsap-fade-up">
-                            <div class="step-number mb-4">04</div>
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">04</div>
                             <h3 class="heading-lg mb-3">Protect</h3>
                             <p class="text-sm text-ink-mute leading-relaxed">Legal compliance frameworks, IP protection, and privacy structures that safeguard your business at every growth stage.</p>
                         </div>
 
                         <!-- Step 5: Scale -->
-                        <div class="step-item py-8 md:py-12 gsap-fade-up">
-                            <div class="step-number mb-4">05</div>
+                        <div class="py-4 gsap-fade-up">
+                            <div class="text-4xl font-light text-ink-faint mb-4">05</div>
                             <h3 class="heading-lg mb-3">Scale</h3>
                             <p class="text-sm text-ink-mute leading-relaxed">Financial strategy, growth analytics, and market expansion. We engineer the systems that turn momentum into exponential growth.</p>
                         </div>
@@ -359,65 +326,53 @@
             <!-- ============================================ -->
             <!-- SECTION 03: TECHNOLOGY                       -->
             <!-- ============================================ -->
-            <section class="section-padding section-band-soft relative overflow-hidden">
-                <!-- Watermark -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 watermark-text whitespace-nowrap select-none">
-                    TECHNOLOGY
-                </div>
-
+            <section class="section-padding bg-canvas-soft relative overflow-hidden">
                 <div class="container-main relative z-10">
                     <div class="max-w-3xl mb-20 gsap-fade-up">
                         <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Engineering</p>
                         <h2 class="display-xl mb-6">We don't build websites. We engineer digital infrastructure.</h2>
-                        <p class="body-lg">Custom React and Next.js applications, serverless architectures, secure API integrations, and cinematic WebGL interactions. Every product is built for speed, security, and scale.</p>
+                        <p class="body-lg text-ink-mute">Custom applications, scalable architectures, secure database integrations, and smooth web layouts. We build for speed, performance, and simplicity.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         <!-- Left: Capabilities -->
                         <div class="space-y-12 gsap-fade-up">
                             <div class="space-y-4">
                                 <h3 class="heading-lg">Web Applications</h3>
-                                <p class="text-sm text-ink-mute leading-relaxed">High-performance applications built with modern frameworks. Server-side rendering, edge functions, and real-time data architectures that handle millions of requests.</p>
+                                <p class="text-sm text-ink-mute leading-relaxed">High-performance applications built with modern frameworks. Rendered on edge, with local caching and real-time database endpoints.</p>
                             </div>
-                            <div class="section-divider"></div>
                             <div class="space-y-4">
                                 <h3 class="heading-lg">Platform Engineering</h3>
-                                <p class="text-sm text-ink-mute leading-relaxed">Custom SaaS platforms, marketplace systems, and enterprise tools. Micro-frontend architecture with modular, scalable codebases designed for long-term evolution.</p>
+                                <p class="text-sm text-ink-mute leading-relaxed">Bespoke management portals, SaaS infrastructures, and customer databases. Built with modular, clean coding structures.</p>
                             </div>
-                            <div class="section-divider"></div>
                             <div class="space-y-4">
-                                <h3 class="heading-lg">Automation & Infrastructure</h3>
-                                <p class="text-sm text-ink-mute leading-relaxed">CI/CD pipelines, serverless deployments, database optimization, and workflow automation. The invisible systems that make everything else possible.</p>
+                                <h3 class="heading-lg">Automation & Integration</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Workflow automations, database connections, and secure API links that connect your core operations smoothly.</p>
                             </div>
                         </div>
 
-                        <!-- Right: Composited Mockup -->
-                        <div class="gsap-fade-up">
-                            <div class="mockup-container p-6 md:p-8">
-                                <!-- Code Editor Mockup -->
-                                <div class="bg-canvas-night rounded-lg p-5 space-y-3">
-                                    <div class="flex items-center space-x-2 mb-4">
-                                        <div class="w-3 h-3 rounded-full bg-[#ef4444]"></div>
-                                        <div class="w-3 h-3 rounded-full bg-[#f59e0b]"></div>
-                                        <div class="w-3 h-3 rounded-full bg-primary"></div>
+                        <!-- Right: Flat, borderless CSS vector illustration (Browser & Rocket) -->
+                        <div class="gsap-fade-up flex justify-center w-full">
+                            <div class="w-full max-w-md bg-canvas-soft rounded-2xl p-8 flex flex-col items-center justify-center relative overflow-hidden h-64">
+                                <!-- Flat background shapes -->
+                                <div class="absolute w-32 h-32 bg-primary/10 rounded-full -top-10 -right-10"></div>
+                                <div class="absolute w-24 h-24 bg-primary/5 rounded-full -bottom-8 -left-8"></div>
+                                <!-- Flat cartoon browser viewport mockup without card border -->
+                                <div class="w-full bg-canvas rounded-xl p-4 flex flex-col gap-3.5 relative z-10">
+                                    <div class="flex gap-1.5">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-primary/25"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-primary/25"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-primary/25"></div>
                                     </div>
-                                    <div class="space-y-2">
-                                        <div class="h-3 bg-[#2a2a2a] rounded w-3/4"></div>
-                                        <div class="h-3 bg-[#2a2a2a] rounded w-1/2"></div>
-                                        <div class="h-3 bg-primary/20 rounded w-5/6"></div>
-                                        <div class="h-3 bg-[#2a2a2a] rounded w-2/3"></div>
-                                        <div class="h-3 bg-[#2a2a2a] rounded w-4/5"></div>
-                                        <div class="h-3 bg-primary/10 rounded w-1/3"></div>
-                                        <div class="h-3 bg-[#2a2a2a] rounded w-3/5"></div>
+                                    <div class="flex items-center justify-between bg-canvas-soft rounded-lg p-4">
+                                        <div class="flex flex-col gap-2 w-2/3">
+                                            <div class="h-2.5 bg-primary/20 rounded w-full"></div>
+                                            <div class="h-2 bg-primary/10 rounded w-1/2"></div>
+                                        </div>
+                                        <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                                            <div class="w-4 h-4 bg-primary rounded-full"></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Status Bar -->
-                                <div class="mt-4 flex items-center justify-between text-xs text-ink-mute">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-2 h-2 rounded-full bg-primary"></span>
-                                        <span>Build passing</span>
-                                    </div>
-                                    <span>TypeScript · Next.js 14</span>
                                 </div>
                             </div>
                         </div>
@@ -433,29 +388,60 @@
                     <div class="max-w-3xl mb-20 gsap-fade-up">
                         <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Growth</p>
                         <h2 class="display-xl mb-6">Visibility is engineered, not accidental.</h2>
-                        <p class="body-lg">Technical SEO, performance analytics, and growth strategy designed to put your product in front of the right audience at the right time.</p>
+                        <p class="body-lg text-ink-mute">Search visibility audits, page speed optimizations, and clean analytics tracking designed to connect your company with clients.</p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 gsap-fade-up">
-                        <div class="space-y-4">
-                            <div class="metric-number">100</div>
-                            <div class="metric-label">Core Web Vitals Score</div>
-                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Perfect performance scores through semantic HTML, optimized load paths, and structured schemas.</p>
+                        <!-- Speed -->
+                        <div class="space-y-6">
+                            <div class="relative w-20 h-10 bg-canvas-soft rounded-t-full overflow-hidden flex items-end justify-center">
+                                <div class="absolute w-16 h-8 bg-primary rounded-t-full origin-bottom rotate-45"></div>
+                                <div class="absolute w-6 h-6 bg-canvas rounded-full"></div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Core Web Vitals</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Optimizing page loads, layouts, and image sizes so your users don't wait.</p>
+                            </div>
                         </div>
-                        <div class="space-y-4">
-                            <div class="metric-number">3x</div>
-                            <div class="metric-label">Organic Traffic Growth</div>
-                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Topic cluster architecture and JSON-LD annotations that build domain authority systematically.</p>
+
+                        <!-- Visibility -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                                <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                                    <div class="w-4 h-4 bg-primary rounded-full"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Search Rank Optimization</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Topic research, clean schemas, and semantic html formatting to rank naturally.</p>
+                            </div>
                         </div>
-                        <div class="space-y-4">
-                            <div class="metric-number">40%</div>
-                            <div class="metric-label">Conversion Improvement</div>
-                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Data-driven UX optimization, A/B testing frameworks, and funnel analysis that turn visitors into customers.</p>
+
+                        <!-- Conversion -->
+                        <div class="space-y-6">
+                            <div class="relative w-12 h-16 bg-primary/20 rounded-t-full flex flex-col items-center justify-center">
+                                <div class="w-3 h-3 bg-white/80 rounded-full"></div>
+                                <div class="w-4 h-4 bg-orange-300 absolute -bottom-2 rounded-full"></div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Conversion Layouts</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Strategic calls to action and clean visual spacing to guide users easily.</p>
+                            </div>
                         </div>
-                        <div class="space-y-4">
-                            <div class="metric-number">24/7</div>
-                            <div class="metric-label">Analytics Monitoring</div>
-                            <p class="text-sm text-ink-mute leading-relaxed mt-2">Real-time dashboards, automated reporting, and proactive alerts that keep your growth trajectory on course.</p>
+
+                        <!-- Monitoring -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas-soft rounded-full flex items-center justify-center relative">
+                                <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center gap-2">
+                                    <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                                    <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                                </div>
+                                <div class="absolute w-6 h-3 bg-primary rounded-b-full bottom-4"></div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Platform Diagnostics</h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Simple setup tracking, performance indicators, and client metrics dashboards.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -464,58 +450,52 @@
             <!-- ============================================ -->
             <!-- SECTION 05: LEGAL & FINANCE                  -->
             <!-- ============================================ -->
-            <section class="section-padding section-band-soft">
+            <section class="section-padding bg-canvas-soft">
                 <div class="container-main">
                     <div class="max-w-3xl mb-20 gsap-fade-up">
                         <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Structure & Foundation</p>
                         <h2 class="display-xl mb-6">Growth without protection is exposure. Revenue without strategy is waste.</h2>
-                        <p class="body-lg">Legal and financial advisory designed specifically for technology companies. We protect what you build and optimize how you grow.</p>
+                        <p class="body-lg text-ink-mute">Legal and financial consulting built to support your core technology business. We secure your intellectual property and plan your growth strategy.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 gsap-fade-up">
-                        <!-- Legal -->
-                        <div class="card-feature space-y-8">
-                            <div>
-                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Legal Consultancy</p>
-                                <h3 class="display-md mb-4">Protect your architecture.</h3>
-                                <p class="body-lg">Digital contract auditing, technology compliance (GDPR/CCPA), intellectual property protection, and privacy frameworks tailored for modern software platforms.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 gsap-fade-up">
+                        <!-- Legal Column (No card borders) -->
+                        <div class="space-y-6">
+                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                                <div class="w-12 h-16 bg-primary rounded-b-full rounded-t-md flex items-center justify-center text-canvas">
+                                    <div class="w-6 h-6 bg-white/20 rounded-full"></div>
+                                </div>
                             </div>
-                            <div class="space-y-3">
-                                <div class="flex items-center gap-3 text-sm text-ink-mute">
-                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
-                                    Technology Compliance Audits
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-ink-mute">
-                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
-                                    IP Protection & SLA Curation
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-ink-mute">
-                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
-                                    Privacy Framework Architecture
-                                </div>
+                            <div>
+                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-2">Legal Consultancy</p>
+                                <h3 class="display-md mb-4">Protect your architecture.</h3>
+                                <p class="body-lg text-ink-mute mb-6">Privacy policy auditing, data compliance (GDPR/CCPA), intellectual property filings, and clean service agreement structures.</p>
+                                <ul class="space-y-3 text-sm text-ink-mute">
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Technology compliance reviews</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> IP protection and contracts</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Privacy policy drafting</li>
+                                </ul>
                             </div>
                         </div>
 
-                        <!-- Finance -->
-                        <div class="card-feature space-y-8">
-                            <div>
-                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Financial Consultancy</p>
-                                <h3 class="display-md mb-4">Engineer your growth capital.</h3>
-                                <p class="body-lg">Strategic fundraising modeling, growth capitalization analysis, tech valuations, financial forecasting, and operational cash flow optimization for scale-ups.</p>
+                        <!-- Finance Column (No card borders) -->
+                        <div class="space-y-6">
+                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                                <div class="flex flex-col gap-1.5">
+                                    <div class="w-10 h-3.5 bg-primary/30 rounded-full"></div>
+                                    <div class="w-10 h-3.5 bg-primary/60 rounded-full"></div>
+                                    <div class="w-10 h-3.5 bg-primary rounded-full"></div>
+                                </div>
                             </div>
-                            <div class="space-y-3">
-                                <div class="flex items-center gap-3 text-sm text-ink-mute">
-                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
-                                    Fundraising & Valuation Models
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-ink-mute">
-                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
-                                    Financial Forecast Architecture
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-ink-mute">
-                                    <span class="w-1 h-1 rounded-full bg-primary flex-shrink-0"></span>
-                                    Cash Flow Optimization
-                                </div>
+                            <div>
+                                <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-2">Financial Consultancy</p>
+                                <h3 class="display-md mb-4">Engineer your growth capital.</h3>
+                                <p class="body-lg text-ink-mute mb-6">Fundraising projection models, company valuation reports, operational budget forecasting, and cash flow analysis.</p>
+                                <ul class="space-y-3 text-sm text-ink-mute">
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Budget projections and forecasting</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Valuations and capitalization consulting</li>
+                                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Cash flow management</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -538,29 +518,28 @@
                         </a>
                     </div>
 
-                    <!-- Editorial Blog Preview Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 gsap-fade-up" id="home-insights-grid">
-                        <!-- Populated by JS from blog data -->
-                        <div class="insight-card col-span-1 md:col-span-2 flex flex-col justify-between min-h-[280px]">
-                            <div>
-                                <span class="pill-green text-[10px] font-medium uppercase tracking-wider mb-4 inline-block">Engineering</span>
-                                <h3 class="display-md mb-3">The Future of Web Development in 2026</h3>
-                                <p class="text-sm text-ink-mute leading-relaxed max-w-lg">Exploring the shift towards minimal frameworks, spatial interfaces, and cinematic web experiences that capture user attention instantly.</p>
+                    <!-- Cardless Typographical Blog Preview Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 gsap-fade-up" id="home-insights-grid">
+                        <div class="col-span-1 md:col-span-2 flex flex-col justify-between py-4 border-b border-hairline pb-8">
+                            <div class="space-y-4">
+                                <span class="bg-canvas-soft border border-hairline text-ink text-[10px] font-medium px-3 py-1 rounded-full uppercase tracking-wider">Engineering</span>
+                                <h3 class="display-md"><a href="blog.html" class="hover:text-ink-mute transition-colors">The Future of Web Development in 2026</a></h3>
+                                <p class="text-sm text-ink-mute leading-relaxed max-w-lg">Exploring the shift towards minimal frameworks, clean layouts, and simple web experiences that serve users directly.</p>
                             </div>
-                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-hairline-cool">
-                                <span class="text-xs text-ink-mute">DiginixIT Engineering</span>
-                                <a href="blog.html" class="text-xs font-medium text-ink flex items-center gap-1 hover:text-ink-mute transition-colors">Read <i data-lucide="arrow-right" class="w-3 h-3"></i></a>
+                            <div class="flex items-center justify-between mt-6 text-xs text-ink-mute">
+                                <span>By DiginixIT Staff</span>
+                                <a href="blog.html" class="font-medium text-ink hover:underline">Read Article</a>
                             </div>
                         </div>
-                        <div class="insight-card flex flex-col justify-between min-h-[280px]">
-                            <div>
-                                <span class="pill-soft text-[10px] font-medium uppercase tracking-wider mb-4 inline-block">SEO</span>
-                                <h3 class="heading-lg mb-3">Technical SEO Architecture for High-Performance Applications</h3>
-                                <p class="text-sm text-ink-mute leading-relaxed">Structured schemas, semantic HTML, and Core Web Vitals optimization for maximum organic authority.</p>
+                        <div class="flex flex-col justify-between py-4 border-b border-hairline pb-8">
+                            <div class="space-y-4">
+                                <span class="bg-canvas-soft border border-hairline text-ink text-[10px] font-medium px-3 py-1 rounded-full uppercase tracking-wider">SEO</span>
+                                <h3 class="heading-lg"><a href="blog.html" class="hover:text-ink-mute transition-colors">SEO Architecture for High-Performance Applications</a></h3>
+                                <p class="text-sm text-ink-mute leading-relaxed">Structured schema layout, semantic HTML grids, and core performance standards for search index visibility.</p>
                             </div>
-                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-hairline-cool">
-                                <span class="text-xs text-ink-mute">DiginixIT Engineering</span>
-                                <a href="blog.html" class="text-xs font-medium text-ink flex items-center gap-1 hover:text-ink-mute transition-colors">Read <i data-lucide="arrow-right" class="w-3 h-3"></i></a>
+                            <div class="flex items-center justify-between mt-6 text-xs text-ink-mute">
+                                <span>By DiginixIT Staff</span>
+                                <a href="blog.html" class="font-medium text-ink hover:underline">Read Article</a>
                             </div>
                         </div>
                     </div>
@@ -570,10 +549,10 @@
             <!-- ============================================ -->
             <!-- SECTION 07: FINAL CTA                        -->
             <!-- ============================================ -->
-            <section class="cta-section gsap-fade-up">
+            <section class="cta-section bg-canvas-soft border-t border-hairline gsap-fade-up">
                 <div class="max-w-3xl mx-auto">
                     <h2 class="display-xxl mb-6">Let's construct your digital future.</h2>
-                    <p class="body-lg max-w-xl mx-auto mb-10">Collaborate with our team of engineers, designers, legal auditors, and financial strategists.</p>
+                    <p class="body-lg max-w-xl mx-auto mb-10 text-ink-mute">Collaborate with our team of engineers, designers, legal auditors, and financial strategists.</p>
                     <div class="magnetic-wrap">
                         <a href="contact.html" class="btn-primary btn-primary-lg">Book a Consultation</a>
                     </div>

@@ -180,19 +180,19 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
                     
-                    <!-- Left Pane: Info Summary (card-feature-style) -->
-                    <div class="md:col-span-1 bg-canvas p-6 rounded-xl border border-hairline space-y-6 text-center shadow-1">
-                        <div class="w-16 h-16 bg-canvas-soft text-ink text-2xl border border-hairline font-semibold rounded-full flex items-center justify-center mx-auto" id="profile-avatar">U</div>
+                    <!-- Left Pane: Info Summary (Cardless) -->
+                    <div class="md:col-span-1 py-6 space-y-6 text-center">
+                        <div class="w-16 h-16 bg-canvas-soft text-ink text-2xl font-semibold rounded-full flex items-center justify-center mx-auto" id="profile-avatar">U</div>
                         <div>
                             <h2 class="font-medium text-lg text-ink" id="profile-display-name">Client Name</h2>
                             <p class="text-ink-mute text-xs mt-1" id="profile-display-email">email@example.com</p>
                         </div>
                     </div>
 
-                    <!-- Right Pane: Forms & Subscription -->
+                    <!-- Right Pane: Forms & Subscription (Cardless) -->
                     <div class="md:col-span-2 space-y-8">
                         <!-- Profile Form -->
-                        <div class="bg-canvas p-8 rounded-xl border border-hairline shadow-1">
+                        <div class="py-6">
                             <h3 class="font-medium text-lg text-ink mb-6 flex items-center"><i data-lucide="user" class="w-5 h-5 mr-2 text-ink-mute"></i> Account Details</h3>
                             <form onsubmit="handleProfileUpdate(event)" class="space-y-5">
                                 <div>

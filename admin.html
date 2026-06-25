@@ -10,7 +10,7 @@
 
     <!-- DNS Prefetch & Preconnect -->
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net font-sans">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -108,7 +108,6 @@
         .bg-green-100 {
             background-color: rgba(62, 207, 142, 0.1) !important;
             color: #24b47e !important;
-            border: 1px solid rgba(62, 207, 142, 0.2) !important;
             border-radius: var(--radius-xs) !important;
             font-weight: 500 !important;
         }
@@ -116,7 +115,6 @@
         .bg-red-100 {
             background-color: rgba(239, 68, 68, 0.1) !important;
             color: #ef4444 !important;
-            border: 1px solid rgba(239, 68, 68, 0.2) !important;
             border-radius: var(--radius-xs) !important;
             font-weight: 500 !important;
         }
@@ -125,14 +123,12 @@
         .admin-tab-btn.bg-primary {
             background-color: var(--color-canvas-soft) !important;
             color: var(--color-ink) !important;
-            border: 1px solid var(--color-hairline) !important;
             border-radius: var(--radius-sm) !important;
         }
         
         .mobile-tab-btn.bg-primary {
             background-color: var(--color-canvas-soft) !important;
             color: var(--color-ink) !important;
-            border: 1px solid var(--color-hairline) !important;
             border-radius: var(--radius-full) !important;
         }
     </style>
@@ -229,10 +225,10 @@
 
         <!-- Layout Container -->
         <div class="flex pt-20 h-screen overflow-hidden">
-            <!-- Sidebar Navigation -->
-            <div class="w-64 bg-canvas border-r border-hairline hidden md:flex flex-col justify-between p-6">
+            <!-- Sidebar Navigation (Borderless design) -->
+            <div class="w-64 bg-canvas hidden md:flex flex-col justify-between p-6">
                 <div class="space-y-6">
-                    <div class="flex items-center space-x-3 bg-canvas-soft border border-hairline p-4 rounded-xl">
+                    <div class="flex items-center space-x-3 bg-canvas-soft p-4 rounded-xl">
                         <div class="w-10 h-10 bg-canvas text-ink border border-hairline rounded-full flex items-center justify-center font-medium">A</div>
                         <div>
                             <div class="font-semibold text-sm text-ink">System Admin</div>
@@ -241,7 +237,7 @@
                     </div>
 
                     <div class="space-y-1">
-                        <button class="w-full flex items-center text-sm px-4 py-3 rounded-md bg-canvas-soft text-ink font-medium border border-hairline admin-tab-btn" data-tab="analytics">
+                        <button class="w-full flex items-center text-sm px-4 py-3 rounded-md bg-canvas-soft text-ink font-medium admin-tab-btn" data-tab="analytics">
                             <i data-lucide="bar-chart-2" class="w-4 h-4 mr-3"></i> Analytics
                         </button>
                         <button class="w-full flex items-center text-sm px-4 py-3 rounded-md text-ink-mute hover:bg-canvas-soft hover:text-ink transition-colors admin-tab-btn font-medium" data-tab="blog">
@@ -256,7 +252,7 @@
                     </div>
                 </div>
 
-                <div class="text-[10px] text-ink-mute text-center border-t border-hairline pt-4">
+                <div class="text-[10px] text-ink-mute text-center pt-4">
                     Node ID: DIGINIXIT-W10
                 </div>
             </div>
@@ -281,24 +277,24 @@
                         <p class="text-ink-mute text-sm mt-1">Realtime usage diagnostics and business metrics.</p>
                     </div>
 
-                    <!-- Stats Cards Grid -->
+                    <!-- Stats Grid (Borderless layout) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline flex flex-col justify-between h-32 shadow-1">
+                        <div class="bg-canvas p-6 rounded-xl flex flex-col justify-between h-32">
                             <div class="text-ink-mute text-xs font-medium uppercase tracking-wider">Active Users</div>
                             <div class="text-3xl font-medium tracking-tight" id="stat-users">0</div>
                             <div class="text-[10px] text-ink-mute font-medium" id="stat-users-change">0% change from last month</div>
                         </div>
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline flex flex-col justify-between h-32 shadow-1">
+                        <div class="bg-canvas p-6 rounded-xl flex flex-col justify-between h-32">
                             <div class="text-ink-mute text-xs font-medium uppercase tracking-wider">Total Visits</div>
                             <div class="text-3xl font-medium tracking-tight" id="stat-visits">0</div>
                             <div class="text-[10px] text-ink-mute font-medium" id="stat-visits-change">0% change from last month</div>
                         </div>
                     </div>
 
-                    <!-- Charts Grid -->
+                    <!-- Charts Grid (Borderless layout) -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Users Chart -->
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline h-[380px] flex flex-col justify-between shadow-1">
+                        <div class="bg-canvas p-6 rounded-xl h-[380px] flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-medium text-sm text-ink">User Acquisitions</h3>
                                 <span class="text-xs text-ink-mute">Last 6 Months (Signups)</span>
@@ -309,7 +305,7 @@
                         </div>
 
                         <!-- Visits Chart -->
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline h-[380px] flex flex-col justify-between shadow-1">
+                        <div class="bg-canvas p-6 rounded-xl h-[380px] flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-medium text-sm text-ink">Website Traffic</h3>
                                 <span class="text-xs text-ink-mute">Last 6 Months (Visits)</span>
@@ -333,8 +329,8 @@
                         <button onclick="toggleBlogModal(true)" class="btn-primary px-5 py-2.5 text-xs font-medium">Add Article</button>
                     </div>
 
-                    <!-- Blog Table -->
-                    <div class="bg-canvas rounded-xl border border-hairline overflow-hidden shadow-1">
+                    <!-- Blog Table (Borderless list design) -->
+                    <div class="bg-canvas rounded-xl overflow-hidden">
                         <div class="responsive-table-container">
                             <table class="w-full text-left border-collapse text-sm">
                                 <thead>
@@ -365,8 +361,8 @@
                         </div>
                         <!-- Controls -->
                         <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full lg:w-auto flex-wrap">
-                            <!-- Date Range Calendar Pickers -->
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-canvas border border-hairline p-3 rounded-xl w-full sm:w-auto">
+                            <!-- Date Range Calendar Pickers (Borderless cardless) -->
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-canvas p-3 rounded-xl w-full sm:w-auto">
                                 <div class="flex items-center gap-1.5">
                                     <span class="text-[10px] font-bold text-ink-mute uppercase tracking-wider">From:</span>
                                     <input type="date" id="users-start-date" class="bg-transparent border-none p-1 text-xs text-ink font-medium focus:ring-0 cursor-pointer outline-none w-full sm:w-auto" aria-label="Select Start Date">
@@ -405,8 +401,8 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Users Table -->
-                    <div class="bg-canvas rounded-xl border border-hairline overflow-hidden shadow-1">
+                    <!-- Users Table (Borderless) -->
+                    <div class="bg-canvas rounded-xl overflow-hidden">
                         <div class="responsive-table-container">
                             <table class="w-full text-left border-collapse text-sm">
                                 <thead>
@@ -436,7 +432,8 @@
                         <p class="text-ink-mute text-sm mt-1">System parameters and brand controls.</p>
                     </div>
 
-                    <div class="max-w-2xl bg-canvas p-8 rounded-xl border border-hairline space-y-6 shadow-1">
+                    <!-- Settings (Cardless block layout) -->
+                    <div class="max-w-2xl bg-canvas p-8 rounded-xl space-y-6">
                         <form onsubmit="handleSettingsUpdate(event)" class="space-y-5">
                             <div>
                                 <label for="settings-sitename" class="text-xs font-medium text-ink-mute block mb-2">Agency Brand Name (Navbar Text)</label>
