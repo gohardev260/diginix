@@ -1,5 +1,8 @@
 // DiginixIT Admin Dashboard Logic
 
+// Target timezone: Pakistan Standard Time (PKT, UTC+5)
+const TARGET_TIMEZONE_OFFSET_MINUTES = 5 * 60;
+
 window.adminState = {
     revenueChartInstance: null,
     userChartInstance: null,
@@ -368,37 +371,51 @@ function deduplicateUsers(list) {
     });
 }
 
+function getTargetTimezoneYMD() {
+    const now = new Date();
+    // Shift milliseconds by the target offset to find the target local date components
+    const targetTime = new Date(now.getTime() + (TARGET_TIMEZONE_OFFSET_MINUTES * 60000));
+    return {
+        year: targetTime.getUTCFullYear(),
+        month: targetTime.getUTCMonth(),
+        day: targetTime.getUTCDate()
+    };
+}
+
 function getPresetDateRange(preset) {
-    const today = new Date();
+    const targetYMD = getTargetTimezoneYMD();
+    // Create Date object at midnight UTC using target timezone date parts
+    const startOfTodayUTC = new Date(Date.UTC(targetYMD.year, targetYMD.month, targetYMD.day));
+    
     let start = null;
-    let end = today;
+    let end = startOfTodayUTC;
 
     switch (preset) {
         case 'today':
-            start = today;
+            start = startOfTodayUTC;
             break;
         case 'yesterday':
-            const yesterday = new Date();
-            yesterday.setDate(today.getDate() - 1);
+            const yesterday = new Date(startOfTodayUTC);
+            yesterday.setUTCDate(startOfTodayUTC.getUTCDate() - 1);
             start = yesterday;
             end = yesterday;
             break;
         case 'last-7-days':
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(today.getDate() - 6);
+            const sevenDaysAgo = new Date(startOfTodayUTC);
+            sevenDaysAgo.setUTCDate(startOfTodayUTC.getUTCDate() - 6);
             start = sevenDaysAgo;
             break;
         case 'last-30-days':
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(today.getDate() - 29);
+            const thirtyDaysAgo = new Date(startOfTodayUTC);
+            thirtyDaysAgo.setUTCDate(startOfTodayUTC.getUTCDate() - 29);
             start = thirtyDaysAgo;
             break;
         case 'this-month':
-            start = new Date(today.getFullYear(), today.getMonth(), 1);
+            start = new Date(Date.UTC(targetYMD.year, targetYMD.month, 1));
             break;
         case 'last-month':
-            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-            end = new Date(today.getFullYear(), today.getMonth(), 0);
+            start = new Date(Date.UTC(targetYMD.year, targetYMD.month - 1, 1));
+            end = new Date(Date.UTC(targetYMD.year, targetYMD.month, 0));
             break;
         case 'all-time':
         default:
@@ -406,9 +423,9 @@ function getPresetDateRange(preset) {
     }
 
     const formatDate = (d) => {
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
+        const year = d.getUTCFullYear();
+        const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(d.getUTCDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
 
@@ -424,9 +441,11 @@ function formatLocalShortDate(dateStr) {
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
         
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
+        // Add target timezone offset in minutes to target epoch milliseconds
+        const targetTime = new Date(d.getTime() + (TARGET_TIMEZONE_OFFSET_MINUTES * 60000));
+        const year = targetTime.getUTCFullYear();
+        const month = String(targetTime.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(targetTime.getUTCDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     } catch (e) {
         return String(dateStr).substring(0, 10);
@@ -491,11 +510,16 @@ function getLocalDateBounds(dateStr, isEnd = false) {
     const year = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10) - 1;
     const day = parseInt(parts[2], 10);
+    
+    let utcMs;
     if (isEnd) {
-        return new Date(year, month, day, 23, 59, 59, 999);
+        utcMs = Date.UTC(year, month, day, 23, 59, 59, 999);
     } else {
-        return new Date(year, month, day, 0, 0, 0, 0);
+        utcMs = Date.UTC(year, month, day, 0, 0, 0, 0);
     }
+    
+    // Subtract target timezone offset to translate target local day bounds back to UTC Date
+    return new Date(utcMs - (TARGET_TIMEZONE_OFFSET_MINUTES * 60000));
 }
 
 function filterAndRenderUsers() {
