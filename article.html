@@ -13,19 +13,19 @@
     <meta property="og:url" id="og-url-tag" content="https://diginixit.com/blog.html">
     <meta property="og:title" id="og-title-tag" content="DiginixIT | Read Insight">
     <meta property="og:description" id="og-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
-    <meta property="og:image" id="og-image-tag" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+    <meta property="og:image" id="og-image-tag" content="https://diginixit.com/images/og-home.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" id="twitter-url-tag" content="https://diginixit.com/blog.html">
     <meta name="twitter:title" id="twitter-title-tag" content="DiginixIT | Read Insight">
     <meta name="twitter:description" id="twitter-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
-    <meta name="twitter:image" id="twitter-image-tag" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+    <meta name="twitter:image" id="twitter-image-tag" content="https://diginixit.com/images/og-home.jpg">
 
     <!-- DNS Prefetch & Preconnect -->
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,8 +35,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-    <!-- Ads Popunder -->
-    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
+
 
     <!-- DOMPurify for XSS Protection -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
@@ -365,12 +364,12 @@
 
             // Set Title & Meta tags dynamically for SEO & Social Cards
             const currentUrl = `https://diginixit.com/article.html?id=${post.id}`;
-            const postImage = 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200';
+            const postImage = 'https://diginixit.com/images/og-home.jpg';
             
-            document.title = `DiginixIT | ${post.title}`;
+            document.title = `${post.title} | DiginixIT`;
             
             const metaTitle = document.getElementById('meta-title-tag');
-            if (metaTitle) metaTitle.innerText = `DiginixIT | ${post.title}`;
+            if (metaTitle) metaTitle.innerText = `${post.title} | DiginixIT`;
             
             const metaDesc = document.getElementById('meta-desc-tag');
             if (metaDesc) metaDesc.content = post.summary;
@@ -382,7 +381,7 @@
             const ogUrl = document.getElementById('og-url-tag');
             if (ogUrl) ogUrl.content = currentUrl;
             const ogTitle = document.getElementById('og-title-tag');
-            if (ogTitle) ogTitle.content = post.title;
+            if (ogTitle) ogTitle.content = `${post.title} | DiginixIT`;
             const ogDesc = document.getElementById('og-desc-tag');
             if (ogDesc) ogDesc.content = post.summary;
             const ogImage = document.getElementById('og-image-tag');
@@ -392,7 +391,7 @@
             const twitterUrl = document.getElementById('twitter-url-tag');
             if (twitterUrl) twitterUrl.content = currentUrl;
             const twitterTitle = document.getElementById('twitter-title-tag');
-            if (twitterTitle) twitterTitle.content = post.title;
+            if (twitterTitle) twitterTitle.content = `${post.title} | DiginixIT`;
             const twitterDesc = document.getElementById('twitter-desc-tag');
             if (twitterDesc) twitterDesc.content = post.summary;
             const twitterImage = document.getElementById('twitter-image-tag');
@@ -418,9 +417,11 @@
                         "name": "DiginixIT",
                         "logo": {
                             "@type": "ImageObject",
-                            "url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200"
+                            "url": "https://diginixit.com/favicon.svg"
                         }
-                    }
+                    },
+                    "url": currentUrl,
+                    "mainEntityOfPage": currentUrl
                 };
                 const schemaScript = document.createElement('script');
                 schemaScript.type = 'application/ld+json';

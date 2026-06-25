@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | Build, Protect & Scale Your Business</title>
     <meta name="description" content="DiginixIT is a premium technology company specializing in web engineering, UI/UX design, SEO, legal consultancy, and corporate finance. Build, protect, and scale your business.">
+    <meta name="keywords" content="web engineering agency Pakistan, digital agency Lahore, UI/UX design services, technical SEO Pakistan, business consulting agency, web development company">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://diginixit.com/">
 
@@ -14,19 +15,22 @@
     <meta property="og:url" content="https://diginixit.com/">
     <meta property="og:title" content="DiginixIT | Build, Protect & Scale Your Business">
     <meta property="og:description" content="DiginixIT is a premium technology company. We engineer web products, design premium experiences, and provide legal and financial strategy for business growth.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+    <meta property="og:image" content="https://diginixit.com/images/og-home.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="DiginixIT — Web Engineering, SEO & Business Consulting Agency">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://diginixit.com/">
     <meta name="twitter:title" content="DiginixIT | Build, Protect & Scale Your Business">
     <meta name="twitter:description" content="DiginixIT is a premium technology company. We engineer web products, design premium experiences, and provide legal and financial strategy for business growth.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200">
+    <meta name="twitter:image" content="https://diginixit.com/images/og-home.jpg">
 
     <!-- DNS Prefetch & Preconnect -->
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://pl29723698.effectivecpmnetwork.com">
+
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,8 +40,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-    <!-- Ads Popunder -->
-    <script src="https://pl29723698.effectivecpmnetwork.com/f5/fa/b6/f5fab6e8cc06a0f1d99f2c7a62ee699c.js" async></script>
+
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -82,6 +85,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
     <script src="https://unpkg.com/lucide@latest" defer></script>
 
+    <!-- Preload Hero Image -->
+    <link rel="preload" as="image" href="images/engineering_cartoon.png" fetchpriority="high">
+
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
@@ -95,7 +101,12 @@
                 "@id": "https://diginixit.com/#organization",
                 "name": "DiginixIT",
                 "url": "https://diginixit.com/",
-                "logo": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=200",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://diginixit.com/favicon.svg",
+                    "width": 512,
+                    "height": 512
+                },
                 "contactPoint": {
                      "@type": "ContactPoint",
                      "telephone": "+92-300-7960300",
@@ -103,16 +114,17 @@
                      "email": "contact@diginix.com"
                 },
                 "sameAs": [
-                    "https://linkedin.com/",
-                    "https://instagram.com/",
-                    "https://twitter.com/"
+                    "https://www.linkedin.com/company/diginixit/",
+                    "https://www.instagram.com/diginixit/",
+                    "https://twitter.com/diginixit",
+                    "https://github.com/diginixit"
                 ]
             },
             {
                 "@type": "LocalBusiness",
                 "@id": "https://diginixit.com/#localbusiness",
                 "name": "DiginixIT",
-                "image": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800",
+                "image": "https://diginixit.com/favicon.svg",
                 "url": "https://diginixit.com/",
                 "telephone": "+923007960300",
                 "priceRange": "$$",
@@ -237,6 +249,7 @@
                         
                         <!-- Left: Typography -->
                         <div class="space-y-8">
+                            <h1 class="sr-only">DiginixIT — Web Engineering, UI/UX Design, Technical SEO & Business Consulting Agency in Pakistan</h1>
                             <div class="space-y-1">
                                 <div class="hero-title-line">
                                     <span class="hero-title-word">BUILD.</span>
@@ -350,11 +363,12 @@
                                 <p class="text-sm text-ink-mute leading-relaxed">Workflow automations, database connections, and secure API links that connect your core operations smoothly.</p>
                             </div>
                         </div>
+                            <a href="services.html#web-engineering" class="btn-link" style="margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 0.25rem;">View engineering services <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
 
                         <!-- Right: Flat, borderless Vector Cartoon illustration -->
                         <div class="gsap-fade-up flex justify-center w-full">
                             <div class="w-full max-w-xl bg-canvas-soft rounded-2xl p-6 flex items-center justify-center relative overflow-hidden h-[480px]">
-                                <img src="images/engineering_cartoon.png" alt="Engineering Illustration" class="w-full h-full object-contain">
+                                <img src="images/engineering_cartoon.png" alt="Custom web application engineering and platform development illustration" class="w-full h-full object-contain" width="580" height="480" fetchpriority="high">
                             </div>
                         </div>
                     </div>
@@ -429,6 +443,7 @@
                             </div>
                         </div>
                     </div>
+                    <a href="services.html#technical-seo" class="btn-link" style="margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 0.25rem;">View SEO services <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
                 </div>
             </section>
 
@@ -460,6 +475,7 @@
                                     <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> IP protection and contracts</li>
                                     <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Privacy policy drafting</li>
                                 </ul>
+                                <a href="services.html#law-compliance" class="btn-link" style="display: inline-flex; align-items: center; gap: 0.25rem;">View legal services <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
                             </div>
                         </div>
 
@@ -481,6 +497,7 @@
                                     <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Valuations and capitalization consulting</li>
                                     <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> Cash flow management</li>
                                 </ul>
+                                <a href="services.html#corporate-finance" class="btn-link" style="display: inline-flex; align-items: center; gap: 0.25rem;">View finance services <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
                             </div>
                         </div>
                     </div>
