@@ -219,14 +219,19 @@
             const uniqueCategories = ['All', ...new Set(allBlogs.map(post => post.category).filter(Boolean))];
             
             filterContainer.innerHTML = uniqueCategories.map(cat => {
-                const match = activeCategory === cat;
+                const isActive = activeCategory === cat;
                 return `
-                    <button class="px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        match 
-                            ? 'bg-canvas-soft border border-hairline text-ink' 
-                            : 'bg-canvas border border-hairline text-ink-mute hover:text-ink hover:border-hairline-strong'
-                    }" style="border-radius: 6px;" data-category="${window.escapeHtml(cat)}">
-                        ${window.escapeHtml(cat === 'All' ? 'All Articles' : cat)}
+                    <button
+                        class="px-4 py-2 text-sm font-medium border rounded-md transition-all duration-200 ${
+                            isActive
+                                ? 'bg-ink text-white border-ink shadow-sm'
+                                : 'bg-canvas text-ink-mute border-hairline hover:bg-canvas-soft hover:text-ink hover:border-hairline-strong hover:shadow-sm'
+                        }"
+                        style="border-radius: 6px;"
+                        data-category="${window.escapeHtml(cat)}"
+                        aria-pressed="${isActive}"
+                    >
+                        ${isActive ? '<span style="display:inline-block;width:6px;height:6px;background:#3ecf8e;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>' : ''}${window.escapeHtml(cat === 'All' ? 'All Articles' : cat)}
                     </button>
                 `;
             }).join('');
