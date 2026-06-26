@@ -179,25 +179,135 @@ function renderCharts(labels, userData, visitData) {
 }
 
 // --- 3. Blog Management Tab ---
+
+// Register a custom BlockEmbed blot so Quill stores <pre class="ql-diagram"> as a
+// single immutable embed — this is the only way to prevent Quill's Delta engine
+// from collapsing whitespace / newlines inside a pre block.
+function registerDiagramBlot() {
+    if (typeof Quill === 'undefined') return;
+    try { if (Quill.find && Quill.find('diagram')) return; } catch(e) {}
+    try {
+        const BlockEmbed = Quill.import('blots/block/embed');
+        class DiagramBlot extends BlockEmbed {
+            static create(value) {
+                const node = super.create();
+                node.textContent = typeof value === 'string' ? value : '';
+                return node;
+            }
+            static value(domNode) { return domNode.textContent; }
+        }
+        DiagramBlot.blotName  = 'diagram';
+        DiagramBlot.tagName   = 'pre';
+        DiagramBlot.className = 'ql-diagram';
+        Quill.register(DiagramBlot, true);
+    } catch(e) { console.warn('DiagramBlot registration failed:', e); }
+}
+
 function initQuill() {
     const editorEl = document.getElementById('blog-quill-editor');
     if (editorEl && typeof Quill !== 'undefined' && !window.adminState.quill) {
+        registerDiagramBlot();
+
         window.adminState.quill = new Quill('#blog-quill-editor', {
             theme: 'snow',
             modules: {
-                toolbar: [
-                    [{ 'header': [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['blockquote', 'code-block'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'align': [] }],
-                    ['link', 'clean']
-                ]
+                toolbar: {
+                    container: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        ['link', 'clean']
+                    ]
+                }
             }
         });
+
+        const quill = window.adminState.quill;
+        const toolbar = quill.getModule('toolbar');
+        const toolbarContainer = toolbar.container;
+
+        // Add tooltips to every standard toolbar button
+        const tipMap = {
+            'ql-bold':       'Bold (Ctrl+B)',
+            'ql-italic':     'Italic (Ctrl+I)',
+            'ql-underline':  'Underline (Ctrl+U)',
+            'ql-strike':     'Strikethrough',
+            'ql-blockquote': 'Blockquote',
+            'ql-code-block': 'Code Block',
+            'ql-link':       'Insert / Edit Link',
+            'ql-clean':      'Remove Formatting',
+            'ql-header':     'Heading Level',
+            'ql-list':       'List',
+            'ql-color':      'Text Colour',
+            'ql-background': 'Highlight Colour',
+            'ql-align':      'Text Alignment',
+        };
+        toolbarContainer.querySelectorAll('button, .ql-picker-label').forEach(el => {
+            for (const [cls, tip] of Object.entries(tipMap)) {
+                if (el.classList.contains(cls) && !el.title) {
+                    el.title = tip;
+                    break;
+                }
+            }
+        });
+
+        // Append an icon-only "Diagram" button (no visible text, tooltip only)
+        const diagramGroup = document.createElement('span');
+        diagramGroup.className = 'ql-formats';
+        const diagramBtn = document.createElement('button');
+        diagramBtn.type = 'button';
+        diagramBtn.className = 'ql-diagram-insert';
+        diagramBtn.title = 'Insert ASCII / Text Diagram';
+        diagramBtn.innerHTML = `<svg viewBox="0 0 18 18" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2"  y="1"  width="14" height="4" rx="1"/>
+            <rect x="1"  y="13" width="7"  height="4" rx="1"/>
+            <rect x="10" y="13" width="7"  height="4" rx="1"/>
+            <line x1="9"  y1="5"  x2="9"  y2="9"/>
+            <line x1="4"  y1="9"  x2="14" y2="9"/>
+            <line x1="4"  y1="9"  x2="4"  y2="13"/>
+            <line x1="14" y1="9" x2="14" y2="13"/>
+        </svg>`;
+        diagramBtn.addEventListener('click', () => window.openDiagramModal());
+        diagramGroup.appendChild(diagramBtn);
+        toolbarContainer.appendChild(diagramGroup);
     }
 }
+
+// Diagram Modal Helpers
+window.openDiagramModal = function () {
+    const modal = document.getElementById('diagram-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    const ta = document.getElementById('diagram-textarea');
+    if (ta) { ta.value = ''; setTimeout(() => ta.focus(), 50); }
+};
+
+window.closeDiagramModal = function () {
+    const modal = document.getElementById('diagram-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+window.insertDiagramToEditor = function () {
+    const ta = document.getElementById('diagram-textarea');
+    const text = ta ? ta.value : '';
+    if (!text.trim()) { window.closeDiagramModal(); return; }
+
+    const quill = window.adminState.quill;
+    if (!quill) return;
+
+    // insertEmbed with the registered 'diagram' blot — Quill stores the pre block
+    // as a single atomic node, so every space and newline is preserved verbatim.
+    const range = quill.getSelection(true) || { index: quill.getLength() - 1, length: 0 };
+    quill.insertEmbed(range.index, 'diagram', text, 'user');
+    quill.setSelection(range.index + 1, 0, 'silent');
+
+    window.closeDiagramModal();
+};
+
+
 
 async function loadBlogData() {
     await window.backendReady;

@@ -69,6 +69,64 @@
     
     <!-- Guard style overlay & dynamic style overrides -->
     <style>
+        /* ── Quill Link Tooltip: force centered overlay ──────────── */
+        /* The default Quill tooltip positions itself relative to the
+           editor text which causes it to overflow/wrap to the next line
+           when triggered on the last line. We override it to a fixed
+           centred modal-style popup instead. */
+        .ql-snow .ql-tooltip {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 9999 !important;
+            white-space: nowrap !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border-radius: 8px !important;
+            border: 1px solid #dfdfdf !important;
+            background: #ffffff !important;
+            padding: 8px 12px !important;
+        }
+        .ql-snow .ql-tooltip::before {
+            display: none !important; /* hide default arrow */
+        }
+        /* Subtle label so the admin knows what it is */
+        .ql-snow .ql-tooltip[data-mode=link]::before {
+            content: 'Insert link:' !important;
+            display: inline !important;
+            margin-right: 8px !important;
+            font-size: 11px !important;
+            color: #707070 !important;
+        }
+
+        /* ── Custom Diagram Icon Button in Quill Toolbar ──────────── */
+        .ql-diagram-insert {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 4px !important;
+            color: #555 !important;
+        }
+        .ql-diagram-insert:hover {
+            color: #171717 !important;
+        }
+        /* Diagram block preview inside Quill editor */
+        .ql-editor pre.ql-diagram {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace !important;
+            background: #1c1c1c !important;
+            color: #d4d4d4 !important;
+            padding: 1rem 1.25rem !important;
+            border-radius: 6px !important;
+            overflow-x: auto !important;
+            white-space: pre !important;
+            word-break: normal !important;
+            overflow-wrap: normal !important;
+            font-size: 0.75rem !important;
+            line-height: 1.55 !important;
+            margin: 0.5rem 0 !important;
+            border-left: 3px solid #3ecf8e !important;
+        }
+
         #admin-guard {
             display: flex;
             flex-direction: column;
@@ -528,7 +586,65 @@
 
     </div>
 
-    <!-- Scripts -->
+    <!-- Diagram Insert Modal -->
+    <div id="diagram-modal" style="display:none;" class="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-canvas rounded-2xl shadow-2xl w-full max-w-2xl" style="max-height: 90vh; display:flex; flex-direction:column;">
+            <!-- Header -->
+            <div class="flex justify-between items-center px-6 pt-5 pb-4 border-b border-hairline flex-shrink-0">
+                <div>
+                    <h4 class="font-medium text-ink text-base">Insert Diagram / ASCII Art</h4>
+                    <p class="text-[11px] text-ink-mute mt-0.5">Paste or type your diagram. Every space and line break will be preserved exactly.</p>
+                </div>
+                <button onclick="closeDiagramModal()" class="p-1.5 hover:bg-canvas-soft rounded-lg transition-colors text-ink-mute hover:text-ink">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <!-- Textarea -->
+            <div class="px-6 py-4 flex-1 overflow-auto">
+                <textarea
+                    id="diagram-textarea"
+                    placeholder="[Human Intent]
+       │
+       ▼
+┌──────────────────────────────┐
+│     Orchestrator Agent       │
+└──────────────┬───────────────┘
+               │ (Allocates Tasks)
+               ▼"
+                    style="
+                        font-family: ui-monospace, 'Courier New', Consolas, monospace;
+                        font-size: 13px;
+                        line-height: 1.65;
+                        white-space: pre;
+                        tab-size: 4;
+                        resize: vertical;
+                        background: #111111;
+                        color: #d4d4d4;
+                        min-height: 260px;
+                        border: 1px solid #2a2a2a;
+                        border-left: 3px solid #3ecf8e;
+                        border-radius: 8px;
+                        padding: 1rem 1.25rem;
+                        width: 100%;
+                        outline: none;
+                        overflow-x: auto;
+                    "
+                ></textarea>
+                <p class="text-[10px] text-ink-faint mt-2">
+                    Tip: Use box-drawing characters like ─ │ ┌ ┐ └ ┘ ┬ ┴ ├ ┤ ┼. Paste directly from any text editor.
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end gap-3 px-6 pb-5 pt-3 border-t border-hairline flex-shrink-0">
+                <button onclick="closeDiagramModal()" class="px-4 py-2 text-sm font-medium text-ink-mute hover:text-ink border border-hairline rounded-lg transition-colors">Cancel</button>
+                <button onclick="insertDiagramToEditor()" class="btn-primary px-6 py-2 text-sm font-medium">Insert Diagram</button>
+            </div>
+        </div>
+    </div>
+
+
     <script src="js/common.js" defer></script>
     <script src="js/script.js" defer></script>
     <script src="js/admin.js" defer></script>

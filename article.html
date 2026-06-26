@@ -167,6 +167,35 @@
             white-space: pre-wrap;
         }
 
+        /* ── Diagram / ASCII Art Block ────────────────────────────── */
+        /* pre.ql-diagram is inserted by the admin Diagram button.           */
+        /* It preserves every character exactly (white-space: pre) so ASCII  */
+        /* art renders perfectly without collapsing spaces.                   */
+        #article-content pre.ql-diagram {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+            background-color: #111111;
+            color: #d4d4d4;
+            padding: 1.5rem 1.75rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre;          /* key: preserve exact spaces */
+            font-size: 0.85rem;
+            line-height: 1.65;
+            margin-bottom: 1.75rem;
+            border-left: 3px solid #3ecf8e;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            /* Prevent word-break from collapsing diagram characters */
+            word-break: normal;
+            overflow-wrap: normal;
+        }
+        /* On small screens, keep it scrollable rather than wrapping */
+        @media (max-width: 640px) {
+            #article-content pre.ql-diagram {
+                font-size: 0.72rem;
+                padding: 1rem;
+            }
+        }
+
         /* ── Article Metadata Bar — 3-Column Grid ────────────────────── */
         /*
          *  Col 1 (avatar-col):  fixed ~36px  — avatar icon, spans 2 rows
@@ -610,7 +639,7 @@
                 const hasHtml = /<[a-z][\s\S]*>/i.test(post.content);
                 if (hasHtml) {
                     contentsContainer.innerHTML = DOMPurify.sanitize(post.content, {
-                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'span', 'blockquote'],
+                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 's', 'strike', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'span', 'blockquote'],
                         ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'class'],
                         FORCE_HTTPS: true
                     });
@@ -625,6 +654,19 @@
                         return `<p>${cleanP}</p>`;
                     }).join('');
                 }
+
+                // ── Post-render diagram fix ─────────────────────────────────
+                // Quill sometimes stores newlines inside <pre.ql-diagram> as <br>
+                // tags (old storage) or collapses spaces. We rebuild each diagram
+                // block from its innerText (which preserves \n and spaces correctly)
+                // and set it as textContent so CSS white-space:pre renders it perfectly.
+                contentsContainer.querySelectorAll('pre.ql-diagram').forEach(pre => {
+                    // innerText respects <br> → \n and preserved whitespace nodes
+                    const rawText = pre.innerText;
+                    // Re-set as textContent (no HTML parsing, spaces/newlines kept)
+                    pre.textContent = rawText;
+                });
+
             } else if (contentsContainer) {
                 contentsContainer.innerHTML = `<p class="italic text-ink-mute">No content available for this article.</p>`;
             }
