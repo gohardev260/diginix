@@ -341,38 +341,75 @@
             <!-- ============================================ -->
             <section class="section-padding bg-canvas-soft relative overflow-hidden">
                 <div class="container-main relative z-10">
-                    <div class="max-w-3xl mb-20 gsap-fade-up">
-                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Engineering</p>
-                        <h2 class="display-xl mb-6">We don't build websites. We engineer digital infrastructure.</h2>
-                        <p class="body-lg text-ink-mute">Custom applications, scalable architectures, secure database integrations, and smooth web layouts. We build for speed, performance, and simplicity.</p>
+                    <!-- Header with Title on Left, Illustration on Right -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-16">
+                        <div class="max-w-xl gsap-fade-up">
+                            <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Engineering</p>
+                            <h2 class="display-xl mb-6">We don't build websites. We engineer digital infrastructure.</h2>
+                            <p class="body-lg text-ink-mute">Custom applications, scalable architectures, secure database integrations, and smooth web layouts. We build for speed, performance, and simplicity.</p>
+                        </div>
+                        <div class="gsap-fade-up flex justify-center w-full">
+                            <div class="w-full max-w-md bg-canvas rounded-2xl p-6 flex items-center justify-center relative overflow-hidden h-[300px] border border-hairline shadow-1">
+                                <img src="images/engineering_cartoon.webp" alt="Custom web application engineering and platform development illustration" class="w-full h-full object-contain" width="480" height="300" fetchpriority="high">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <!-- Left: Capabilities -->
-                        <div class="space-y-12 gsap-fade-up">
-                            <div class="space-y-4">
-                                <h3 class="heading-lg">Web Applications</h3>
+                    <!-- Subsections in a Grid of Columns with SVGs -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 gsap-fade-up">
+                        <!-- Web Applications -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                                    <path d="M6 8h.01" />
+                                    <path d="M10 8h.01" />
+                                    <path d="M14 8h.01" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Web Applications</h3>
                                 <p class="text-sm text-ink-mute leading-relaxed">High-performance applications built with modern frameworks. Rendered on edge, with local caching and real-time database endpoints.</p>
                             </div>
-                            <div class="space-y-4">
-                                <h3 class="heading-lg">Platform Engineering</h3>
+                        </div>
+
+                        <!-- Platform Engineering -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="8" x="2" y="3" rx="2" />
+                                    <rect width="20" height="8" x="2" y="13" rx="2" />
+                                    <path d="M6 7h.01" />
+                                    <path d="M6 17h.01" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Platform Engineering</h3>
                                 <p class="text-sm text-ink-mute leading-relaxed">Bespoke management portals, SaaS infrastructures, and customer databases. Built with modular, clean coding structures.</p>
                             </div>
-                            <div class="space-y-4">
-                                <h3 class="heading-lg">Automation & Integration</h3>
+                        </div>
+
+                        <!-- Automation & Integration -->
+                        <div class="space-y-6">
+                            <div class="w-16 h-16 bg-canvas rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-ink mb-2">Automation & Integration</h3>
                                 <p class="text-sm text-ink-mute leading-relaxed">Workflow automations, database connections, and secure API links that connect your core operations smoothly.</p>
                             </div>
                         </div>
-                            <a href="services.html#web-engineering" class="btn-link" style="margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 0.25rem;">View engineering services <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-
-                        <!-- Right: Flat, borderless Vector Cartoon illustration -->
-                        <div class="gsap-fade-up flex justify-center w-full">
-                            <div class="w-full max-w-xl bg-canvas-soft rounded-2xl p-6 flex items-center justify-center relative overflow-hidden h-[480px]">
-                                <img src="images/engineering_cartoon.webp" alt="Custom web application engineering and platform development illustration" class="w-full h-full object-contain" width="580" height="480" fetchpriority="high">
-                            </div>
-                        </div>
                     </div>
-                </div>
+
+
+                    <!-- Action Link Outside Grid -->
+                    <div class="mt-12 gsap-fade-up">
+                        <a href="services.html#web-engineering" class="btn-link" style="display: inline-flex; align-items: center; gap: 0.25rem;">View engineering services <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+
             </section>
 
             <!-- ============================================ -->
@@ -380,11 +417,20 @@
             <!-- ============================================ -->
             <section class="section-padding">
                 <div class="container-main">
-                    <div class="max-w-3xl mb-20 gsap-fade-up">
-                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Growth</p>
-                        <h2 class="display-xl mb-6">Visibility is engineered, not accidental.</h2>
-                        <p class="body-lg text-ink-mute">Search visibility audits, page speed optimizations, and clean analytics tracking designed to connect your company with clients.</p>
+                    <!-- Header with Title on Left, Illustration on Right -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-16">
+                        <div class="max-w-xl gsap-fade-up">
+                            <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Growth</p>
+                            <h2 class="display-xl mb-6">Visibility is engineered, not accidental.</h2>
+                            <p class="body-lg text-ink-mute">Search visibility audits, page speed optimizations, and clean analytics tracking designed to connect your company with clients.</p>
+                        </div>
+                        <div class="gsap-fade-up flex justify-center w-full">
+                            <div class="w-full max-w-md bg-canvas-soft rounded-2xl p-6 flex items-center justify-center relative overflow-hidden h-[300px] border border-hairline shadow-1">
+                                <img src="images/growth_illustration.webp" alt="Search engine visibility and platform growth diagnostics illustration" class="w-full h-full object-contain" width="480" height="300" loading="lazy">
+                            </div>
+                        </div>
                     </div>
+
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 gsap-fade-up">
                         <!-- Speed -->
@@ -452,11 +498,20 @@
             <!-- ============================================ -->
             <section class="section-padding bg-canvas-soft">
                 <div class="container-main">
-                    <div class="max-w-3xl mb-20 gsap-fade-up">
-                        <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Structure & Foundation</p>
-                        <h2 class="display-xl mb-6">Growth without protection is exposure. Revenue without strategy is waste.</h2>
-                        <p class="body-lg text-ink-mute">Legal and financial consulting built to support your core technology business. We secure your intellectual property and plan your growth strategy.</p>
+                    <!-- Header with Title on Left, Illustration on Right -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-16">
+                        <div class="max-w-xl gsap-fade-up">
+                            <p class="text-xs font-medium tracking-widest text-ink-mute uppercase mb-4">Structure & Foundation</p>
+                            <h2 class="display-xl mb-6">Growth without protection is exposure. Revenue without strategy is waste.</h2>
+                            <p class="body-lg text-ink-mute">Legal and financial consulting built to support your core technology business. We secure your intellectual property and plan your growth strategy.</p>
+                        </div>
+                        <div class="gsap-fade-up flex justify-center w-full">
+                            <div class="w-full max-w-md bg-canvas rounded-2xl p-6 flex items-center justify-center relative overflow-hidden h-[300px] border border-hairline shadow-1">
+                                <img src="images/structure_foundation_illustration.webp" alt="Legal compliance frameworks and corporate financial strategy illustration" class="w-full h-full object-contain" width="480" height="300" loading="lazy">
+                            </div>
+                        </div>
                     </div>
+
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-16 gsap-fade-up">
                         <!-- Legal Column (No card borders) -->
