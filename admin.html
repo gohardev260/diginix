@@ -189,6 +189,67 @@
             color: var(--color-ink) !important;
             border-radius: var(--radius-full) !important;
         }
+
+        /* Analytics Timeline Preset Buttons */
+        .analytics-preset-btn {
+            background: transparent;
+            color: #707070;
+            transition: all 0.15s ease;
+        }
+        .analytics-preset-btn:hover {
+            background: rgba(99,102,241,0.08);
+            color: #6366f1;
+        }
+        .analytics-preset-btn.active-preset {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff !important;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.35);
+        }
+
+        /* Blog Filter Tab Buttons */
+        .blog-filter-btn {
+            background: transparent;
+            color: #707070;
+            border: 1px solid #dfdfdf;
+            transition: all 0.15s ease;
+        }
+        .blog-filter-btn:hover {
+            background: #fafafa;
+            color: #171717;
+        }
+        .blog-filter-btn.active-filter {
+            background: #171717;
+            color: #fff !important;
+            border-color: #171717;
+        }
+
+        /* Blog Status Badges */
+        .badge-published {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            background: rgba(16,185,129,0.1);
+            color: #059669;
+        }
+        .badge-draft {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            background: rgba(245,158,11,0.12);
+            color: #b45309;
+        }
     </style>
 </head>
 
@@ -330,46 +391,171 @@
                 <!-- TAB: ANALYTICS                             -->
                 <!-- ========================================== -->
                 <div id="tab-analytics" class="admin-tab-content active space-y-8">
-                    <div>
-                        <h2 class="display-lg">Platform Analytics</h2>
-                        <p class="text-ink-mute text-sm mt-1">Realtime usage diagnostics and business metrics.</p>
+                    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                        <div>
+                            <h2 class="display-lg">Platform Analytics</h2>
+                            <p class="text-ink-mute text-sm mt-1">Realtime usage diagnostics and business metrics.</p>
+                        </div>
+                        <!-- Timeline Filter Bar -->
+                        <div class="flex flex-wrap items-center gap-2" id="analytics-timeline-bar">
+                            <div class="flex items-center gap-1 bg-canvas rounded-xl px-3 py-2 border border-hairline flex-wrap">
+                                <span class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mr-1">Period:</span>
+                                <button class="analytics-preset-btn active-preset px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="30d">30D</button>
+                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="7d">7D</button>
+                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="90d">90D</button>
+                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="1y">1Y</button>
+                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="all">All</button>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
+                                <input type="date" id="analytics-start-date" class="bg-transparent border-none text-[11px] font-medium text-ink focus:ring-0 outline-none cursor-pointer" aria-label="Analytics Start Date">
+                                <span class="text-ink-faint text-[11px]">→</span>
+                                <input type="date" id="analytics-end-date" class="bg-transparent border-none text-[11px] font-medium text-ink focus:ring-0 outline-none cursor-pointer" aria-label="Analytics End Date">
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Stats Grid (Borderless layout) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div class="bg-canvas p-6 rounded-xl flex flex-col justify-between h-32">
-                            <div class="text-ink-mute text-xs font-medium uppercase tracking-wider">Active Users</div>
-                            <div class="text-3xl font-medium tracking-tight" id="stat-users">0</div>
-                            <div class="text-[10px] text-ink-mute font-medium" id="stat-users-change">0% change from last month</div>
+                    <!-- KPI Stats Row (4 cards) -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-5" style="background: linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
+                            <div class="relative">
+                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Active Users</div>
+                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-users">0</div>
+                                <div class="text-[10px] text-ink-mute mt-1" id="stat-users-change">0% vs last period</div>
+                            </div>
+                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(99,102,241,0.12)">
+                                <i data-lucide="users" class="w-4 h-4" style="color:#6366f1"></i>
+                            </div>
                         </div>
-                        <div class="bg-canvas p-6 rounded-xl flex flex-col justify-between h-32">
-                            <div class="text-ink-mute text-xs font-medium uppercase tracking-wider">Total Visits</div>
-                            <div class="text-3xl font-medium tracking-tight" id="stat-visits">0</div>
-                            <div class="text-[10px] text-ink-mute font-medium" id="stat-visits-change">0% change from last month</div>
+                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-5" style="background: linear-gradient(135deg,#06b6d4,#3b82f6)"></div>
+                            <div class="relative">
+                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Total Visits</div>
+                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-visits">0</div>
+                                <div class="text-[10px] text-ink-mute mt-1" id="stat-visits-change">0% vs last period</div>
+                            </div>
+                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(6,182,212,0.12)">
+                                <i data-lucide="eye" class="w-4 h-4" style="color:#06b6d4"></i>
+                            </div>
+                        </div>
+                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-5" style="background: linear-gradient(135deg,#f59e0b,#f97316)"></div>
+                            <div class="relative">
+                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Avg. Session</div>
+                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-session">2m 34s</div>
+                                <div class="text-[10px] text-ink-mute mt-1" id="stat-session-change">+12% vs last period</div>
+                            </div>
+                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,0.12)">
+                                <i data-lucide="clock" class="w-4 h-4" style="color:#f59e0b"></i>
+                            </div>
+                        </div>
+                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-5" style="background: linear-gradient(135deg,#10b981,#3ecf8e)"></div>
+                            <div class="relative">
+                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Bounce Rate</div>
+                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-bounce">38%</div>
+                                <div class="text-[10px] text-ink-mute mt-1" id="stat-bounce-change">-5% vs last period</div>
+                            </div>
+                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,0.12)">
+                                <i data-lucide="trending-down" class="w-4 h-4" style="color:#10b981"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Charts Grid (Borderless layout) -->
+                    <!-- Row 1: Traffic Trendline (wide) + Device Doughnut -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="bg-canvas p-6 rounded-xl lg:col-span-2 border border-hairline" style="height:340px; display:flex; flex-direction:column;">
+                            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                                <div>
+                                    <h3 class="font-semibold text-sm text-ink">Website Traffic</h3>
+                                    <p class="text-[11px] text-ink-mute mt-0.5">Visitor trend over selected period</p>
+                                </div>
+                                <span class="text-[10px] px-2 py-1 rounded-full font-semibold" style="background:rgba(99,102,241,0.1);color:#6366f1" id="traffic-period-label">Last 30 Days</span>
+                            </div>
+                            <div class="flex-1 min-h-0">
+                                <canvas id="adminVisitsChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:340px; display:flex; flex-direction:column;">
+                            <div class="mb-4 flex-shrink-0">
+                                <h3 class="font-semibold text-sm text-ink">Device Breakdown</h3>
+                                <p class="text-[11px] text-ink-mute mt-0.5">Traffic by device type</p>
+                            </div>
+                            <div class="flex-1 min-h-0 flex flex-col items-center justify-center">
+                                <canvas id="adminDeviceChart" style="max-height:200px"></canvas>
+                                <div class="flex gap-4 mt-3 flex-wrap justify-center" id="device-legend"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: User Acquisitions (slim bars) + Retention -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Users Chart -->
-                        <div class="bg-canvas p-6 rounded-xl h-[380px] flex flex-col justify-between">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-medium text-sm text-ink">User Acquisitions</h3>
-                                <span class="text-xs text-ink-mute">Last 6 Months (Signups)</span>
+                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
+                            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                                <div>
+                                    <h3 class="font-semibold text-sm text-ink">User Acquisitions</h3>
+                                    <p class="text-[11px] text-ink-mute mt-0.5">New signups per month</p>
+                                </div>
                             </div>
                             <div class="flex-1 min-h-0">
                                 <canvas id="adminUsersChart"></canvas>
                             </div>
                         </div>
-
-                        <!-- Visits Chart -->
-                        <div class="bg-canvas p-6 rounded-xl h-[380px] flex flex-col justify-between">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-medium text-sm text-ink">Website Traffic</h3>
-                                <span class="text-xs text-ink-mute">Last 6 Months (Visits)</span>
+                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
+                            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                                <div>
+                                    <h3 class="font-semibold text-sm text-ink">Avg. Session Duration</h3>
+                                    <p class="text-[11px] text-ink-mute mt-0.5">Retention time in seconds per month</p>
+                                </div>
                             </div>
                             <div class="flex-1 min-h-0">
-                                <canvas id="adminVisitsChart"></canvas>
+                                <canvas id="adminRetentionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Top Pages (horiz bar) + Locations (horiz bar) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
+                            <div class="mb-4 flex-shrink-0">
+                                <h3 class="font-semibold text-sm text-ink">Top Pages</h3>
+                                <p class="text-[11px] text-ink-mute mt-0.5">Most visited pages</p>
+                            </div>
+                            <div class="flex-1 min-h-0">
+                                <canvas id="adminTopPagesChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
+                            <div class="mb-4 flex-shrink-0">
+                                <h3 class="font-semibold text-sm text-ink">Visitor Locations</h3>
+                                <p class="text-[11px] text-ink-mute mt-0.5">Top countries by visits</p>
+                            </div>
+                            <div class="flex-1 min-h-0">
+                                <canvas id="adminLocationsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Bounce Rate Trendline + Recent IPs Table -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:300px; display:flex; flex-direction:column;">
+                            <div class="mb-4 flex-shrink-0">
+                                <h3 class="font-semibold text-sm text-ink">Bounce Rate Trend</h3>
+                                <p class="text-[11px] text-ink-mute mt-0.5">% of single-page sessions over time</p>
+                            </div>
+                            <div class="flex-1 min-h-0">
+                                <canvas id="adminBounceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:300px; display:flex; flex-direction:column;">
+                            <div class="mb-3 flex-shrink-0 flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold text-sm text-ink">Recent Visitors</h3>
+                                    <p class="text-[11px] text-ink-mute mt-0.5">Latest IP addresses &amp; locations</p>
+                                </div>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold" style="background:rgba(16,185,129,0.1);color:#10b981">Live</span>
+                            </div>
+                            <div class="flex-1 overflow-y-auto hide-scrollbar" id="recent-visitors-list">
+                                <!-- Populated by JS -->
                             </div>
                         </div>
                     </div>
@@ -379,15 +565,22 @@
                 <!-- TAB: BLOG MANAGER                          -->
                 <!-- ========================================== -->
                 <div id="tab-blog" class="admin-tab-content space-y-8">
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <h2 class="display-lg">Blog Manager</h2>
                             <p class="text-ink-mute text-sm mt-1">Publish, edit, and curate insights content.</p>
                         </div>
-                        <button onclick="toggleBlogModal(true)" class="btn-primary px-5 py-2.5 text-xs font-medium">Add Article</button>
+                        <button onclick="toggleBlogModal(true)" class="btn-primary px-5 py-2.5 text-xs font-medium self-start sm:self-auto">Add Article</button>
                     </div>
 
-                    <!-- Blog Table (Borderless list design) -->
+                    <!-- Status Filter Tabs -->
+                    <div class="flex items-center gap-2">
+                        <button class="blog-filter-btn active-filter px-4 py-1.5 rounded-full text-xs font-semibold" data-filter="all">All Articles</button>
+                        <button class="blog-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold" data-filter="published">Published</button>
+                        <button class="blog-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold" data-filter="draft">Drafts</button>
+                    </div>
+
+                    <!-- Blog Table -->
                     <div class="bg-canvas rounded-xl overflow-hidden">
                         <div class="responsive-table-container">
                             <table class="w-full text-left border-collapse text-sm">
@@ -396,6 +589,7 @@
                                         <th class="p-4 font-medium text-xs uppercase tracking-wider">Article Title</th>
                                         <th class="p-4 font-medium text-xs uppercase tracking-wider">Category</th>
                                         <th class="p-4 font-medium text-xs uppercase tracking-wider">Author</th>
+                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Status</th>
                                         <th class="p-4 font-medium text-xs uppercase tracking-wider">Date</th>
                                         <th class="p-4 font-medium text-xs uppercase tracking-wider text-right">Actions</th>
                                     </tr>
@@ -577,8 +771,11 @@
                             <div id="blog-quill-editor" style="height: 260px;" class="font-sans text-sm"></div>
                         </div>
                     </div>
-                    <div class="pt-4">
-                        <button type="submit" class="w-full btn-primary py-4 font-medium transition-colors">Save & Publish Insights</button>
+                    <div class="pt-4 flex gap-3">
+                        <button type="button" onclick="handleBlogSaveAsDraft()" class="flex-1 py-4 font-medium transition-colors rounded-xl border border-hairline text-ink hover:bg-canvas-soft text-sm" style="background:rgba(245,158,11,0.06); border-color:rgba(245,158,11,0.3); color:#b45309;">
+                            Save as Draft
+                        </button>
+                        <button type="submit" class="flex-1 btn-primary py-4 font-medium transition-colors">Save &amp; Publish</button>
                     </div>
                 </form>
             </div>

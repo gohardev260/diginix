@@ -13,6 +13,7 @@ DROP FUNCTION IF EXISTS public.update_profile_secure(TEXT);
 DROP FUNCTION IF EXISTS public.increment_user_visit_secure();
 DROP FUNCTION IF EXISTS public.increment_user_visit_secure(TEXT);
 DROP FUNCTION IF EXISTS public.increment_user_visit_secure(TEXT, UUID);
+DROP FUNCTION IF EXISTS public.increment_user_visit_secure(TEXT, UUID, TEXT, TEXT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.get_visit_logs_admin();
 DROP FUNCTION IF EXISTS public.hash_user_password();
 DROP FUNCTION IF EXISTS public.verify_session_from_jwt(UUID);
@@ -59,7 +60,8 @@ CREATE TABLE IF NOT EXISTS public.blogs (
     content TEXT NOT NULL,
     author TEXT NOT NULL,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
-    category TEXT NOT NULL DEFAULT 'Tech'
+    category TEXT NOT NULL DEFAULT 'Tech',
+    status TEXT NOT NULL DEFAULT 'published'
 );
 
 -- Users Table (Custom Registered Users - Client profiles linked to Supabase Auth)
@@ -112,8 +114,13 @@ ALTER TABLE public.users ALTER COLUMN password DROP NOT NULL;
 ALTER TABLE public.users ALTER COLUMN date TYPE TIMESTAMPTZ USING date::TIMESTAMPTZ;
 ALTER TABLE public.users ALTER COLUMN date SET DEFAULT NOW();
 ALTER TABLE public.users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user';
-ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS session_id UUID DEFAULT NULL;
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'published';
 ALTER TABLE public.blogs DROP COLUMN IF EXISTS image;
+ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS session_id UUID DEFAULT NULL;
+ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS ip_address TEXT DEFAULT 'Unknown';
+ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS country TEXT DEFAULT 'Unknown';
+ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS device_type TEXT DEFAULT 'Desktop';
+ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS page_path TEXT DEFAULT '/';
 
 -- 2.6 CREATE INDEXES
 CREATE INDEX IF NOT EXISTS idx_visit_logs_visited_at ON public.visit_logs(visited_at);
@@ -454,7 +461,7 @@ CREATE OR REPLACE FUNCTION public.get_public_blogs()
 RETURNS SETOF public.blogs AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM public.blogs ORDER BY id DESC;
+    SELECT * FROM public.blogs WHERE status IS NULL OR status <> 'draft' ORDER BY id DESC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -557,12 +564,16 @@ GRANT EXECUTE ON FUNCTION public.get_all_users_admin() TO authenticated;
 CREATE OR REPLACE FUNCTION public.get_visit_logs_admin()
 RETURNS TABLE (
     email TEXT,
-    visited_at TIMESTAMPTZ
+    visited_at TIMESTAMPTZ,
+    ip_address TEXT,
+    country TEXT,
+    device_type TEXT,
+    page_path TEXT
 ) AS $$
 BEGIN
     PERFORM public.verify_admin_only();
     RETURN QUERY
-    SELECT v.email, v.visited_at
+    SELECT v.email, v.visited_at, v.ip_address, v.country, v.device_type, v.page_path
     FROM public.visit_logs v
     ORDER BY v.visited_at DESC;
 END;
@@ -602,7 +613,8 @@ CREATE OR REPLACE FUNCTION public.save_blog_secure(
     p_author TEXT,
     p_summary TEXT,
     p_content TEXT,
-    p_csrf_token TEXT
+    p_csrf_token TEXT,
+    p_status TEXT DEFAULT 'published'
 )
 RETURNS BOOLEAN AS $$
 BEGIN
@@ -622,18 +634,19 @@ BEGIN
             category = p_category,
             author = p_author,
             summary = p_summary,
-            content = p_content
+            content = p_content,
+            status = COALESCE(p_status, 'published')
         WHERE id = p_id;
     ELSE
-        INSERT INTO public.blogs (title, category, author, summary, content, date)
-        VALUES (p_title, p_category, p_author, p_summary, p_content, CURRENT_DATE);
+        INSERT INTO public.blogs (title, category, author, summary, content, date, status)
+        VALUES (p_title, p_category, p_author, p_summary, p_content, CURRENT_DATE, COALESCE(p_status, 'published'));
     END IF;
 
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-GRANT EXECUTE ON FUNCTION public.save_blog_secure(BIGINT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.save_blog_secure(BIGINT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.delete_blog_secure(
     p_id BIGINT,
@@ -768,7 +781,11 @@ GRANT EXECUTE ON FUNCTION public.update_profile_secure(TEXT) TO authenticated;
 -- Secure increment visit
 CREATE OR REPLACE FUNCTION public.increment_user_visit_secure(
     p_email TEXT DEFAULT NULL,
-    p_session_id UUID DEFAULT NULL
+    p_session_id UUID DEFAULT NULL,
+    p_ip_address TEXT DEFAULT 'Unknown',
+    p_country TEXT DEFAULT 'Unknown',
+    p_device_type TEXT DEFAULT 'Desktop',
+    p_page_path TEXT DEFAULT '/'
 )
 RETURNS INT AS $$
 DECLARE
@@ -793,8 +810,8 @@ BEGIN
 
     IF NOT v_already_tracked THEN
         -- Log the visit in visit_logs
-        INSERT INTO public.visit_logs (email, session_id, visited_at)
-        VALUES (p_email, p_session_id, NOW());
+        INSERT INTO public.visit_logs (email, session_id, visited_at, ip_address, country, device_type, page_path)
+        VALUES (p_email, p_session_id, NOW(), p_ip_address, p_country, p_device_type, p_page_path);
 
         -- If a valid email is provided, also increment the user's visits count in public.users
         IF p_email IS NOT NULL AND p_email <> '' THEN
@@ -821,7 +838,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-GRANT EXECUTE ON FUNCTION public.increment_user_visit_secure(TEXT, UUID) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.increment_user_visit_secure(TEXT, UUID, TEXT, TEXT, TEXT, TEXT) TO anon, authenticated;
 
 -- Associate session visits to a logged-in user
 CREATE OR REPLACE FUNCTION public.associate_session_visits(
