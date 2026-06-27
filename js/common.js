@@ -787,8 +787,8 @@ function apiCallLocalStorageFallback(action, data) {
                         }
                     }
                     const avgDuration = totalSessions > 0 ? Math.round(totalDuration / totalSessions) : 0;
-                    const bounceRate = totalSessions > 0 ? Math.round((bounces / totalSessions) * 100) : 0;
-                    return { totalVisits, activeUsers: totalSessions, avgDuration, bounceRate };
+                    const articlesRead = logs.filter(log => log.page_url && (log.page_url.includes('article.html') || log.page_url.includes('article'))).length;
+                    return { totalVisits, avgDuration, articlesRead };
                 };
 
                 const currentStats = calculateStats(currentLogs);
@@ -862,27 +862,27 @@ function apiCallLocalStorageFallback(action, data) {
                 Object.entries(bucketSessions).forEach(([key, sessMap]) => {
                     let totalDur = 0;
                     let countSess = 0;
-                    let bounces = 0;
                     for (const sId in sessMap) {
                         const times = sessMap[sId];
                         countSess++;
                         if (times.length === 1) {
-                            bounces++;
                             totalDur += 15;
                         } else {
                             times.sort((a,b)=>a-b);
                             totalDur += (times[times.length - 1] - times[0]) / 1000;
                         }
                     }
+                    const bucketLogs = currentLogs.filter(log => getBucketStart(log.visited_at, intervalMinutes) === key);
+                    const readsCount = bucketLogs.filter(log => log.page_url && (log.page_url.includes('article.html') || log.page_url.includes('article'))).length;
                     retentionTrend[key] = {
                         avg_duration: countSess > 0 ? Math.round(totalDur / countSess) : 0,
-                        bounce_rate: countSess > 0 ? Math.round((bounces / countSess) * 100) : 0
+                        articles_read: readsCount
                     };
                 });
                 const retentionTrendArr = Object.entries(retentionTrend).map(([bucket_time, val]) => ({
                     bucket_time,
                     avg_duration: val.avg_duration,
-                    bounce_rate: val.bounce_rate
+                    articles_read: val.articles_read
                 })).sort((a,b)=>new Date(a.bucket_time)-new Date(b.bucket_time));
 
                 // Recent
@@ -895,13 +895,13 @@ function apiCallLocalStorageFallback(action, data) {
 
                 resolve({
                     total_visits: currentStats.totalVisits,
-                    active_users: currentStats.activeUsers,
+                    active_users: usersList.length,
                     avg_session_duration: currentStats.avgDuration,
-                    bounce_rate: currentStats.bounceRate,
+                    articles_read: currentStats.articlesRead,
                     prior_total_visits: priorStats.totalVisits,
-                    prior_active_users: priorStats.activeUsers,
+                    prior_active_users: usersList.filter(u => new Date(u.date) < startDate).length,
                     prior_avg_session_duration: priorStats.avgDuration,
-                    prior_bounce_rate: priorStats.bounceRate,
+                    prior_articles_read: priorStats.articlesRead,
                     devices: devicesArr,
                     countries: countriesArr,
                     pages: pagesArr,

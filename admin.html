@@ -451,12 +451,12 @@
                         <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
                             <div class="absolute inset-0 opacity-[0.03]" style="background-color: #10b981"></div>
                             <div class="relative">
-                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Bounce Rate</div>
-                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-bounce">38%</div>
-                                <div class="text-[10px] text-ink-mute mt-1" id="stat-bounce-change">-5% vs last period</div>
+                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Articles Read</div>
+                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-reads">0</div>
+                                <div class="text-[10px] text-ink-mute mt-1" id="stat-reads-change">0% vs last period</div>
                             </div>
                             <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,0.12)">
-                                <i data-lucide="trending-down" class="w-4 h-4" style="color:#10b981"></i>
+                                <i data-lucide="book-open" class="w-4 h-4" style="color:#10b981"></i>
                             </div>
                         </div>
                     </div>
@@ -539,8 +539,8 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:300px; display:flex; flex-direction:column;">
                             <div class="mb-4 flex-shrink-0">
-                                <h3 class="font-semibold text-sm text-ink">Bounce Rate Trend</h3>
-                                <p class="text-[11px] text-ink-mute mt-0.5">% of single-page sessions over time</p>
+                                <h3 class="font-semibold text-sm text-ink">Articles Read Trend</h3>
+                                <p class="text-[11px] text-ink-mute mt-0.5">Total article reads over selected period</p>
                             </div>
                             <div class="flex-1 min-h-0">
                                 <canvas id="adminBounceChart"></canvas>

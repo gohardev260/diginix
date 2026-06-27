@@ -183,7 +183,7 @@ SELECT
     '203.135.' || (val % 255) || '.' || (val % 100 + 1),
     CASE WHEN val % 3 = 0 THEN 'Pakistan' WHEN val % 3 = 1 THEN 'United States' ELSE 'United Kingdom' END,
     CASE WHEN val % 4 = 0 THEN 'Mobile' WHEN val % 4 = 1 THEN 'Tablet' ELSE 'Desktop' END,
-    CASE WHEN val % 3 = 0 THEN '/home' WHEN val % 3 = 1 THEN '/blog' ELSE '/services' END,
+    CASE WHEN val % 4 = 0 THEN '/home' WHEN val % 4 = 1 THEN '/blog' WHEN val % 4 = 2 THEN '/article.html' ELSE '/services' END,
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
 FROM generate_series(1, 200) AS val
 WHERE NOT EXISTS (SELECT 1 FROM public.visit_logs LIMIT 1);
@@ -1001,12 +1001,12 @@ DECLARE
     v_total_visits INT8;
     v_active_users INT8;
     v_avg_duration INT8;
-    v_bounce_rate INT8;
+    v_articles_read INT8;
     
     v_prior_total_visits INT8;
     v_prior_active_users INT8;
     v_prior_avg_duration INT8;
-    v_prior_bounce_rate INT8;
+    v_prior_articles_read INT8;
     
     v_diff_days NUMERIC;
     v_trunc_unit TEXT;
@@ -1045,10 +1045,10 @@ BEGIN
     )
     SELECT 
         (SELECT COUNT(*) FROM public.visit_logs WHERE visited_at >= p_start_date AND visited_at <= p_end_date),
-        COALESCE((SELECT total_sessions FROM current_stats), 0),
+        (SELECT COUNT(*) FROM public.users),
         COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND(total_duration / total_sessions) ELSE 0 END FROM current_stats), 0),
-        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND((bounces::numeric / total_sessions) * 100) ELSE 0 END FROM current_stats), 0)
-    INTO v_total_visits, v_active_users, v_avg_duration, v_bounce_rate;
+        (SELECT COUNT(*)::INT8 FROM public.visit_logs WHERE visited_at >= p_start_date AND visited_at <= p_end_date AND (page_url LIKE '%article.html%' OR page_url LIKE '%article%'))
+    INTO v_total_visits, v_active_users, v_avg_duration, v_articles_read;
 
     -- Prior stats
     WITH prior_sessions AS (
@@ -1070,10 +1070,10 @@ BEGIN
     )
     SELECT 
         (SELECT COUNT(*) FROM public.visit_logs WHERE visited_at >= v_prior_start AND visited_at <= v_prior_end),
-        COALESCE((SELECT total_sessions FROM prior_stats), 0),
+        (SELECT COUNT(*) FROM public.users WHERE date < p_start_date),
         COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND(total_duration / total_sessions) ELSE 0 END FROM prior_stats), 0),
-        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND((bounces::numeric / total_sessions) * 100) ELSE 0 END FROM prior_stats), 0)
-    INTO v_prior_total_visits, v_prior_active_users, v_prior_avg_duration, v_prior_bounce_rate;
+        (SELECT COUNT(*)::INT8 FROM public.visit_logs WHERE visited_at >= v_prior_start AND visited_at <= v_prior_end AND (page_url LIKE '%article.html%' OR page_url LIKE '%article%'))
+    INTO v_prior_total_visits, v_prior_active_users, v_prior_avg_duration, v_prior_articles_read;
 
     -- Devices breakdown
     SELECT COALESCE(json_agg(t), '[]'::json) INTO v_devices FROM (
@@ -1139,7 +1139,7 @@ BEGIN
         ORDER BY bucket_time
     ) t;
 
-    -- Session retention & bounce rate trends by time bucket
+    -- Session retention & articles read trends by time bucket
     SELECT COALESCE(json_agg(t), '[]'::json) INTO v_retention_trend FROM (
         WITH bucket_sessions AS (
             SELECT 
@@ -1151,14 +1151,24 @@ BEGIN
             FROM public.visit_logs
             WHERE visited_at >= p_start_date AND visited_at <= p_end_date
             GROUP BY bucket_time, COALESCE(session_id::text, id::text)
+        ),
+        bucket_reads AS (
+            SELECT 
+                date_trunc(v_trunc_unit, visited_at) as bucket_time,
+                COUNT(*)::INT8 as reads_count
+            FROM public.visit_logs
+            WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+              AND (page_url LIKE '%article.html%' OR page_url LIKE '%article%')
+            GROUP BY bucket_time
         )
         SELECT 
-            bucket_time,
+            bs.bucket_time,
             ROUND(AVG(EXTRACT(EPOCH FROM (max_time - min_time)) + CASE WHEN page_views = 1 THEN 15 ELSE 0 END))::INT8 as avg_duration,
-            ROUND((SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END)::numeric / COUNT(*)) * 100)::INT8 as bounce_rate
-        FROM bucket_sessions
-        GROUP BY bucket_time
-        ORDER BY bucket_time
+            COALESCE(br.reads_count, 0)::INT8 as articles_read
+        FROM bucket_sessions bs
+        LEFT JOIN bucket_reads br ON br.bucket_time = bs.bucket_time
+        GROUP BY bs.bucket_time, br.reads_count
+        ORDER BY bs.bucket_time
     ) t;
 
     -- Recent Visitors
@@ -1178,11 +1188,11 @@ BEGIN
         'total_visits', v_total_visits,
         'active_users', v_active_users,
         'avg_session_duration', v_avg_duration,
-        'bounce_rate', v_bounce_rate,
+        'articles_read', v_articles_read,
         'prior_total_visits', v_prior_total_visits,
         'prior_active_users', v_prior_active_users,
         'prior_avg_session_duration', v_prior_avg_duration,
-        'prior_bounce_rate', v_prior_bounce_rate,
+        'prior_articles_read', v_prior_articles_read,
         'devices', v_devices,
         'countries', v_countries,
         'pages', v_pages,

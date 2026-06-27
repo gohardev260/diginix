@@ -204,8 +204,8 @@ async function loadAnalyticsData() {
 
     if (!res) {
         res = {
-            total_visits: 0, active_users: 0, avg_session_duration: 0, bounce_rate: 0,
-            prior_total_visits: 0, prior_active_users: 0, prior_avg_session_duration: 0, prior_bounce_rate: 0,
+            total_visits: 0, active_users: 0, avg_session_duration: 0, articles_read: 0,
+            prior_total_visits: 0, prior_active_users: 0, prior_avg_session_duration: 0, prior_articles_read: 0,
             devices: [], countries: [], pages: [], visits_trend: [], users_trend: [], retention_trend: [], recent_visitors: []
         };
     }
@@ -221,7 +221,7 @@ async function loadAnalyticsData() {
     document.getElementById('stat-users').innerText = Number(res.active_users || 0).toLocaleString();
     document.getElementById('stat-visits').innerText = Number(res.total_visits || 0).toLocaleString();
     document.getElementById('stat-session').innerText = formatDuration(res.avg_session_duration || 0);
-    document.getElementById('stat-bounce').innerText = `${res.bounce_rate || 0}%`;
+    document.getElementById('stat-reads').innerText = Number(res.articles_read || 0).toLocaleString();
 
     const updateChangeLabel = (elementId, current, prior) => {
         const el = document.getElementById(elementId);
@@ -249,7 +249,7 @@ async function loadAnalyticsData() {
     updateChangeLabel('stat-users-change', res.active_users, res.prior_active_users);
     updateChangeLabel('stat-visits-change', res.total_visits, res.prior_total_visits);
     updateChangeLabel('stat-session-change', res.avg_session_duration, res.prior_avg_session_duration);
-    updateChangeLabel('stat-bounce-change', res.bounce_rate, res.prior_bounce_rate);
+    updateChangeLabel('stat-reads-change', res.articles_read, res.prior_articles_read);
 
     // Update traffic period label
     const trafficLabel = document.getElementById('traffic-period-label');
@@ -275,14 +275,14 @@ async function loadAnalyticsData() {
             return itemTime >= bucket.start && itemTime <= bucket.end;
         });
         bucket.duration = matchingRetention ? Number(matchingRetention.avg_duration) : 0;
-        bucket.bounceRate = matchingRetention ? Number(matchingRetention.bounce_rate) : 0;
+        bucket.articlesRead = matchingRetention ? Number(matchingRetention.articles_read) : 0;
     });
 
     const chartLabels = buckets.map(b => b.label);
     const visitHistoryData = buckets.map(b => b.visits);
     const signupHistoryData = buckets.map(b => b.signups);
     const retentionHistoryData = buckets.map(b => b.duration);
-    const bounceHistoryData = buckets.map(b => b.bounceRate);
+    const articlesReadHistoryData = buckets.map(b => b.articlesRead);
 
     // Device breakdown (Desktop, Mobile, Tablet)
     const devicesMap = { Desktop: 0, Mobile: 0, Tablet: 0 };
@@ -314,7 +314,7 @@ async function loadAnalyticsData() {
     }
 
     renderAnalyticsCharts(
-        chartLabels, signupHistoryData, visitHistoryData, retentionHistoryData, bounceHistoryData,
+        chartLabels, signupHistoryData, visitHistoryData, retentionHistoryData, articlesReadHistoryData,
         devicePct, topPagesLabels, topPagesData, countryLabels, countryData
     );
 
@@ -338,7 +338,7 @@ function destroyAllCharts() {
 
 // ── Analytics: Render All 8 Charts (Solid Colors, No Gradients) ──────
 function renderAnalyticsCharts(
-    labels, userData, visitData, retentionData, bounceData, 
+    labels, userData, visitData, retentionData, articlesReadData, 
     devicePct, topPagesLabels, topPagesData, countryLabels, countryData
 ) {
     destroyAllCharts();
@@ -637,7 +637,7 @@ function renderAnalyticsCharts(
         });
     }
 
-    // ── Chart 7: Bounce Rate Trendline Curve (Solid) ─────────────────
+    // ── Chart 7: Articles Read Trendline Curve (Solid) ─────────────────
     const ctxBounce = document.getElementById('adminBounceChart');
     if (ctxBounce) {
         window.adminState.bounceChartInstance = new Chart(ctxBounce, {
@@ -645,14 +645,14 @@ function renderAnalyticsCharts(
             data: {
                 labels,
                 datasets: [{
-                    label: 'Bounce Rate %',
-                    data: bounceData,
-                    borderColor: '#ef4444',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    label: 'Articles Read',
+                    data: articlesReadData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#ef4444',
+                    pointBackgroundColor: '#10b981',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 1.5,
                     pointRadius: 2.5,
@@ -666,15 +666,15 @@ function renderAnalyticsCharts(
                     tooltip: {
                         backgroundColor: '#171717', titleColor: '#fff', bodyColor: '#fafafa',
                         padding: 10, cornerRadius: 6,
-                        callbacks: { label: ctx => ` ${ctx.parsed.y}% bounce rate` }
+                        callbacks: { label: ctx => ` ${ctx.parsed.y.toLocaleString()} articles read` }
                     }
                 },
                 scales: {
                     y: {
-                        beginAtZero: false, min: 0, max: 100,
+                        beginAtZero: true,
                         grid: { color: '#f0f0f0', lineWidth: 1 },
                         border: { display: false },
-                        ticks: { color: '#888', font: { size: 10 }, callback: v => v + '%' }
+                        ticks: { color: '#888', font: { size: 10 }, precision: 0 }
                     },
                     x: {
                         grid: { display: false },
