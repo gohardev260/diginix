@@ -167,67 +167,10 @@ function generateBuckets(startDate, endDate) {
     return buckets;
 }
 
-// Helper to calculate statistics of a logs subset
-function calculateCollectionStats(filteredLogs) {
-    const totalVisits = filteredLogs.length;
-    
-    // Unique active users (sessions or emails)
-    const activeUserSessions = new Set();
-    filteredLogs.forEach(log => {
-        if (log.session_id) activeUserSessions.add(log.session_id);
-        else if (log.email) activeUserSessions.add(log.email.toLowerCase());
-    });
-    const activeUsers = activeUserSessions.size;
-
-    // Session durations and bounces
-    const sessions = {};
-    filteredLogs.forEach(log => {
-        const sId = log.session_id || log.email || 'anon';
-        const d = new Date(log.visited_at).getTime();
-        sessions[sId] = sessions[sId] || [];
-        sessions[sId].push(d);
-    });
-
-    let totalDuration = 0;
-    let totalSessions = 0;
-    let bounces = 0;
-
-    for (const sId in sessions) {
-        const times = sessions[sId];
-        totalSessions++;
-        if (times.length === 1) {
-            bounces++;
-            totalDuration += 15; // default 15 seconds bounce visit
-        } else {
-            times.sort((a, b) => a - b);
-            const diffSec = (times[times.length - 1] - times[0]) / 1000;
-            totalDuration += diffSec;
-        }
-    }
-
-    const avgDuration = totalSessions > 0 ? Math.round(totalDuration / totalSessions) : 0;
-    const bounceRate = totalSessions > 0 ? Math.round((bounces / totalSessions) * 100) : 0;
-
-    return { totalVisits, activeUsers, avgDuration, bounceRate };
-}
-
 // ── Analytics: Main Load ─────────────────────────────────────────────
 async function loadAnalyticsData() {
     await window.backendReady;
     
-    let logs = [];
-    let users = [];
-    try {
-        const [logsRes, usersRes] = await Promise.all([
-            window.apiCall('get_visit_logs'),
-            window.apiCall('get_filtered_users', { search: '' })
-        ]);
-        logs = Array.isArray(logsRes) ? logsRes : [];
-        users = Array.isArray(usersRes) ? usersRes : [];
-    } catch (e) {
-        console.error("Failed to load real logs or users:", e);
-    }
-
     // Determine bounds
     const preset = window.adminState.analyticsPreset;
     let startDate, endDate;
@@ -249,29 +192,23 @@ async function loadAnalyticsData() {
         if (endInput) endInput.value = endDate.toISOString().slice(0, 10);
     }
 
-    // Prior period bounds for comparison
-    const rangeDurationMs = endDate.getTime() - startDate.getTime();
-    const priorEndDate = new Date(startDate.getTime() - 1);
-    const priorStartDate = new Date(startDate.getTime() - rangeDurationMs);
+    let res = null;
+    try {
+        res = await window.apiCall('get_admin_analytics', {
+            start_date: startDate.toISOString(),
+            end_date: endDate.toISOString()
+        });
+    } catch (e) {
+        console.error("Failed to load get_admin_analytics from backend:", e);
+    }
 
-    // Filter current and prior
-    const filterLogsByRange = (list, start, end) => list.filter(log => {
-        const d = new Date(log.visited_at);
-        return d >= start && d <= end;
-    });
-    const filterUsersByRange = (list, start, end) => list.filter(u => {
-        const d = new Date(u.date);
-        return d >= start && d <= end;
-    });
-
-    const currentLogs = filterLogsByRange(logs, startDate, endDate);
-    const priorLogs = filterLogsByRange(logs, priorStartDate, priorEndDate);
-    const currentUsers = filterUsersByRange(users, startDate, endDate);
-    const priorUsers = filterUsersByRange(users, priorStartDate, priorEndDate);
-
-    // Compute metrics
-    const currentStats = calculateCollectionStats(currentLogs);
-    const priorStats = calculateCollectionStats(priorLogs);
+    if (!res) {
+        res = {
+            total_visits: 0, active_users: 0, avg_session_duration: 0, bounce_rate: 0,
+            prior_total_visits: 0, prior_active_users: 0, prior_avg_session_duration: 0, prior_bounce_rate: 0,
+            devices: [], countries: [], pages: [], visits_trend: [], users_trend: [], retention_trend: [], recent_visitors: []
+        };
+    }
 
     // Sync Stats Row KPI UI
     const formatDuration = (s) => {
@@ -281,10 +218,10 @@ async function loadAnalyticsData() {
         return `${m}m ${sec}s`;
     };
 
-    document.getElementById('stat-users').innerText = currentStats.activeUsers.toLocaleString();
-    document.getElementById('stat-visits').innerText = currentStats.totalVisits.toLocaleString();
-    document.getElementById('stat-session').innerText = formatDuration(currentStats.avgDuration);
-    document.getElementById('stat-bounce').innerText = `${currentStats.bounceRate}%`;
+    document.getElementById('stat-users').innerText = Number(res.active_users || 0).toLocaleString();
+    document.getElementById('stat-visits').innerText = Number(res.total_visits || 0).toLocaleString();
+    document.getElementById('stat-session').innerText = formatDuration(res.avg_session_duration || 0);
+    document.getElementById('stat-bounce').innerText = `${res.bounce_rate || 0}%`;
 
     const updateChangeLabel = (elementId, current, prior) => {
         const el = document.getElementById(elementId);
@@ -309,32 +246,36 @@ async function loadAnalyticsData() {
         }
     };
 
-    updateChangeLabel('stat-users-change', currentStats.activeUsers, priorStats.activeUsers);
-    updateChangeLabel('stat-visits-change', currentStats.totalVisits, priorStats.totalVisits);
-    updateChangeLabel('stat-session-change', currentStats.avgDuration, priorStats.avgDuration);
-    updateChangeLabel('stat-bounce-change', currentStats.bounceRate, priorStats.bounceRate);
+    updateChangeLabel('stat-users-change', res.active_users, res.prior_active_users);
+    updateChangeLabel('stat-visits-change', res.total_visits, res.prior_total_visits);
+    updateChangeLabel('stat-session-change', res.avg_session_duration, res.prior_avg_session_duration);
+    updateChangeLabel('stat-bounce-change', res.bounce_rate, res.prior_bounce_rate);
 
     // Update traffic period label
     const trafficLabel = document.getElementById('traffic-period-label');
     if (trafficLabel) trafficLabel.textContent = getPresetLabel(preset);
 
-    // Populate Buckets
+    // Populate Buckets (Chart labels)
     const buckets = generateBuckets(startDate, endDate);
     buckets.forEach(bucket => {
-        const bLogs = currentLogs.filter(log => {
-            const d = new Date(log.visited_at);
-            return d >= bucket.start && d <= bucket.end;
+        const matchingVisit = (res.visits_trend || []).find(item => {
+            const itemTime = new Date(item.bucket_time);
+            return itemTime >= bucket.start && itemTime <= bucket.end;
         });
-        const bUsers = currentUsers.filter(u => {
-            const d = new Date(u.date);
-            return d >= bucket.start && d <= bucket.end;
+        bucket.visits = matchingVisit ? Number(matchingVisit.count) : 0;
+        
+        const matchingUser = (res.users_trend || []).find(item => {
+            const itemTime = new Date(item.bucket_time);
+            return itemTime >= bucket.start && itemTime <= bucket.end;
         });
+        bucket.signups = matchingUser ? Number(matchingUser.count) : 0;
 
-        const bStats = calculateCollectionStats(bLogs);
-        bucket.visits = bStats.totalVisits;
-        bucket.signups = bUsers.length;
-        bucket.duration = bStats.avgDuration;
-        bucket.bounceRate = bStats.bounceRate;
+        const matchingRetention = (res.retention_trend || []).find(item => {
+            const itemTime = new Date(item.bucket_time);
+            return itemTime >= bucket.start && itemTime <= bucket.end;
+        });
+        bucket.duration = matchingRetention ? Number(matchingRetention.avg_duration) : 0;
+        bucket.bounceRate = matchingRetention ? Number(matchingRetention.bounce_rate) : 0;
     });
 
     const chartLabels = buckets.map(b => b.label);
@@ -343,51 +284,41 @@ async function loadAnalyticsData() {
     const retentionHistoryData = buckets.map(b => b.duration);
     const bounceHistoryData = buckets.map(b => b.bounceRate);
 
-    // Device breakdown
-    const devices = { Desktop: 0, Mobile: 0, Tablet: 0 };
-    currentLogs.forEach(log => {
-        let d = log.device;
-        if (!d && log.user_agent) {
-            if (/Mobi|Android|iPhone|iPod/i.test(log.user_agent)) d = 'Mobile';
-            else if (/iPad/i.test(log.user_agent)) d = 'Tablet';
-            else d = 'Desktop';
-        }
-        d = d || 'Desktop';
-        devices[d] = (devices[d] || 0) + 1;
+    // Device breakdown (Desktop, Mobile, Tablet)
+    const devicesMap = { Desktop: 0, Mobile: 0, Tablet: 0 };
+    (res.devices || []).forEach(d => {
+        const lbl = d.label === 'Tablet' ? 'Tablet' : d.label === 'Mobile' ? 'Mobile' : 'Desktop';
+        devicesMap[lbl] = (devicesMap[lbl] || 0) + Number(d.count);
     });
-    const totalDevices = devices.Desktop + devices.Mobile + devices.Tablet;
+    const totalDevices = devicesMap.Desktop + devicesMap.Mobile + devicesMap.Tablet;
     const devicePct = totalDevices > 0 ? [
-        Math.round((devices.Desktop / totalDevices) * 100),
-        Math.round((devices.Mobile / totalDevices) * 100),
-        Math.round((devices.Tablet / totalDevices) * 100)
+        Math.round((devicesMap.Desktop / totalDevices) * 100),
+        Math.round((devicesMap.Mobile / totalDevices) * 100),
+        Math.round((devicesMap.Tablet / totalDevices) * 100)
     ] : [100, 0, 0];
 
     // Top Pages
-    const pagesMap = {};
-    currentLogs.forEach(log => {
-        const url = log.page_url || '/home';
-        pagesMap[url] = (pagesMap[url] || 0) + 1;
-    });
-    const sortedPages = Object.entries(pagesMap).sort((a,b)=>b[1]-a[1]).slice(0, 6);
-    const topPagesLabels = sortedPages.length > 0 ? sortedPages.map(e=>e[0]) : ['/home', '/blog', '/services'];
-    const topPagesData = sortedPages.length > 0 ? sortedPages.map(e=>e[1]) : [0, 0, 0];
+    const topPagesLabels = (res.pages || []).map(p => p.label);
+    const topPagesData = (res.pages || []).map(p => Number(p.count));
+    if (topPagesLabels.length === 0) {
+        topPagesLabels.push('/home', '/blog', '/services');
+        topPagesData.push(0, 0, 0);
+    }
 
-    // Visitor Countries
-    const countryMap = {};
-    currentLogs.forEach(log => {
-        const country = log.country || 'Unknown';
-        countryMap[country] = (countryMap[country] || 0) + 1;
-    });
-    const sortedCountries = Object.entries(countryMap).sort((a,b)=>b[1]-a[1]).slice(0, 6);
-    const countryLabels = sortedCountries.length > 0 ? sortedCountries.map(e=>e[0]) : ['Pakistan', 'United States', 'United Kingdom'];
-    const countryData = sortedCountries.length > 0 ? sortedCountries.map(e=>e[1]) : [0, 0, 0];
+    // Visitor Locations
+    const countryLabels = (res.countries || []).map(c => c.label);
+    const countryData = (res.countries || []).map(c => Number(c.count));
+    if (countryLabels.length === 0) {
+        countryLabels.push('Pakistan', 'United States', 'United Kingdom');
+        countryData.push(0, 0, 0);
+    }
 
     renderAnalyticsCharts(
         chartLabels, signupHistoryData, visitHistoryData, retentionHistoryData, bounceHistoryData,
         devicePct, topPagesLabels, topPagesData, countryLabels, countryData
     );
 
-    renderRecentVisitorsList(currentLogs);
+    renderRecentVisitorsList(res.recent_visitors || []);
 }
 
 // ── Analytics: Destroy all chart instances ───────────────────────────
@@ -757,17 +688,14 @@ function renderAnalyticsCharts(
 }
 
 // ── Recent Visitors List (Real Data with relative times) ────────────
-function renderRecentVisitorsList(logs) {
+function renderRecentVisitorsList(sortedLogs) {
     const list = document.getElementById('recent-visitors-list');
     if (!list) return;
 
-    if (logs.length === 0) {
+    if (sortedLogs.length === 0) {
         list.innerHTML = `<div class="p-8 text-center text-xs text-secondary">No visitor logs in this period.</div>`;
         return;
     }
-
-    // Sort logs chronologically DESC and take top 7
-    const sortedLogs = logs.slice().sort((a,b) => new Date(b.visited_at) - new Date(a.visited_at)).slice(0, 7);
 
     const getRelativeTime = (visitedAtStr) => {
         const visitedAt = new Date(visitedAtStr);
@@ -944,7 +872,7 @@ window.insertDiagramToEditor = function () {
 // ── Blog: Load & Filter ──────────────────────────────────────────────
 async function loadBlogData() {
     await window.backendReady;
-    const res = await window.apiCall('get_blogs');
+    const res = await window.apiCall('get_admin_blogs');
     if (res && Array.isArray(res)) {
         window.adminState.blogs = res;
     } else {

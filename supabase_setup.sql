@@ -40,6 +40,7 @@ DROP FUNCTION IF EXISTS public.update_user_status_secure(TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.delete_user_secure(TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.save_settings_secure(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.migrate_legacy_users();
+DROP FUNCTION IF EXISTS public.get_admin_analytics(TIMESTAMPTZ, TIMESTAMPTZ);
 
 -- Enable pgcrypto extension for secure password hashing and random bytes
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -985,6 +986,217 @@ BEGIN
     END IF;
 END;
 $$;
+
+-- Secure Admin Analytics aggregator (Bypasses 1000 row api limit and executes in milliseconds)
+CREATE OR REPLACE FUNCTION public.get_admin_analytics(
+    p_start_date TIMESTAMPTZ,
+    p_end_date TIMESTAMPTZ
+)
+RETURNS JSON AS $$
+DECLARE
+    v_range_interval INTERVAL;
+    v_prior_start TIMESTAMPTZ;
+    v_prior_end TIMESTAMPTZ;
+    
+    v_total_visits INT8;
+    v_active_users INT8;
+    v_avg_duration INT8;
+    v_bounce_rate INT8;
+    
+    v_prior_total_visits INT8;
+    v_prior_active_users INT8;
+    v_prior_avg_duration INT8;
+    v_prior_bounce_rate INT8;
+    
+    v_diff_days NUMERIC;
+    v_trunc_unit TEXT;
+    
+    v_devices JSON;
+    v_countries JSON;
+    v_pages JSON;
+    v_visits_trend JSON;
+    v_users_trend JSON;
+    v_retention_trend JSON;
+    v_recent_visitors JSON;
+    
+    v_result JSON;
+BEGIN
+    v_range_interval := p_end_date - p_start_date;
+    v_prior_start := p_start_date - v_range_interval;
+    v_prior_end := p_start_date - INTERVAL '1 millisecond';
+
+    -- Current stats
+    WITH current_sessions AS (
+        SELECT 
+            COALESCE(session_id::text, id::text) as s_id,
+            MIN(visited_at) as min_time,
+            MAX(visited_at) as max_time,
+            COUNT(*) as page_views
+        FROM public.visit_logs
+        WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+        GROUP BY COALESCE(session_id::text, id::text)
+    ),
+    current_stats AS (
+        SELECT
+            COUNT(*) as total_sessions,
+            SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END) as bounces,
+            SUM(EXTRACT(EPOCH FROM (max_time - min_time)) + CASE WHEN page_views = 1 THEN 15 ELSE 0 END) as total_duration
+        FROM current_sessions
+    )
+    SELECT 
+        (SELECT COUNT(*) FROM public.visit_logs WHERE visited_at >= p_start_date AND visited_at <= p_end_date),
+        COALESCE((SELECT total_sessions FROM current_stats), 0),
+        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND(total_duration / total_sessions) ELSE 0 END FROM current_stats), 0),
+        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND((bounces::numeric / total_sessions) * 100) ELSE 0 END FROM current_stats), 0)
+    INTO v_total_visits, v_active_users, v_avg_duration, v_bounce_rate;
+
+    -- Prior stats
+    WITH prior_sessions AS (
+        SELECT 
+            COALESCE(session_id::text, id::text) as s_id,
+            MIN(visited_at) as min_time,
+            MAX(visited_at) as max_time,
+            COUNT(*) as page_views
+        FROM public.visit_logs
+        WHERE visited_at >= v_prior_start AND visited_at <= v_prior_end
+        GROUP BY COALESCE(session_id::text, id::text)
+    ),
+    prior_stats AS (
+        SELECT
+            COUNT(*) as total_sessions,
+            SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END) as bounces,
+            SUM(EXTRACT(EPOCH FROM (max_time - min_time)) + CASE WHEN page_views = 1 THEN 15 ELSE 0 END) as total_duration
+        FROM prior_sessions
+    )
+    SELECT 
+        (SELECT COUNT(*) FROM public.visit_logs WHERE visited_at >= v_prior_start AND visited_at <= v_prior_end),
+        COALESCE((SELECT total_sessions FROM prior_stats), 0),
+        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND(total_duration / total_sessions) ELSE 0 END FROM prior_stats), 0),
+        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND((bounces::numeric / total_sessions) * 100) ELSE 0 END FROM prior_stats), 0)
+    INTO v_prior_total_visits, v_prior_active_users, v_prior_avg_duration, v_prior_bounce_rate;
+
+    -- Devices breakdown
+    SELECT COALESCE(json_agg(t), '[]'::json) INTO v_devices FROM (
+        SELECT COALESCE(device, 'Desktop') as label, COUNT(*)::INT8 as count
+        FROM public.visit_logs
+        WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+        GROUP BY COALESCE(device, 'Desktop')
+        ORDER BY count DESC
+        LIMIT 5
+    ) t;
+
+    -- Countries breakdown
+    SELECT COALESCE(json_agg(t), '[]'::json) INTO v_countries FROM (
+        SELECT COALESCE(country, 'Unknown') as label, COUNT(*)::INT8 as count
+        FROM public.visit_logs
+        WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+        GROUP BY COALESCE(country, 'Unknown')
+        ORDER BY count DESC
+        LIMIT 5
+    ) t;
+
+    -- Pages breakdown
+    SELECT COALESCE(json_agg(t), '[]'::json) INTO v_pages FROM (
+        SELECT COALESCE(page_url, '/home') as label, COUNT(*)::INT8 as count
+        FROM public.visit_logs
+        WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+        GROUP BY COALESCE(page_url, '/home')
+        ORDER BY count DESC
+        LIMIT 5
+    ) t;
+
+    -- Determine time truncation unit
+    v_diff_days := EXTRACT(EPOCH FROM (p_end_date - p_start_date)) / 86400;
+    IF v_diff_days <= 1.1 THEN
+        v_trunc_unit := 'hour';
+    ELSIF v_diff_days <= 31 THEN
+        v_trunc_unit := 'day';
+    ELSIF v_diff_days <= 180 THEN
+        v_trunc_unit := 'week';
+    ELSE
+        v_trunc_unit := 'month';
+    END IF;
+
+    -- Visits Trend
+    SELECT COALESCE(json_agg(t), '[]'::json) INTO v_visits_trend FROM (
+        SELECT 
+            date_trunc(v_trunc_unit, visited_at) as bucket_time,
+            COUNT(*)::INT8 as count
+        FROM public.visit_logs
+        WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+        GROUP BY bucket_time
+        ORDER BY bucket_time
+    ) t;
+
+    -- Acquisitions Trend
+    SELECT COALESCE(json_agg(t), '[]'::json) INTO v_users_trend FROM (
+        SELECT 
+            date_trunc(v_trunc_unit, date) as bucket_time,
+            COUNT(*)::INT8 as count
+        FROM public.users
+        WHERE date >= p_start_date AND date <= p_end_date
+        GROUP BY bucket_time
+        ORDER BY bucket_time
+    ) t;
+
+    -- Session retention & bounce rate trends by time bucket
+    SELECT COALESCE(json_agg(t), '[]'::json) INTO v_retention_trend FROM (
+        WITH bucket_sessions AS (
+            SELECT 
+                date_trunc(v_trunc_unit, visited_at) as bucket_time,
+                COALESCE(session_id::text, id::text) as s_id,
+                MIN(visited_at) as min_time,
+                MAX(visited_at) as max_time,
+                COUNT(*) as page_views
+            FROM public.visit_logs
+            WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+            GROUP BY bucket_time, COALESCE(session_id::text, id::text)
+        )
+        SELECT 
+            bucket_time,
+            ROUND(AVG(EXTRACT(EPOCH FROM (max_time - min_time)) + CASE WHEN page_views = 1 THEN 15 ELSE 0 END))::INT8 as avg_duration,
+            ROUND((SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END)::numeric / COUNT(*)) * 100)::INT8 as bounce_rate
+        FROM bucket_sessions
+        GROUP BY bucket_time
+        ORDER BY bucket_time
+    ) t;
+
+    -- Recent Visitors
+    SELECT COALESCE(json_agg(t), '[]'::json) INTO v_recent_visitors FROM (
+        SELECT 
+            COALESCE(ip_address, '127.0.0.1') as ip_address,
+            COALESCE(country, 'Unknown') as country,
+            COALESCE(page_url, '/home') as page_url,
+            visited_at
+        FROM public.visit_logs
+        WHERE visited_at >= p_start_date AND visited_at <= p_end_date
+        ORDER BY visited_at DESC
+        LIMIT 7
+    ) t;
+
+    v_result := json_build_object(
+        'total_visits', v_total_visits,
+        'active_users', v_active_users,
+        'avg_session_duration', v_avg_duration,
+        'bounce_rate', v_bounce_rate,
+        'prior_total_visits', v_prior_total_visits,
+        'prior_active_users', v_prior_active_users,
+        'prior_avg_session_duration', v_prior_avg_duration,
+        'prior_bounce_rate', v_prior_bounce_rate,
+        'devices', v_devices,
+        'countries', v_countries,
+        'pages', v_pages,
+        'visits_trend', v_visits_trend,
+        'users_trend', v_users_trend,
+        'retention_trend', v_retention_trend,
+        'recent_visitors', v_recent_visitors
+    );
+
+    RETURN v_result;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.get_admin_analytics(TIMESTAMPTZ, TIMESTAMPTZ) TO authenticated;
 
 -- 6. ROW LEVEL SECURITY (RLS) POLICIES
 -- Enable RLS on all tables to protect them from direct unauthorized PostgREST access.

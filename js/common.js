@@ -290,6 +290,13 @@ window.apiCall = async function (action, data = null) {
                 return blogs || [];
             }
 
+            case 'get_admin_blogs': {
+                const { data: blogs, error } = await window.supabase
+                    .rpc('get_all_blogs_admin');
+                if (error) throw error;
+                return blogs || [];
+            }
+
             case 'save_blog': {
                 const { error } = await window.supabase
                     .rpc('save_blog_secure', {
@@ -328,6 +335,16 @@ window.apiCall = async function (action, data = null) {
                     .rpc('get_visit_logs_admin');
                 if (error) throw error;
                 return logs || [];
+            }
+
+            case 'get_admin_analytics': {
+                const { data: result, error } = await window.supabase
+                    .rpc('get_admin_analytics', {
+                        p_start_date: data.start_date,
+                        p_end_date: data.end_date
+                    });
+                if (error) throw error;
+                return typeof result === 'string' ? JSON.parse(result) : result;
             }
 
             case 'update_user_status': {
@@ -637,6 +654,9 @@ function apiCallLocalStorageFallback(action, data) {
             case 'get_blogs':
                 resolve(blogs.slice().reverse());
                 break;
+            case 'get_admin_blogs':
+                resolve(blogs.slice().reverse());
+                break;
             case 'save_blog':
                 if (data.id) {
                     const idx = blogs.findIndex(b => b.id === data.id);
@@ -714,6 +734,182 @@ function apiCallLocalStorageFallback(action, data) {
                 }));
 
                 resolve(mapped);
+                break;
+            }
+
+            case 'get_admin_analytics': {
+                const visitLogs = JSON.parse(localStorage.getItem('visit_logs') || '[]');
+                const usersList = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                const startDate = new Date(data.start_date);
+                const endDate = new Date(data.end_date);
+                const rangeDurationMs = Math.abs(endDate.getTime() - startDate.getTime());
+                const priorEndDate = new Date(startDate.getTime() - 1);
+                const priorStartDate = new Date(startDate.getTime() - rangeDurationMs);
+
+                const filterLogs = (list, start, end) => list.filter(item => {
+                    const d = new Date(item.visited_at);
+                    return d >= start && d <= end;
+                });
+                const filterUsers = (list, start, end) => list.filter(item => {
+                    const d = new Date(item.date);
+                    return d >= start && d <= end;
+                });
+
+                const currentLogs = filterLogs(visitLogs, startDate, endDate);
+                const priorLogs = filterLogs(visitLogs, priorStartDate, priorEndDate);
+                const currentUsers = filterUsers(usersList, startDate, endDate);
+                const priorUsers = filterUsers(usersList, priorStartDate, priorEndDate);
+
+                const calculateStats = (logs) => {
+                    const totalVisits = logs.length;
+                    const sessions = {};
+                    logs.forEach((log, index) => {
+                        const sId = log.session_id || (log.email ? `${log.email}_${index}` : `anon_${index}`);
+                        const d = new Date(log.visited_at).getTime();
+                        sessions[sId] = sessions[sId] || [];
+                        sessions[sId].push(d);
+                    });
+
+                    let totalDuration = 0;
+                    let totalSessions = 0;
+                    let bounces = 0;
+
+                    for (const sId in sessions) {
+                        const times = sessions[sId];
+                        totalSessions++;
+                        if (times.length === 1) {
+                            bounces++;
+                            totalDuration += 15;
+                        } else {
+                            times.sort((a,b)=>a-b);
+                            totalDuration += (times[times.length - 1] - times[0]) / 1000;
+                        }
+                    }
+                    const avgDuration = totalSessions > 0 ? Math.round(totalDuration / totalSessions) : 0;
+                    const bounceRate = totalSessions > 0 ? Math.round((bounces / totalSessions) * 100) : 0;
+                    return { totalVisits, activeUsers: totalSessions, avgDuration, bounceRate };
+                };
+
+                const currentStats = calculateStats(currentLogs);
+                const priorStats = calculateStats(priorLogs);
+
+                // Devices
+                const devices = {};
+                currentLogs.forEach(log => {
+                    const d = log.device || 'Desktop';
+                    devices[d] = (devices[d] || 0) + 1;
+                });
+                const devicesArr = Object.entries(devices).map(([label, count]) => ({ label, count })).sort((a,b)=>b.count-a.count);
+
+                // Countries
+                const countries = {};
+                currentLogs.forEach(log => {
+                    const c = log.country || 'Unknown';
+                    countries[c] = (countries[c] || 0) + 1;
+                });
+                const countriesArr = Object.entries(countries).map(([label, count]) => ({ label, count })).sort((a,b)=>b.count-a.count);
+
+                // Pages
+                const pages = {};
+                currentLogs.forEach(log => {
+                    const p = log.page_url || '/home';
+                    pages[p] = (pages[p] || 0) + 1;
+                });
+                const pagesArr = Object.entries(pages).map(([label, count]) => ({ label, count })).sort((a,b)=>b.count-a.count);
+
+                // Trends
+                const diffDays = rangeDurationMs / 86400000;
+                let intervalMinutes = 60;
+                if (diffDays > 1.1 && diffDays <= 31) intervalMinutes = 1440;
+                else if (diffDays > 31 && diffDays <= 180) intervalMinutes = 10080;
+                else if (diffDays > 180) intervalMinutes = 43200;
+
+                const getBucketStart = (date, unit) => {
+                    const d = new Date(date);
+                    if (unit === 60) { d.setMinutes(0,0,0); }
+                    else if (unit === 1440) { d.setHours(0,0,0,0); }
+                    else if (unit === 10080) { d.setHours(0,0,0,0); const day = d.getDay(); d.setDate(d.getDate() - day); }
+                    else { d.setDate(1); d.setHours(0,0,0,0); }
+                    return d.toISOString();
+                };
+
+                const visitsTrend = {};
+                currentLogs.forEach(log => {
+                    const key = getBucketStart(log.visited_at, intervalMinutes);
+                    visitsTrend[key] = (visitsTrend[key] || 0) + 1;
+                });
+                const visitsTrendArr = Object.entries(visitsTrend).map(([bucket_time, count]) => ({ bucket_time, count })).sort((a,b)=>new Date(a.bucket_time)-new Date(b.bucket_time));
+
+                const usersTrend = {};
+                currentUsers.forEach(u => {
+                    const key = getBucketStart(u.date, intervalMinutes);
+                    usersTrend[key] = (usersTrend[key] || 0) + 1;
+                });
+                const usersTrendArr = Object.entries(usersTrend).map(([bucket_time, count]) => ({ bucket_time, count })).sort((a,b)=>new Date(a.bucket_time)-new Date(b.bucket_time));
+
+                const retentionTrend = {};
+                const bucketSessions = {};
+                currentLogs.forEach((log, index) => {
+                    const key = getBucketStart(log.visited_at, intervalMinutes);
+                    const sId = log.session_id || (log.email ? `${log.email}_${index}` : `anon_${index}`);
+                    const d = new Date(log.visited_at).getTime();
+                    bucketSessions[key] = bucketSessions[key] || {};
+                    bucketSessions[key][sId] = bucketSessions[key][sId] || [];
+                    bucketSessions[key][sId].push(d);
+                });
+
+                Object.entries(bucketSessions).forEach(([key, sessMap]) => {
+                    let totalDur = 0;
+                    let countSess = 0;
+                    let bounces = 0;
+                    for (const sId in sessMap) {
+                        const times = sessMap[sId];
+                        countSess++;
+                        if (times.length === 1) {
+                            bounces++;
+                            totalDur += 15;
+                        } else {
+                            times.sort((a,b)=>a-b);
+                            totalDur += (times[times.length - 1] - times[0]) / 1000;
+                        }
+                    }
+                    retentionTrend[key] = {
+                        avg_duration: countSess > 0 ? Math.round(totalDur / countSess) : 0,
+                        bounce_rate: countSess > 0 ? Math.round((bounces / countSess) * 100) : 0
+                    };
+                });
+                const retentionTrendArr = Object.entries(retentionTrend).map(([bucket_time, val]) => ({
+                    bucket_time,
+                    avg_duration: val.avg_duration,
+                    bounce_rate: val.bounce_rate
+                })).sort((a,b)=>new Date(a.bucket_time)-new Date(b.bucket_time));
+
+                // Recent
+                const recentArr = currentLogs.slice().sort((a,b)=>new Date(b.visited_at)-new Date(a.visited_at)).slice(0,7).map(log => ({
+                    ip_address: log.ip_address || '127.0.0.1',
+                    country: log.country || 'Unknown',
+                    page_url: log.page_url || '/home',
+                    visited_at: log.visited_at
+                }));
+
+                resolve({
+                    total_visits: currentStats.totalVisits,
+                    active_users: currentStats.activeUsers,
+                    avg_session_duration: currentStats.avgDuration,
+                    bounce_rate: currentStats.bounceRate,
+                    prior_total_visits: priorStats.totalVisits,
+                    prior_active_users: priorStats.activeUsers,
+                    prior_avg_session_duration: priorStats.avgDuration,
+                    prior_bounce_rate: priorStats.bounceRate,
+                    devices: devicesArr,
+                    countries: countriesArr,
+                    pages: pagesArr,
+                    visits_trend: visitsTrendArr,
+                    users_trend: usersTrendArr,
+                    retention_trend: retentionTrendArr,
+                    recent_visitors: recentArr
+                });
                 break;
             }
             case 'associate_session_visits': {
