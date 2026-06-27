@@ -153,12 +153,34 @@ function initLocalStorage() {
             return date.toISOString();
         };
 
+        const generateMockIP = () => `203.135.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 254) + 1}`;
+        const generateMockCountry = () => {
+            const countries = ['Pakistan', 'United States', 'United Kingdom', 'UAE', 'Saudi Arabia'];
+            return countries[Math.floor(Math.random() * countries.length)];
+        };
+        const generateMockDevice = () => {
+            const devices = ['Desktop', 'Mobile', 'Tablet'];
+            const weights = [0.65, 0.25, 0.1]; // desktop 65%, mobile 25%, tablet 10%
+            const r = Math.random();
+            return r < weights[0] ? devices[0] : r < (weights[0] + weights[1]) ? devices[1] : devices[2];
+        };
+        const generateMockPage = () => {
+            const pages = ['/index.html', '/blog.html', '/services.html', '/contact.html', '/article.html'];
+            return pages[Math.floor(Math.random() * pages.length)];
+        };
+
         // Sarah Connor joined 2026-05-10
         const sarahStart = new Date(2026, 4, 10, 0, 0, 0, 0); // May 10, 2026
         for (let i = 0; i < 12; i++) {
             logs.push({
                 email: 'sarah@connor.com',
-                visited_at: randomDateBetween(sarahStart, today)
+                session_id: getUUID(),
+                visited_at: randomDateBetween(sarahStart, today),
+                ip_address: generateMockIP(),
+                country: generateMockCountry(),
+                device: generateMockDevice(),
+                page_url: generateMockPage(),
+                user_agent: 'Mozilla/5.0'
             });
         }
 
@@ -167,7 +189,13 @@ function initLocalStorage() {
         for (let i = 0; i < 45; i++) {
             logs.push({
                 email: 'john@doe.com',
-                visited_at: randomDateBetween(johnStart, today)
+                session_id: getUUID(),
+                visited_at: randomDateBetween(johnStart, today),
+                ip_address: generateMockIP(),
+                country: generateMockCountry(),
+                device: generateMockDevice(),
+                page_url: generateMockPage(),
+                user_agent: 'Mozilla/5.0'
             });
         }
 
@@ -177,7 +205,13 @@ function initLocalStorage() {
         for (let i = 0; i < 100; i++) {
             logs.push({
                 email: null,
-                visited_at: randomDateBetween(anonStart, today)
+                session_id: getUUID(),
+                visited_at: randomDateBetween(anonStart, today),
+                ip_address: generateMockIP(),
+                country: generateMockCountry(),
+                device: generateMockDevice(),
+                page_url: generateMockPage(),
+                user_agent: 'Mozilla/5.0'
             });
         }
 
@@ -256,13 +290,6 @@ window.apiCall = async function (action, data = null) {
                 return blogs || [];
             }
 
-            case 'get_admin_blogs': {
-                const { data: blogs, error } = await window.supabase
-                    .rpc('get_all_blogs_admin');
-                if (error) throw error;
-                return blogs || [];
-            }
-
             case 'save_blog': {
                 const { error } = await window.supabase
                     .rpc('save_blog_secure', {
@@ -272,8 +299,8 @@ window.apiCall = async function (action, data = null) {
                         p_author: data.author,
                         p_summary: data.summary,
                         p_content: data.content,
-                        p_csrf_token: data._csrf_token,
-                        p_status: data.status
+                        p_status: data.status || 'published',
+                        p_csrf_token: data._csrf_token
                     });
                 if (error) throw error;
                 return { success: true };
@@ -568,10 +595,11 @@ window.apiCall = async function (action, data = null) {
                     .rpc('increment_user_visit_secure', { 
                         p_email: data ? data.email : null,
                         p_session_id: data ? data.session_id : null,
-                        p_ip_address: data ? data.ip_address : 'Unknown',
-                        p_country: data ? data.country : 'Unknown',
-                        p_device_type: data ? data.device_type : 'Desktop',
-                        p_page_path: data ? data.page_path : '/'
+                        p_ip_address: data ? data.ip_address : null,
+                        p_country: data ? data.country : null,
+                        p_device: data ? data.device : null,
+                        p_page_url: data ? data.page_url : null,
+                        p_user_agent: data ? data.user_agent : null
                     });
                 if (error) throw error;
                 return { success: true, visits: visits };
@@ -607,9 +635,6 @@ function apiCallLocalStorageFallback(action, data) {
                 resolve({ success: false, message: "Local storage only" });
                 break;
             case 'get_blogs':
-                resolve(blogs.filter(b => b.status !== 'draft').slice().reverse());
-                break;
-            case 'get_admin_blogs':
                 resolve(blogs.slice().reverse());
                 break;
             case 'save_blog':
@@ -804,7 +829,12 @@ function apiCallLocalStorageFallback(action, data) {
                     visitLogs.push({
                         email: email,
                         session_id: sessionId,
-                        visited_at: new Date().toISOString()
+                        visited_at: new Date().toISOString(),
+                        ip_address: data.ip_address || '127.0.0.1',
+                        country: data.country || 'Unknown',
+                        device: data.device || 'Desktop',
+                        page_url: data.page_url || '/home',
+                        user_agent: data.user_agent || 'Mozilla/5.0'
                     });
                     localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
 
@@ -1156,9 +1186,45 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('online', processTrackingQueue);
         setInterval(processTrackingQueue, 15000);
 
+        async function getVisitorInfo() {
+            let ip = sessionStorage.getItem('visitor_ip');
+            let country = sessionStorage.getItem('visitor_country');
+            if (!ip || !country) {
+                try {
+                    const response = await fetch('https://ipapi.co/json/');
+                    if (response.ok) {
+                        const data = await response.json();
+                        ip = data.ip || '127.0.0.1';
+                        country = data.country_name || 'Unknown';
+                        sessionStorage.setItem('visitor_ip', ip);
+                        sessionStorage.setItem('visitor_country', country);
+                    }
+                } catch (e) {
+                    console.warn("Visitor IP API lookup failed:", e);
+                }
+            }
+            // Device detection
+            let device = 'Desktop';
+            const ua = navigator.userAgent || '';
+            if (/Mobi|Android|iPhone|iPad|iPod/i.test(ua)) {
+                device = /iPad/i.test(ua) ? 'Tablet' : 'Mobile';
+            }
+            // Page URL detection
+            const pageUrl = window.location.pathname.split('/').pop() || 'index.html';
+            
+            return {
+                ip_address: ip || '127.0.0.1',
+                country: country || 'Unknown',
+                device: device,
+                page_url: '/' + pageUrl,
+                user_agent: ua
+            };
+        }
+
         async function recordVisit(email = null) {
             const sessionId = sessionStorage.getItem('session_id');
-            const visitPayload = { email, session_id: sessionId };
+            const info = await getVisitorInfo();
+            const visitPayload = { email, session_id: sessionId, ...info };
             try {
                 if (!window.useSupabase) {
                     // Log locally for offline mode fallback, but raise error so it gets queued
