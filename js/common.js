@@ -1459,12 +1459,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             const email = currentUser ? currentUser.email : null;
             
-            const trackedSession = sessionStorage.getItem('user_visit_tracked');
-            const trackedEmail = sessionStorage.getItem('user_logged_visit_tracked');
-
-            if (!trackedSession || (email && trackedEmail !== email)) {
-                await recordVisit(email);
-            }
+            // Track every page view to capture top pages, session duration, and article reads
+            await recordVisit(email);
         }
 
         // Also process tracking queue initially
