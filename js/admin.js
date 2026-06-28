@@ -104,7 +104,7 @@ function generateBuckets(startDate, endDate) {
             bStart.setHours(h, 0, 0, 0);
             const bEnd = new Date(baseDate);
             bEnd.setHours(h, 59, 59, 999);
-            
+
             let label = h === 0 ? '12 AM' : h === 12 ? '12 PM' : h < 12 ? `${h} AM` : `${h - 12} PM`;
             buckets.push({ start: bStart, end: bEnd, label, visits: 0, signups: 0, duration: 0, durationCount: 0, bounces: 0, sessions: {} });
         }
@@ -119,10 +119,10 @@ function generateBuckets(startDate, endDate) {
             const bStart = new Date(current);
             const bEnd = new Date(current);
             bEnd.setHours(23, 59, 59, 999);
-            
+
             const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const label = `${shortMonths[current.getMonth()]} ${current.getDate()}`;
-            
+
             buckets.push({ start: bStart, end: bEnd, label, visits: 0, signups: 0, duration: 0, durationCount: 0, bounces: 0, sessions: {} });
             current.setDate(current.getDate() + 1);
         }
@@ -138,10 +138,10 @@ function generateBuckets(startDate, endDate) {
             const bEnd = new Date(current);
             bEnd.setDate(bEnd.getDate() + 6);
             bEnd.setHours(23, 59, 59, 999);
-            
+
             const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const label = `Wk of ${shortMonths[current.getMonth()]} ${current.getDate()}`;
-            
+
             buckets.push({ start: bStart, end: bEnd, label, visits: 0, signups: 0, duration: 0, durationCount: 0, bounces: 0, sessions: {} });
             current.setDate(current.getDate() + 7);
         }
@@ -156,10 +156,10 @@ function generateBuckets(startDate, endDate) {
         while (current <= limit) {
             const bStart = new Date(current);
             const bEnd = new Date(current.getFullYear(), current.getMonth() + 1, 0, 23, 59, 59, 999);
-            
+
             const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const label = `${shortMonths[current.getMonth()]} ${current.getFullYear()}`;
-            
+
             buckets.push({ start: bStart, end: bEnd, label, visits: 0, signups: 0, duration: 0, durationCount: 0, bounces: 0, sessions: {} });
             current.setMonth(current.getMonth() + 1);
         }
@@ -170,11 +170,11 @@ function generateBuckets(startDate, endDate) {
 // ── Analytics: Main Load ─────────────────────────────────────────────
 async function loadAnalyticsData() {
     await window.backendReady;
-    
+
     // Determine bounds
     const preset = window.adminState.analyticsPreset;
     let startDate, endDate;
-    
+
     if (preset === 'custom') {
         const startVal = document.getElementById('analytics-start-date')?.value;
         const endVal = document.getElementById('analytics-end-date')?.value;
@@ -184,7 +184,7 @@ async function loadAnalyticsData() {
         const range = getAnalyticsDateRange(preset);
         startDate = range.start;
         endDate = range.end;
-        
+
         // Sync UI date pickers
         const startInput = document.getElementById('analytics-start-date');
         const endInput = document.getElementById('analytics-end-date');
@@ -226,14 +226,14 @@ async function loadAnalyticsData() {
     const updateChangeLabel = (elementId, current, prior) => {
         const el = document.getElementById(elementId);
         if (!el) return;
-        
+
         let percent = 0;
         if (prior > 0) {
             percent = Math.round(((current - prior) / prior) * 100);
         } else if (current > 0) {
             percent = 100;
         }
-        
+
         if (percent > 0) {
             el.innerText = `+${percent}% vs last period`;
             el.className = "text-[10px] text-green-500 font-semibold mt-1";
@@ -263,7 +263,7 @@ async function loadAnalyticsData() {
             return itemTime >= bucket.start && itemTime <= bucket.end;
         });
         bucket.visits = matchingVisit ? Number(matchingVisit.count) : 0;
-        
+
         const matchingUser = (res.users_trend || []).find(item => {
             const itemTime = new Date(item.bucket_time);
             return itemTime >= bucket.start && itemTime <= bucket.end;
@@ -330,7 +330,7 @@ function destroyAllCharts() {
     ];
     instances.forEach(key => {
         if (window.adminState[key]) {
-            try { window.adminState[key].destroy(); } catch(e) {}
+            try { window.adminState[key].destroy(); } catch (e) { }
             window.adminState[key] = null;
         }
     });
@@ -338,7 +338,7 @@ function destroyAllCharts() {
 
 // ── Analytics: Render All 8 Charts (Solid Colors, No Gradients) ──────
 function renderAnalyticsCharts(
-    labels, userData, visitData, retentionData, articlesReadData, 
+    labels, userData, visitData, retentionData, articlesReadData,
     devicePct, topPagesLabels, topPagesData, countryLabels, countryData
 ) {
     destroyAllCharts();
@@ -522,7 +522,7 @@ function renderAnalyticsCharts(
                             label: ctx => {
                                 if (ctx.datasetIndex === 0) {
                                     const s = ctx.parsed.y;
-                                    return ` ${Math.floor(s/60)}m ${s%60}s avg duration`;
+                                    return ` ${Math.floor(s / 60)}m ${s % 60}s avg duration`;
                                 }
                                 return null;
                             }
@@ -536,7 +536,7 @@ function renderAnalyticsCharts(
                         border: { display: false },
                         ticks: {
                             color: '#888', font: { size: 10 },
-                            callback: v => `${Math.floor(v/60)}m`
+                            callback: v => `${Math.floor(v / 60)}m`
                         }
                     },
                     x: {
@@ -737,8 +737,8 @@ function initAnalyticsPresets() {
             window.adminState.analyticsPreset = preset;
 
             const { start, end } = getAnalyticsDateRange(preset);
-            if (startInput) startInput.value = start.toISOString().slice(0,10);
-            if (endInput) endInput.value = end.toISOString().slice(0,10);
+            if (startInput) startInput.value = start.toISOString().slice(0, 10);
+            if (endInput) endInput.value = end.toISOString().slice(0, 10);
 
             loadAnalyticsData();
         });
@@ -765,7 +765,7 @@ function initAnalyticsPresets() {
 // Quill DiagramBlot registration
 function registerDiagramBlot() {
     if (typeof Quill === 'undefined') return;
-    try { if (Quill.find && Quill.find('diagram')) return; } catch(e) {}
+    try { if (Quill.find && Quill.find('diagram')) return; } catch (e) { }
     try {
         const BlockEmbed = Quill.import('blots/block/embed');
         class DiagramBlot extends BlockEmbed {
@@ -776,11 +776,11 @@ function registerDiagramBlot() {
             }
             static value(domNode) { return domNode.textContent; }
         }
-        DiagramBlot.blotName  = 'diagram';
-        DiagramBlot.tagName   = 'pre';
+        DiagramBlot.blotName = 'diagram';
+        DiagramBlot.tagName = 'pre';
         DiagramBlot.className = 'ql-diagram';
         Quill.register(DiagramBlot, true);
-    } catch(e) { console.warn('DiagramBlot registration failed:', e); }
+    } catch (e) { console.warn('DiagramBlot registration failed:', e); }
 }
 
 function initQuill() {
@@ -842,8 +842,158 @@ function initQuill() {
         diagramBtn.addEventListener('click', () => window.openDiagramModal());
         diagramGroup.appendChild(diagramBtn);
         toolbarContainer.appendChild(diagramGroup);
+
+        // Append the List Start controller directly into the Quill toolbar container
+        const listStartGroup = document.createElement('span');
+        listStartGroup.className = 'ql-formats ql-list-start-group';
+        listStartGroup.style.display = 'none'; // hidden by default
+        listStartGroup.style.alignItems = 'center';
+        listStartGroup.style.gap = '6px';
+        listStartGroup.style.borderLeft = '1px solid #dfdfdf';
+        listStartGroup.style.paddingLeft = '8px';
+        listStartGroup.style.marginLeft = '8px';
+
+        listStartGroup.innerHTML = `
+            <span style="font-size: 11px; font-weight: 500; color: #707070; white-space: nowrap;">Starts at:</span>
+            <input type="number" id="ql-list-start-input" min="1" value="1" style="width: 44px; height: 24px; border: 1px solid #dfdfdf; border-radius: 4px; text-align: center; font-size: 11px; font-weight: 600; outline: none; background: #ffffff; color: #171717;">
+            <button type="button" id="ql-list-follow-btn" title="Follow Previous List Number" style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1px solid #dfdfdf; border-radius: 4px; cursor: pointer; padding: 0; background: none; color: #555;">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11a5 5 0 0 1 5 5v2a5 5 0 0 1-5 5H3"/><polyline points="7 11 3 7 7 3"/></svg>
+            </button>
+        `;
+
+        toolbarContainer.appendChild(listStartGroup);
+
+        const input = listStartGroup.querySelector('#ql-list-start-input');
+        const followBtn = listStartGroup.querySelector('#ql-list-follow-btn');
+
+        // Handle typing in the Starts At input box
+        input.addEventListener('input', (e) => {
+            const ol = listStartGroup.activeOl;
+            if (ol) {
+                const val = parseInt(e.target.value, 10);
+                const allOls = Array.from(quill.root.querySelectorAll('ol'));
+                const olIndex = allOls.indexOf(ol);
+
+                window.adminState.manualListStarts = window.adminState.manualListStarts || new Map();
+                if (!isNaN(val) && val > 0) {
+                    window.adminState.manualListStarts.set(olIndex, val);
+                    ol.setAttribute('start', val);
+                } else {
+                    window.adminState.manualListStarts.delete(olIndex);
+                    ol.removeAttribute('start');
+                }
+                window.autoAlignListStartAttributes();
+                quill.update();
+            }
+        });
+
+        // Handle clicking the Follow Previous button
+        followBtn.addEventListener('click', () => {
+            const ol = listStartGroup.activeOl;
+            if (!ol) return;
+            const allOls = Array.from(quill.root.querySelectorAll('ol'));
+            const index = allOls.indexOf(ol);
+
+            window.adminState.manualListStarts = window.adminState.manualListStarts || new Map();
+            if (index > 0) {
+                let totalItems = 0;
+                for (let i = 0; i < index; i++) {
+                    const prevOl = allOls[i];
+                    const startVal = parseInt(prevOl.getAttribute('start') || '1', 10);
+                    const numItems = prevOl.querySelectorAll('li').length;
+                    totalItems = startVal + numItems - 1;
+                }
+                const nextStart = totalItems + 1;
+                ol.setAttribute('start', nextStart);
+                input.value = nextStart;
+                window.adminState.manualListStarts.set(index, nextStart);
+            } else {
+                ol.setAttribute('start', 1);
+                input.value = 1;
+                window.adminState.manualListStarts.set(index, 1);
+            }
+            window.autoAlignListStartAttributes();
+            quill.update();
+        });
+
+        // Bind editor selection-change and text-change events to toggle toolbar control and auto-align
+        quill.on('selection-change', () => {
+            window.autoAlignListStartAttributes();
+            updateListStartToolbarControl();
+        });
+        quill.on('text-change', () => {
+            window.autoAlignListStartAttributes();
+            updateListStartToolbarControl();
+        });
+
     }
 }
+
+// ── List Start Toolbar Controller Helper ───────────────────────────────
+window.updateListStartToolbarControl = function () {
+    const group = document.querySelector('.ql-list-start-group');
+    const input = document.getElementById('ql-list-start-input');
+    const quill = window.adminState.quill;
+    if (!quill || !group || !input) return;
+
+    const range = quill.getSelection();
+    if (!range) {
+        group.style.display = 'none';
+        return;
+    }
+
+    const [line, offset] = quill.getLine(range.index);
+    if (!line || !line.domNode) {
+        group.style.display = 'none';
+        return;
+    }
+
+    const ol = line.domNode.closest('ol');
+    if (!ol) {
+        group.style.display = 'none';
+        return;
+    }
+
+    // Toggle display of control inside toolbar
+    group.style.display = 'inline-flex';
+    group.activeOl = ol;
+    input.value = ol.getAttribute('start') || '1';
+};
+
+window.autoAlignListStartAttributes = function () {
+    const quill = window.adminState.quill;
+    if (!quill) return;
+
+    const allOls = Array.from(quill.root.querySelectorAll('ol'));
+    let currentCounter = 1;
+
+    // Walk through all direct block-level children of the editor root
+    const children = Array.from(quill.root.children);
+    children.forEach((child) => {
+        const tagName = child.tagName;
+        if (tagName === 'H1' || tagName === 'H2' || tagName === 'H3' || tagName === 'HR') {
+            // Reset counter to 1 when entering a new section
+            currentCounter = 1;
+        } else if (tagName === 'OL') {
+            const olIndex = allOls.indexOf(child);
+            const manualStart = window.adminState.manualListStarts?.get(olIndex);
+
+            if (manualStart !== undefined) {
+                currentCounter = manualStart;
+            }
+
+            // Directly inject the start attribute in the editor's live DOM
+            child.setAttribute('start', currentCounter);
+
+            // Increment counter by the number of list items (li) in this block
+            const numItems = child.querySelectorAll('li').length;
+            currentCounter += numItems;
+        }
+    });
+};
+
+
+
 
 // Diagram Modal helpers
 window.openDiagramModal = function () {
@@ -961,6 +1111,9 @@ window.toggleBlogModal = function (show, isEdit = false) {
         gsap.to(editorPanel, { opacity: 1, duration: 0.3 });
         gsap.to(editorContent, { x: 0, duration: 0.3, ease: 'power2.out' });
     } else {
+        const listTooltip = document.getElementById('list-start-tooltip');
+        if (listTooltip) listTooltip.style.display = 'none';
+
         gsap.to(editorPanel, { opacity: 0, duration: 0.2 });
         gsap.to(editorContent, { x: '100%', duration: 0.2 });
         setTimeout(() => editorPanel.classList.add('pointer-events-none'), 200);
@@ -994,6 +1147,9 @@ window.deleteBlogPost = async function (id) {
 };
 
 function getBlogFormValues() {
+    if (window.adminState.quill) {
+        window.autoAlignListStartAttributes();
+    }
     return {
         id: document.getElementById('edit-post-id').value,
         title: document.getElementById('blog-title').value.trim(),
@@ -1003,6 +1159,7 @@ function getBlogFormValues() {
         content: window.adminState.quill ? window.adminState.quill.root.innerHTML : ''
     };
 }
+
 
 window.handleBlogSave = async function (e) {
     e.preventDefault();
@@ -1089,7 +1246,7 @@ function getPresetDateRange(preset) {
             end = new Date(Date.UTC(targetYMD.year, targetYMD.month, 0)); break;
         case 'all-time': default: return { startStr: '', endStr: '' };
     }
-    const fmt = d => `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+    const fmt = d => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
     return { startStr: fmt(start), endStr: fmt(end) };
 }
 
@@ -1099,7 +1256,7 @@ function formatLocalShortDate(dateStr) {
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
         const targetTime = new Date(d.getTime() + (TARGET_TIMEZONE_OFFSET_MINUTES * 60000));
-        return `${targetTime.getUTCFullYear()}-${String(targetTime.getUTCMonth()+1).padStart(2,'0')}-${String(targetTime.getUTCDate()).padStart(2,'0')}`;
+        return `${targetTime.getUTCFullYear()}-${String(targetTime.getUTCMonth() + 1).padStart(2, '0')}-${String(targetTime.getUTCDate()).padStart(2, '0')}`;
     } catch (e) { return String(dateStr).substring(0, 10); }
 }
 

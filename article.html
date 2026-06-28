@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="meta-title-tag">DiginixIT Insights Blog | Read Article</title>
-    <meta name="description" id="meta-desc-tag" content="Read developer audits, technical web development insights, design guidelines, and Core Web Vitals optimization guides on DiginixIT Insights Blog.">
+    <meta name="description" id="meta-desc-tag"
+        content="Read developer audits, technical web development insights, design guidelines, and Core Web Vitals optimization guides on DiginixIT Insights Blog.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" id="canonical-link" href="https://diginixit.com/article.html">
 
@@ -12,14 +14,16 @@
     <meta property="og:type" content="article">
     <meta property="og:url" id="og-url-tag" content="https://diginixit.com/blog.html">
     <meta property="og:title" id="og-title-tag" content="DiginixIT | Read Insight">
-    <meta property="og:description" id="og-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
+    <meta property="og:description" id="og-desc-tag"
+        content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
     <meta property="og:image" id="og-image-tag" content="https://diginixit.com/images/og-home.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" id="twitter-url-tag" content="https://diginixit.com/blog.html">
     <meta name="twitter:title" id="twitter-title-tag" content="DiginixIT | Read Insight">
-    <meta name="twitter:description" id="twitter-desc-tag" content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
+    <meta name="twitter:description" id="twitter-desc-tag"
+        content="Read bespoke technical audits, WebGL animations development, and Core Web Vitals optimization guidelines on the DiginixIT Insights Blog.">
     <meta name="twitter:image" id="twitter-image-tag" content="https://diginixit.com/images/og-home.jpg">
 
     <!-- DNS Prefetch & Preconnect -->
@@ -29,9 +33,9 @@
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+
     <meta name="color-scheme" content="light">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
@@ -39,9 +43,11 @@
 
     <!-- DOMPurify for XSS Protection -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-    
+
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind Configuration Inline -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,7 +55,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { 
+                    fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         serif: ['Lora', 'serif']
                     },
@@ -82,14 +88,20 @@
     <!-- Article typography customization to follow design.md -->
     <style>
         /* ── Page-level overflow fix ─────────────────────────────────── */
-        html, body {
+        html,
+        body {
             overflow-x: hidden;
             max-width: 100%;
         }
+
         * {
             box-sizing: border-box;
         }
-        img, video, iframe, table {
+
+        img,
+        video,
+        iframe,
+        table {
             max-width: 100%;
         }
 
@@ -103,11 +115,21 @@
             word-break: break-word;
             overflow-wrap: break-word;
         }
+
         @media (min-width: 640px) {
-            #article-content { font-size: 1.25rem; }
+            #article-content {
+                font-size: 1.25rem;
+            }
         }
-        #article-content p { margin-bottom: 1.75rem; font-weight: 400; }
-        #article-content h1, #article-content h2, #article-content h3 {
+
+        #article-content p {
+            margin-bottom: 1.75rem;
+            font-weight: 400;
+        }
+
+        #article-content h1,
+        #article-content h2,
+        #article-content h3 {
             font-family: 'Inter', sans-serif;
             color: var(--color-ink);
             font-weight: 500;
@@ -117,9 +139,19 @@
             letter-spacing: -0.03em;
             word-break: break-word;
         }
-        #article-content h1 { font-size: clamp(1.5rem, 4vw, 2rem); }
-        #article-content h2 { font-size: clamp(1.25rem, 3.5vw, 1.75rem); }
-        #article-content h3 { font-size: clamp(1.1rem, 3vw, 1.4rem); }
+
+        #article-content h1 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        #article-content h2 {
+            font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+        }
+
+        #article-content h3 {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+        }
+
         #article-content a {
             color: var(--color-ink);
             text-decoration: underline;
@@ -127,31 +159,40 @@
             transition: opacity 0.2s ease;
             word-break: break-all;
         }
-        #article-content a:hover { opacity: 0.8; }
-        #article-content ul, #article-content ol {
-            margin-bottom: 1.75rem;
-            padding-left: 1.5rem;
+
+        #article-content a:hover {
+            opacity: 0.8;
         }
-        /* Force clean native bullets and ordered numbers, matching the editor formats */
-        #article-content ul,
+
+        /* Restore standard native HTML list styling on the article page */
+        #article-content ul {
+            list-style-type: disc !important;
+            padding-left: 1.5rem !important;
+            margin-bottom: 1.75rem;
+        }
+        #article-content ol {
+            list-style-type: decimal !important;
+            padding-left: 1.5rem !important;
+            margin-bottom: 1.75rem;
+        }
         #article-content ul li,
         #article-content li[data-list="bullet"] {
             list-style-type: disc !important;
         }
-        #article-content ol,
         #article-content ol li,
         #article-content li[data-list="ordered"] {
             list-style-type: decimal !important;
         }
-        #article-content li { 
-            margin-bottom: 0.5rem; 
+        #article-content li {
+            margin-bottom: 0.5rem;
         }
-        /* Hide any duplicate markers or Quill UI helper structures that may have been parsed or injected */
         #article-content li::before,
         #article-content .ql-ui {
             display: none !important;
             content: none !important;
         }
+
+
 
         #article-content blockquote {
             border-left: 3px solid var(--color-primary);
@@ -160,13 +201,16 @@
             color: var(--color-ink-mute);
             margin: 2rem 0;
         }
-        #article-content pre, #article-content code {
+
+        #article-content pre,
+        #article-content code {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             background-color: var(--color-canvas-soft);
             padding: 0.2em 0.4em;
             border-radius: var(--radius-xs);
             font-size: 0.85em;
         }
+
         #article-content pre {
             padding: 1rem;
             overflow-x: auto;
@@ -177,6 +221,7 @@
             max-width: 100%;
             white-space: pre-wrap;
         }
+
         #article-content pre code {
             background-color: transparent;
             padding: 0;
@@ -199,8 +244,10 @@
             /* ── Scroll behaviour ── */
             overflow-x: auto;
             overflow-y: hidden;
-            -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
-            max-width: 100%;                   /* never exceed the article column */
+            -webkit-overflow-scrolling: touch;
+            /* smooth momentum scroll on iOS */
+            max-width: 100%;
+            /* never exceed the article column */
             box-sizing: border-box;
             /* ── Preserve exact whitespace ── */
             white-space: pre;
@@ -211,23 +258,28 @@
             line-height: 1.65;
             margin-bottom: 1.75rem;
             border-left: 3px solid #3ecf8e;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
         }
+
         /* Show a subtle scrollbar so users know they can scroll sideways */
         #article-content pre.ql-diagram::-webkit-scrollbar {
             height: 5px;
         }
+
         #article-content pre.ql-diagram::-webkit-scrollbar-track {
             background: #1e1e1e;
             border-radius: 0 0 8px 8px;
         }
+
         #article-content pre.ql-diagram::-webkit-scrollbar-thumb {
             background: #3ecf8e55;
             border-radius: 4px;
         }
+
         #article-content pre.ql-diagram::-webkit-scrollbar-thumb:hover {
             background: #3ecf8e99;
         }
+
         /* On small screens: tighter padding + smaller font, still scrollable */
         @media (max-width: 640px) {
             #article-content pre.ql-diagram {
@@ -341,12 +393,16 @@
             position: relative;
             flex-shrink: 0;
         }
+
         .share-icon-btn:hover {
             border-color: #171717;
             color: #171717;
             background: #fafafa;
         }
-        .share-icon-btn svg { display: block; }
+
+        .share-icon-btn svg {
+            display: block;
+        }
 
         /* ── Responsive ─────────────────────────────────────────────── */
         /* Article title fluid sizing */
@@ -362,12 +418,20 @@
                 padding-right: 1rem !important;
                 padding-top: 5.5rem !important;
             }
-            #article-content { font-size: 1rem !important; }
+
+            #article-content {
+                font-size: 1rem !important;
+            }
+
             .article-meta-bar {
                 grid-template-columns: 32px 1fr auto;
                 column-gap: 0.5rem;
             }
-            .meta-avatar { width: 32px; height: 32px; }
+
+            .meta-avatar {
+                width: 32px;
+                height: 32px;
+            }
         }
     </style>
 
@@ -395,6 +459,7 @@
     }
     </script>
 </head>
+
 <body class="bg-canvas text-ink">
 
     <div class="noise"></div>
@@ -403,10 +468,12 @@
     <div id="reading-progress" class="fixed top-0 left-0 h-1 bg-primary z-[110] w-0 transition-all duration-75"></div>
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12" aria-label="Main Navigation">
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 px-6 md:px-12"
+        aria-label="Main Navigation">
         <div class="max-w-[1280px] mx-auto flex justify-between items-center">
-            <a href="./" class="text-xl font-medium tracking-tighter text-ink" style="letter-spacing: -0.04em;">DIGINIXIT.</a>
-            
+            <a href="./" class="text-xl font-medium tracking-tighter text-ink"
+                style="letter-spacing: -0.04em;">DIGINIXIT.</a>
+
             <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
                 <a href="./" class="nav-item-link" id="nav-home">Home</a>
                 <a href="services.html" class="nav-item-link" id="nav-services">Services</a>
@@ -416,7 +483,9 @@
 
             <!-- Desktop Auth / CTA -->
             <div class="hidden md:flex space-x-4 items-center" id="desktop-auth-container">
-                <a href="auth.html?mode=signin" class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign In</a>
+                <a href="auth.html?mode=signin"
+                    class="text-sm font-medium text-ink-mute hover:text-ink transition-colors" id="btn-signin">Sign
+                    In</a>
                 <div class="magnetic-wrap">
                     <a href="auth.html?mode=signup" class="btn-primary" id="btn-signup">Get Started</a>
                 </div>
@@ -432,17 +501,21 @@
     </nav>
 
     <!-- Mobile Drawer Overlay Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
+    <div id="mobile-menu"
+        class="fixed inset-0 z-40 bg-canvas transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8 pt-24">
         <div class="flex flex-col space-y-6 text-2xl font-medium" style="letter-spacing: -0.02em;">
             <a href="./" class="mobile-nav-link hover:text-ink-mute transition-colors">Home</a>
             <a href="services.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Services</a>
             <a href="blog.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Blog</a>
             <a href="contact.html" class="mobile-nav-link hover:text-ink-mute transition-colors">Contact</a>
         </div>
-        
+
         <div class="flex flex-col space-y-4" id="mobile-auth-container">
-            <a href="auth.html?mode=signin" class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm" id="mobile-btn-signin">Sign In</a>
-            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm" id="mobile-btn-signup">Get Started</a>
+            <a href="auth.html?mode=signin"
+                class="w-full text-center py-4 border border-hairline rounded-md font-medium hover:bg-canvas-soft transition-colors text-sm"
+                id="mobile-btn-signin">Sign In</a>
+            <a href="auth.html?mode=signup" class="btn-primary w-full text-center py-4 text-sm"
+                id="mobile-btn-signup">Get Started</a>
         </div>
     </div>
 
@@ -450,11 +523,13 @@
     <main class="pt-32 pb-20 px-6">
         <div class="max-w-[1280px] mx-auto">
             <div class="max-w-3xl mx-auto" id="main-article-view">
-                
+
                 <!-- Breadcrumbs -->
-                <div class="mb-8 flex items-center space-x-2 text-xs font-medium text-ink-mute uppercase tracking-widest">
+                <div
+                    class="mb-8 flex items-center space-x-2 text-xs font-medium text-ink-mute uppercase tracking-widest">
                     <a href="blog.html" class="hover:text-ink transition-colors flex items-center gap-1 group">
-                        <i data-lucide="arrow-left" class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform"></i>
+                        <i data-lucide="arrow-left"
+                            class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform"></i>
                         Back to Insights
                     </a>
                     <span>/</span>
@@ -464,7 +539,9 @@
                 <!-- Article Body Wrapper (Centered max-w-2xl mx-auto) -->
                 <div class="max-w-2xl mx-auto">
                     <!-- Article Title -->
-                    <h1 id="article-title" class="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-6 leading-tight text-ink" style="letter-spacing: -0.03em;">
+                    <h1 id="article-title"
+                        class="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-6 leading-tight text-ink"
+                        style="letter-spacing: -0.03em;">
                         Loading article...
                     </h1>
 
@@ -486,24 +563,32 @@
                         <!-- Col 3, row 2: Share Icons -->
                         <div class="share-toolbar">
                             <!-- Twitter / X -->
-                            <a href="#" id="share-twitter" target="_blank" class="share-icon-btn" title="Share on Twitter / X" aria-label="Share on Twitter">
+                            <a href="#" id="share-twitter" target="_blank" class="share-icon-btn"
+                                title="Share on Twitter / X" aria-label="Share on Twitter">
                                 <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" stroke="none">
-                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    <path
+                                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                                 </svg>
                             </a>
                             <!-- LinkedIn -->
-                            <a href="#" id="share-linkedin" target="_blank" class="share-icon-btn" title="Share on LinkedIn" aria-label="Share on LinkedIn">
+                            <a href="#" id="share-linkedin" target="_blank" class="share-icon-btn"
+                                title="Share on LinkedIn" aria-label="Share on LinkedIn">
                                 <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" stroke="none">
-                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    <path
+                                        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                 </svg>
                             </a>
                             <!-- Copy Link -->
-                            <button id="share-copy" class="share-icon-btn" title="Copy article link" aria-label="Copy link">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                            <button id="share-copy" class="share-icon-btn" title="Copy article link"
+                                aria-label="Copy link">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                                 </svg>
-                                <span id="copy-toast" class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-primary text-ink text-[10px] font-medium rounded-sm opacity-0 pointer-events-none transition-opacity duration-200 whitespace-nowrap">Link Copied!</span>
+                                <span id="copy-toast"
+                                    class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-primary text-ink text-[10px] font-medium rounded-sm opacity-0 pointer-events-none transition-opacity duration-200 whitespace-nowrap">Link
+                                    Copied!</span>
                             </button>
                         </div>
 
@@ -519,11 +604,14 @@
                 <section class="border-t border-hairline mt-20 pt-16" aria-label="Related Insights">
                     <div class="flex justify-between items-end mb-8">
                         <div>
-                            <h2 class="text-2xl font-medium tracking-tight" style="letter-spacing: -0.02em;">Related Insights</h2>
+                            <h2 class="text-2xl font-medium tracking-tight" style="letter-spacing: -0.02em;">Related
+                                Insights</h2>
                         </div>
-                        <a href="blog.html" class="text-xs font-medium text-ink hover:text-ink-mute flex items-center gap-1 group">
+                        <a href="blog.html"
+                            class="text-xs font-medium text-ink hover:text-ink-mute flex items-center gap-1 group">
                             View all insights
-                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+                            <i data-lucide="arrow-right"
+                                class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                     <div id="related-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -537,7 +625,8 @@
 
     <!-- Footer -->
     <footer class="footer-light">
-        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
+        <div
+            class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-y-4 md:gap-y-0">
             <div class="font-medium" style="letter-spacing: -0.04em;">DIGINIXIT.</div>
             <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
                 <a href="./">Home</a>
@@ -590,12 +679,12 @@
             // Set Title & Meta tags dynamically for SEO & Social Cards
             const currentUrl = `https://diginixit.com/article.html?id=${post.id}`;
             const postImage = 'https://diginixit.com/images/og-home.jpg';
-            
+
             document.title = `${post.title} | DiginixIT`;
-            
+
             const metaTitle = document.getElementById('meta-title-tag');
             if (metaTitle) metaTitle.innerText = `${post.title} | DiginixIT`;
-            
+
             const metaDesc = document.getElementById('meta-desc-tag');
             if (metaDesc) metaDesc.content = post.summary;
 
@@ -658,15 +747,15 @@
 
             const titleEl = document.getElementById('article-title');
             if (titleEl) titleEl.innerText = post.title;
-            
+
             // Set Categories
             const breadcrumbEl = document.getElementById('article-category-breadcrumb');
             if (breadcrumbEl) breadcrumbEl.innerText = post.category;
-            
+
             // Date & Author details
             const dateEl = document.getElementById('article-date');
             if (dateEl) dateEl.innerText = formatLocalShortDate(post.date);
-            
+
             const authorEl = document.getElementById('article-author');
             if (authorEl) authorEl.innerText = post.author;
 
@@ -690,7 +779,7 @@
                 if (hasHtml) {
                     contentsContainer.innerHTML = DOMPurify.sanitize(post.content, {
                         ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 's', 'strike', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'span', 'blockquote'],
-                        ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'class'],
+                        ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'class', 'start'],
                         FORCE_HTTPS: true
                     });
                 } else {
@@ -698,12 +787,13 @@
                     contentsContainer.innerHTML = paragraphs.map((p) => {
                         const cleanP = DOMPurify.sanitize(p, {
                             ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre'],
-                            ALLOWED_ATTR: ['href', 'target', 'rel'],
+                            ALLOWED_ATTR: ['href', 'target', 'rel', 'start'],
                             FORCE_HTTPS: true
                         });
                         return `<p>${cleanP}</p>`;
                     }).join('');
                 }
+
 
                 // ── Post-render diagram fix ─────────────────────────────────
                 // Quill sometimes stores newlines inside <pre.ql-diagram> as <br>
@@ -717,6 +807,27 @@
                     pre.textContent = rawText;
                 });
 
+                // ── Post-render list starting number alignment ──────────────
+                // Automatically calculates sequential numbering for all separate <ol> lists
+                // that are part of the same section (split by paragraphs or bullets, but reset on headings/hr)
+                const allElements = Array.from(contentsContainer.querySelectorAll('ol, h1, h2, h3, hr'));
+                let currentCounter = 1;
+
+                allElements.forEach((el) => {
+                    const tagName = el.tagName;
+                    if (tagName === 'H1' || tagName === 'H2' || tagName === 'H3' || tagName === 'HR') {
+                        // Reset counter to 1 when entering a new section heading
+                        currentCounter = 1;
+                    } else if (tagName === 'OL') {
+                        // Set start attribute natively based on current counter
+                        el.setAttribute('start', currentCounter);
+                        const numItems = el.querySelectorAll('li').length;
+                        currentCounter += numItems;
+                    }
+                });
+
+
+
             } else if (contentsContainer) {
                 contentsContainer.innerHTML = `<p class="italic text-ink-mute">No content available for this article.</p>`;
             }
@@ -725,7 +836,7 @@
             const shareUrl = window.location.href;
             const shareTwitter = document.getElementById('share-twitter');
             if (shareTwitter) shareTwitter.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`;
-            
+
             const shareLinkedin = document.getElementById('share-linkedin');
             if (shareLinkedin) shareLinkedin.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
 
@@ -804,7 +915,7 @@
             // Select related posts (same category first, then fallback to others)
             let matchingCategory = filterList.filter(b => b.category === currentPost.category);
             let otherCategories = filterList.filter(b => b.category !== currentPost.category);
-            
+
             let relatedBlogs = [...matchingCategory, ...otherCategories].slice(0, 3);
 
             if (relatedBlogs.length === 0) {
@@ -840,4 +951,5 @@
         });
     </script>
 </body>
+
 </html>
