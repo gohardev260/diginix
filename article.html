@@ -132,9 +132,27 @@
             margin-bottom: 1.75rem;
             padding-left: 1.5rem;
         }
-        #article-content ul { list-style-type: disc; }
-        #article-content ol { list-style-type: decimal; }
-        #article-content li { margin-bottom: 0.5rem; }
+        /* Force clean native bullets and ordered numbers, matching the editor formats */
+        #article-content ul,
+        #article-content ul li,
+        #article-content li[data-list="bullet"] {
+            list-style-type: disc !important;
+        }
+        #article-content ol,
+        #article-content ol li,
+        #article-content li[data-list="ordered"] {
+            list-style-type: decimal !important;
+        }
+        #article-content li { 
+            margin-bottom: 0.5rem; 
+        }
+        /* Hide any duplicate markers or Quill UI helper structures that may have been parsed or injected */
+        #article-content li::before,
+        #article-content .ql-ui {
+            display: none !important;
+            content: none !important;
+        }
+
         #article-content blockquote {
             border-left: 3px solid var(--color-primary);
             padding-left: 1.5rem;
