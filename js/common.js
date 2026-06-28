@@ -1156,6 +1156,11 @@ function apiCallLocalStorageFallback(action, data) {
 async function applySiteSettings() {
     const settings = await window.apiCall('get_settings');
     if (settings) {
+        // Cache settings in localStorage for instant retrieval on next page loads
+        try {
+            localStorage.setItem('settings', JSON.stringify(settings));
+        } catch (e) {}
+
         // --- Maintenance Mode Redirection & Support Info Injection ---
         const href = window.location.href.toLowerCase();
         const pathname = window.location.pathname.toLowerCase();

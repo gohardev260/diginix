@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Instant check for maintenance mode to prevent page flash of content
+        try {
+            if (JSON.parse(localStorage.getItem('settings') || '{}').maintenanceMode) {
+                document.documentElement.style.display = 'none';
+                window.location.replace('maintenance.html');
+            }
+        } catch (e) {}
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DiginixIT | User Profile Panel</title>

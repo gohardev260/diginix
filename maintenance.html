@@ -51,82 +51,88 @@
 
     <!-- Core Libraries -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
 
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     
     <style>
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.03); }
+        @keyframes slow-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .pulse-animation {
-            animation: pulse-slow 3s infinite ease-in-out;
+        .rotate-slow {
+            animation: slow-rotate 12s linear infinite;
         }
-        .dot-pulse {
+        .dot-ping {
             animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
     </style>
 </head>
-<body class="bg-canvas text-ink min-h-screen flex flex-col justify-between">
+<body class="bg-canvas text-ink min-h-screen flex flex-col justify-between overflow-hidden">
 
     <div class="noise"></div>
 
     <!-- Header Logo -->
-    <header class="py-6 px-6 md:px-12">
+    <header class="py-6 px-6 md:px-12 z-20">
         <div class="max-w-[1280px] mx-auto flex justify-start items-center">
             <span class="text-xl font-medium tracking-tighter text-ink site-logo-text" style="letter-spacing: -0.04em;">DIGINIXIT.</span>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 flex items-center justify-center px-6 py-12">
-        <div class="max-w-md w-full bg-white border border-hairline rounded-xl p-8 shadow-sm relative text-center pulse-animation">
+    <main class="flex-1 flex items-center justify-center px-6 py-12 relative">
+        <!-- Massive Background Text (Like 404 page) -->
+        <div class="select-none pointer-events-none absolute inset-0 flex items-center justify-center z-0" aria-hidden="true">
+            <span id="bg-text" style="font-size: clamp(8rem, 25vw, 18rem); font-weight: 800; letter-spacing: -8px; color: #ededed; line-height: 1;">OFFLINE</span>
+        </div>
+
+        <!-- Centered Text Block -->
+        <div class="max-w-xl w-full text-center relative z-10 space-y-6">
             
-            <!-- Status Badge -->
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas-soft border border-hairline-cool mb-6">
+            <!-- Badge -->
+            <div id="status-badge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas-soft border border-hairline-cool">
                 <span class="relative flex h-2 w-2">
-                    <span class="dot-pulse absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span class="dot-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                <span class="text-[10px] uppercase font-semibold tracking-wider text-ink-mute">System Upgrade In Progress</span>
+                <span class="text-[10px] uppercase font-semibold tracking-wider text-ink-mute">Undergoing Scheduled Upgrades</span>
             </div>
 
-            <!-- Icon -->
-            <div class="w-16 h-16 bg-canvas-soft border border-hairline rounded-xl flex items-center justify-center mx-auto mb-6">
-                <i data-lucide="wrench" class="w-8 h-8 text-ink-secondary"></i>
+            <!-- Icon Container -->
+            <div id="icon-container" class="w-16 h-16 bg-canvas-soft border border-hairline rounded-xl flex items-center justify-center mx-auto">
+                <i data-lucide="wrench" class="w-8 h-8 text-ink-secondary rotate-slow"></i>
             </div>
 
-            <!-- Typography Header -->
-            <h1 class="text-2xl md:text-3xl font-medium tracking-display text-ink mb-4">Scheduled Maintenance</h1>
-            <p class="text-sm text-ink-mute leading-relaxed max-w-sm mx-auto mb-8">
-                We are performing essential system updates to enhance platform performance. The website will be fully operational shortly.
+            <!-- Headline -->
+            <h1 id="maint-title" class="text-3xl md:text-5xl font-medium tracking-display text-ink" style="letter-spacing: -1.44px;">Scheduled Maintenance</h1>
+            
+            <p id="maint-desc" class="text-base md:text-lg text-ink-mute leading-relaxed max-w-md mx-auto">
+                We are currently optimizing our systems to serve you better. We'll be back online shortly. Thank you for your patience.
             </p>
 
             <!-- Line Divider -->
-            <div class="h-px bg-hairline-cool w-full mb-6"></div>
+            <div id="divider-line" class="h-px bg-hairline-cool w-32 mx-auto"></div>
 
-            <!-- Contact/Support Details -->
-            <div class="space-y-4 text-left">
-                <p class="text-[11px] uppercase font-bold tracking-widest text-ink-faint text-center mb-2">Need immediate assistance?</p>
-                
-                <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-canvas-soft border border-transparent hover:border-hairline-cool transition-all duration-200">
+            <!-- Contact Box (Horizontal cards) -->
+            <div id="contact-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto pt-2">
+                <div class="flex items-center gap-3 p-3 bg-white border border-hairline rounded-lg hover:bg-canvas-soft hover:border-hairline-strong transition-all duration-200">
                     <div class="w-8 h-8 rounded-md bg-canvas-soft border border-hairline-cool flex items-center justify-center flex-shrink-0">
                         <i data-lucide="mail" class="w-4 h-4 text-ink-mute"></i>
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-[10px] text-ink-faint uppercase font-bold tracking-wider">Email Support</p>
-                        <a href="mailto:contact@diginixit.com" id="maintenance-email" class="text-sm font-medium text-ink hover:text-primary transition-colors truncate block">contact@diginix.com</a>
+                    <div class="min-w-0 flex-1 text-left">
+                        <p class="text-[9px] text-ink-faint uppercase font-bold tracking-wider">Email</p>
+                        <a href="mailto:contact@diginixit.com" id="maintenance-email" class="text-xs font-semibold text-ink hover:text-primary transition-colors truncate block">contact@diginixit.com</a>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-canvas-soft border border-transparent hover:border-hairline-cool transition-all duration-200">
+                <div class="flex items-center gap-3 p-3 bg-white border border-hairline rounded-lg hover:bg-canvas-soft hover:border-hairline-strong transition-all duration-200">
                     <div class="w-8 h-8 rounded-md bg-canvas-soft border border-hairline-cool flex items-center justify-center flex-shrink-0">
                         <i data-lucide="phone" class="w-4 h-4 text-ink-mute"></i>
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-[10px] text-ink-faint uppercase font-bold tracking-wider">Phone Support</p>
-                        <a href="tel:+923007960300" id="maintenance-phone" class="text-sm font-medium text-ink hover:text-primary transition-colors truncate block">+92 300 7960300</a>
+                    <div class="min-w-0 flex-1 text-left">
+                        <p class="text-[9px] text-ink-faint uppercase font-bold tracking-wider">Phone</p>
+                        <a href="tel:+923007960300" id="maintenance-phone" class="text-xs font-semibold text-ink hover:text-primary transition-colors truncate block">+92 300 7960300</a>
                     </div>
                 </div>
             </div>
@@ -135,16 +141,33 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-6 px-6 border-t border-hairline">
+    <footer class="py-6 px-6 border-t border-hairline z-20">
         <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-ink-mute gap-y-2 md:gap-y-0">
             <div>&copy; 2026 DiginixIT. All rights reserved.</div>
-            <div class="flex gap-4">
-                <a href="admin_login.html" class="hover:text-ink font-medium transition-colors">Admin Portal</a>
-            </div>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script src="js/common.js" defer></script>
+    <script>
+        // GSAP Animations on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof gsap !== 'undefined') {
+                const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1 } });
+                
+                // Set initial hidden states to avoid flash of content
+                gsap.set('#bg-text', { opacity: 0, scale: 0.9 });
+                gsap.set(['#status-badge', '#icon-container', '#maint-title', '#maint-desc', '#divider-line', '#contact-container'], { opacity: 0, y: 15 });
+
+                tl.to('#bg-text', { opacity: 1, scale: 1, duration: 1.4 })
+                  .to('#status-badge', { opacity: 1, y: 0, duration: 0.6 }, '-=0.8')
+                  .to('#icon-container', { opacity: 1, y: 0, duration: 0.6 }, '-=0.5')
+                  .to('#maint-title', { opacity: 1, y: 0, duration: 0.6 }, '-=0.5')
+                  .to('#maint-desc', { opacity: 1, y: 0, duration: 0.6 }, '-=0.5')
+                  .to('#divider-line', { opacity: 1, duration: 0.4 }, '-=0.4')
+                  .to('#contact-container', { opacity: 1, y: 0, duration: 0.6 }, '-=0.3');
+            }
+        });
+    </script>
 </body>
 </html>
