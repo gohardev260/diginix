@@ -1156,6 +1156,36 @@ function apiCallLocalStorageFallback(action, data) {
 async function applySiteSettings() {
     const settings = await window.apiCall('get_settings');
     if (settings) {
+        // --- Maintenance Mode Redirection & Support Info Injection ---
+        const pageName = window.location.pathname.split('/').pop().toLowerCase() || 'index.html';
+        const isAdminPage = pageName === 'admin.html' || pageName === 'admin_login.html';
+        const isMaintenancePage = pageName === 'maintenance.html';
+
+        if (settings.maintenanceMode) {
+            if (!isAdminPage && !isMaintenancePage) {
+                window.location.replace('maintenance.html');
+                return;
+            }
+        } else {
+            if (isMaintenancePage) {
+                window.location.replace('index.html');
+                return;
+            }
+        }
+
+        if (isMaintenancePage) {
+            const emailEl = document.getElementById('maintenance-email');
+            if (emailEl && settings.contactEmail) {
+                emailEl.href = `mailto:${settings.contactEmail}`;
+                emailEl.innerText = settings.contactEmail;
+            }
+            const phoneEl = document.getElementById('maintenance-phone');
+            if (phoneEl && settings.contactPhone) {
+                phoneEl.href = `tel:${settings.contactPhone.replace(/\s+/g, '')}`;
+                phoneEl.innerText = settings.contactPhone;
+            }
+        }
+
         if (settings.siteName) {
             const brandEls = document.querySelectorAll('.site-logo-text');
             brandEls.forEach(el => {

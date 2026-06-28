@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduled Maintenance | DiginixIT</title>
+    <meta name="description" content="DiginixIT is undergoing scheduled maintenance to upgrade our systems. We will be back online shortly.">
+    <meta name="robots" content="noindex, follow">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <meta name="color-scheme" content="light">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        canvas: '#ffffff',
+                        'canvas-soft': '#fafafa',
+                        'canvas-night': '#1c1c1c',
+                        ink: '#171717',
+                        'ink-secondary': '#212121',
+                        'ink-mute': '#707070',
+                        'ink-faint': '#b2b2b2',
+                        primary: '#3ecf8e',
+                        'primary-deep': '#24b47e',
+                        hairline: '#dfdfdf',
+                        'hairline-strong': '#c7c7c7',
+                        'hairline-cool': '#ededed'
+                    },
+                    letterSpacing: { 
+                        tighter: '-0.04em', 
+                        tight: '-0.02em',
+                        display: '-0.03em'
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Core Libraries -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.03); }
+        }
+        .pulse-animation {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+        .dot-pulse {
+            animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-ink min-h-screen flex flex-col justify-between">
+
+    <div class="noise"></div>
+
+    <!-- Header Logo -->
+    <header class="py-6 px-6 md:px-12">
+        <div class="max-w-[1280px] mx-auto flex justify-start items-center">
+            <span class="text-xl font-medium tracking-tighter text-ink site-logo-text" style="letter-spacing: -0.04em;">DIGINIXIT.</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center px-6 py-12">
+        <div class="max-w-md w-full bg-white border border-hairline rounded-xl p-8 shadow-sm relative text-center pulse-animation">
+            
+            <!-- Status Badge -->
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas-soft border border-hairline-cool mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="dot-pulse absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                <span class="text-[10px] uppercase font-semibold tracking-wider text-ink-mute">System Upgrade In Progress</span>
+            </div>
+
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-canvas-soft border border-hairline rounded-xl flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="wrench" class="w-8 h-8 text-ink-secondary"></i>
+            </div>
+
+            <!-- Typography Header -->
+            <h1 class="text-2xl md:text-3xl font-medium tracking-display text-ink mb-4">Scheduled Maintenance</h1>
+            <p class="text-sm text-ink-mute leading-relaxed max-w-sm mx-auto mb-8">
+                We are performing essential system updates to enhance platform performance. The website will be fully operational shortly.
+            </p>
+
+            <!-- Line Divider -->
+            <div class="h-px bg-hairline-cool w-full mb-6"></div>
+
+            <!-- Contact/Support Details -->
+            <div class="space-y-4 text-left">
+                <p class="text-[11px] uppercase font-bold tracking-widest text-ink-faint text-center mb-2">Need immediate assistance?</p>
+                
+                <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-canvas-soft border border-transparent hover:border-hairline-cool transition-all duration-200">
+                    <div class="w-8 h-8 rounded-md bg-canvas-soft border border-hairline-cool flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="mail" class="w-4 h-4 text-ink-mute"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[10px] text-ink-faint uppercase font-bold tracking-wider">Email Support</p>
+                        <a href="mailto:contact@diginixit.com" id="maintenance-email" class="text-sm font-medium text-ink hover:text-primary transition-colors truncate block">contact@diginix.com</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-canvas-soft border border-transparent hover:border-hairline-cool transition-all duration-200">
+                    <div class="w-8 h-8 rounded-md bg-canvas-soft border border-hairline-cool flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="phone" class="w-4 h-4 text-ink-mute"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[10px] text-ink-faint uppercase font-bold tracking-wider">Phone Support</p>
+                        <a href="tel:+923007960300" id="maintenance-phone" class="text-sm font-medium text-ink hover:text-primary transition-colors truncate block">+92 300 7960300</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 px-6 border-t border-hairline">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-ink-mute gap-y-2 md:gap-y-0">
+            <div>&copy; 2026 DiginixIT. All rights reserved.</div>
+            <div class="flex gap-4">
+                <a href="admin_login.html" class="hover:text-ink font-medium transition-colors">Admin Portal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/common.js" defer></script>
+</body>
+</html>
