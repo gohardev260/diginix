@@ -1157,9 +1157,22 @@ async function applySiteSettings() {
     const settings = await window.apiCall('get_settings');
     if (settings) {
         // --- Maintenance Mode Redirection & Support Info Injection ---
-        const pageName = window.location.pathname.split('/').pop().toLowerCase() || 'index.html';
-        const isAdminPage = pageName === 'admin.html' || pageName === 'admin_login.html';
-        const isMaintenancePage = pageName === 'maintenance.html';
+        const href = window.location.href.toLowerCase();
+        const pathname = window.location.pathname.toLowerCase();
+
+        const isAdminPage = href.includes('admin.html') || 
+                            href.includes('admin_login.html') || 
+                            pathname.endsWith('/admin') || 
+                            pathname.endsWith('/admin/') || 
+                            pathname.endsWith('/admin_login') || 
+                            pathname.endsWith('/admin_login/') ||
+                            pathname === 'admin' ||
+                            pathname === 'admin_login';
+
+        const isMaintenancePage = href.includes('maintenance.html') || 
+                                  pathname.endsWith('/maintenance') || 
+                                  pathname.endsWith('/maintenance/') || 
+                                  pathname === 'maintenance';
 
         if (settings.maintenanceMode) {
             if (!isAdminPage && !isMaintenancePage) {
