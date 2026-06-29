@@ -762,7 +762,6 @@ function apiCallLocalStorageFallback(action, data) {
                 const priorUsers = filterUsers(usersList, priorStartDate, priorEndDate);
 
                 const calculateStats = (logs) => {
-                    const totalVisits = logs.length;
                     const sessions = {};
                     logs.forEach((log, index) => {
                         const sId = log.session_id || (log.email ? `${log.email}_${index}` : `anon_${index}`);
@@ -771,7 +770,6 @@ function apiCallLocalStorageFallback(action, data) {
                         sessions[sId].push(d);
                     });
 
-                    let totalDuration = 0;
                     let totalSessions = 0;
                     let bounces = 0;
 
@@ -780,13 +778,10 @@ function apiCallLocalStorageFallback(action, data) {
                         totalSessions++;
                         if (times.length === 1) {
                             bounces++;
-                            totalDuration += 15;
-                        } else {
-                            times.sort((a,b)=>a-b);
-                            totalDuration += (times[times.length - 1] - times[0]) / 1000;
                         }
                     }
-                    const avgDuration = totalSessions > 0 ? Math.round(totalDuration / totalSessions) : 0;
+                    const totalVisits = totalSessions;
+                    const avgDuration = totalSessions > 0 ? Math.round((bounces / totalSessions) * 100) : 0;
                     const articlesRead = logs.filter(log => log.page_url && (log.page_url.includes('article.html') || log.page_url.includes('article'))).length;
                     return { totalVisits, avgDuration, articlesRead };
                 };
@@ -835,10 +830,16 @@ function apiCallLocalStorageFallback(action, data) {
                 };
 
                 const visitsTrend = {};
-                currentLogs.forEach(log => {
+                const bucketSessionsTracker = {};
+                currentLogs.forEach((log, index) => {
                     const key = getBucketStart(log.visited_at, intervalMinutes);
-                    visitsTrend[key] = (visitsTrend[key] || 0) + 1;
+                    const sId = log.session_id || (log.email ? `${log.email}_${index}` : `anon_${index}`);
+                    bucketSessionsTracker[key] = bucketSessionsTracker[key] || new Set();
+                    bucketSessionsTracker[key].add(sId);
                 });
+                for (const key in bucketSessionsTracker) {
+                    visitsTrend[key] = bucketSessionsTracker[key].size;
+                }
                 const visitsTrendArr = Object.entries(visitsTrend).map(([bucket_time, count]) => ({ bucket_time, count })).sort((a,b)=>new Date(a.bucket_time)-new Date(b.bucket_time));
 
                 const usersTrend = {};
@@ -860,22 +861,19 @@ function apiCallLocalStorageFallback(action, data) {
                 });
 
                 Object.entries(bucketSessions).forEach(([key, sessMap]) => {
-                    let totalDur = 0;
+                    let bounces = 0;
                     let countSess = 0;
                     for (const sId in sessMap) {
                         const times = sessMap[sId];
                         countSess++;
                         if (times.length === 1) {
-                            totalDur += 15;
-                        } else {
-                            times.sort((a,b)=>a-b);
-                            totalDur += (times[times.length - 1] - times[0]) / 1000;
+                            bounces++;
                         }
                     }
                     const bucketLogs = currentLogs.filter(log => getBucketStart(log.visited_at, intervalMinutes) === key);
                     const readsCount = bucketLogs.filter(log => log.page_url && (log.page_url.includes('article.html') || log.page_url.includes('article'))).length;
                     retentionTrend[key] = {
-                        avg_duration: countSess > 0 ? Math.round(totalDur / countSess) : 0,
+                        avg_duration: countSess > 0 ? Math.round((bounces / countSess) * 100) : 0,
                         articles_read: readsCount
                     };
                 });
@@ -978,7 +976,8 @@ function apiCallLocalStorageFallback(action, data) {
                 const usersList = JSON.parse(localStorage.getItem('users') || '[]');
                 
                 const totalUsers = usersList.length;
-                const totalVisits = usersList.reduce((sum, u) => sum + (Number(u.visits) || 0), 0) + visitLogs.filter(log => !log.email).length;
+                const loggedSessions = new Set(visitLogs.map((log, index) => log.session_id || `anon_${index}`));
+                const totalVisits = loggedSessions.size;
                 
                 const months = [];
                 const today = new Date();
@@ -995,10 +994,12 @@ function apiCallLocalStorageFallback(action, data) {
                 });
                 
                 const visitHistory = months.map(m => {
-                    return visitLogs.filter(log => {
+                    const monthLogs = visitLogs.filter(log => {
                         const logDate = new Date(log.visited_at);
                         return logDate.getFullYear() === m.getFullYear() && logDate.getMonth() === m.getMonth();
-                    }).length;
+                    });
+                    const monthSessions = new Set(monthLogs.map((log, index) => log.session_id || `anon_${index}`));
+                    return monthSessions.size;
                 });
                 
                 resolve({
@@ -1021,31 +1022,27 @@ function apiCallLocalStorageFallback(action, data) {
                 const alreadyTracked = sessionId && visitLogs.some(log => log.session_id === sessionId);
                 let visitCount = 0;
 
-                if (!alreadyTracked) {
-                    visitLogs.push({
-                        email: email,
-                        session_id: sessionId,
-                        visited_at: new Date().toISOString(),
-                        ip_address: data.ip_address || '127.0.0.1',
-                        country: data.country || 'Unknown',
-                        device: data.device || 'Desktop',
-                        page_url: data.page_url || '/home',
-                        user_agent: data.user_agent || 'Mozilla/5.0'
-                    });
-                    localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
+                // Always log the visit log to record multiple page views per session
+                visitLogs.push({
+                    email: email,
+                    session_id: sessionId,
+                    visited_at: new Date().toISOString(),
+                    ip_address: data.ip_address || '127.0.0.1',
+                    country: data.country || 'Unknown',
+                    device: data.device || 'Desktop',
+                    page_url: data.page_url || '/home',
+                    user_agent: data.user_agent || 'Mozilla/5.0'
+                });
+                localStorage.setItem('visit_logs', JSON.stringify(visitLogs));
 
-                    if (email) {
-                        const userIdx = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
-                        if (userIdx !== -1) {
+                if (email) {
+                    const userIdx = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+                    if (userIdx !== -1) {
+                        if (!alreadyTracked) {
                             users[userIdx].visits = (Number(users[userIdx].visits) || 0) + 1;
-                            visitCount = users[userIdx].visits;
                             localStorage.setItem('users', JSON.stringify(users));
                         }
-                    }
-                } else {
-                    if (email) {
-                        const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-                        if (user) visitCount = user.visits;
+                        visitCount = users[userIdx].visits;
                     }
                 }
                 resolve({ success: true, visits: visitCount });
@@ -1507,8 +1504,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             const email = currentUser ? currentUser.email : null;
             
-            // Track every page view to capture top pages, session duration, and article reads
-            await recordVisit(email);
+            // Track page view after 3 seconds of active session to filter out short bounces
+            setTimeout(async () => {
+                await recordVisit(email);
+            }, 3000);
         }
 
         // Also process tracking queue initially

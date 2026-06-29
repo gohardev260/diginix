@@ -826,12 +826,12 @@ BEGIN
         SELECT 1 FROM public.visit_logs WHERE session_id = p_session_id
     ) INTO v_already_tracked;
 
-    IF NOT v_already_tracked THEN
-        -- Log the visit in visit_logs
-        INSERT INTO public.visit_logs (email, session_id, visited_at, ip_address, country, device, page_url, user_agent)
-        VALUES (p_email, p_session_id, NOW(), p_ip_address, p_country, p_device, p_page_url, p_user_agent);
+    -- Always log the visit in visit_logs to record multiple page views per session
+    INSERT INTO public.visit_logs (email, session_id, visited_at, ip_address, country, device, page_url, user_agent)
+    VALUES (p_email, p_session_id, NOW(), p_ip_address, p_country, p_device, p_page_url, p_user_agent);
 
-        -- If a valid email is provided, also increment the user's visits count in public.users
+    -- Only increment the user's visits count if this is the first visit of the session
+    IF NOT v_already_tracked THEN
         IF p_email IS NOT NULL AND p_email <> '' THEN
             SELECT u.id, u.status INTO v_id, v_status
             FROM public.users u
@@ -1039,14 +1039,13 @@ BEGIN
     current_stats AS (
         SELECT
             COUNT(*) as total_sessions,
-            SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END) as bounces,
-            SUM(EXTRACT(EPOCH FROM (max_time - min_time)) + CASE WHEN page_views = 1 THEN 15 ELSE 0 END) as total_duration
+            SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END) as bounces
         FROM current_sessions
     )
     SELECT 
-        (SELECT COUNT(*) FROM public.visit_logs WHERE visited_at >= p_start_date AND visited_at <= p_end_date),
+        COALESCE((SELECT total_sessions FROM current_stats), 0),
         (SELECT COUNT(*) FROM public.users),
-        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND(total_duration / total_sessions) ELSE 0 END FROM current_stats), 0),
+        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND((bounces::NUMERIC / total_sessions::NUMERIC) * 100) ELSE 0 END FROM current_stats), 0),
         (SELECT COUNT(*)::INT8 FROM public.visit_logs WHERE visited_at >= p_start_date AND visited_at <= p_end_date AND (page_url LIKE '%article.html%' OR page_url LIKE '%article%'))
     INTO v_total_visits, v_active_users, v_avg_duration, v_articles_read;
 
@@ -1064,14 +1063,13 @@ BEGIN
     prior_stats AS (
         SELECT
             COUNT(*) as total_sessions,
-            SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END) as bounces,
-            SUM(EXTRACT(EPOCH FROM (max_time - min_time)) + CASE WHEN page_views = 1 THEN 15 ELSE 0 END) as total_duration
+            SUM(CASE WHEN page_views = 1 THEN 1 ELSE 0 END) as bounces
         FROM prior_sessions
     )
     SELECT 
-        (SELECT COUNT(*) FROM public.visit_logs WHERE visited_at >= v_prior_start AND visited_at <= v_prior_end),
+        COALESCE((SELECT total_sessions FROM prior_stats), 0),
         (SELECT COUNT(*) FROM public.users WHERE date < p_start_date),
-        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND(total_duration / total_sessions) ELSE 0 END FROM prior_stats), 0),
+        COALESCE((SELECT CASE WHEN total_sessions > 0 THEN ROUND((bounces::NUMERIC / total_sessions::NUMERIC) * 100) ELSE 0 END FROM prior_stats), 0),
         (SELECT COUNT(*)::INT8 FROM public.visit_logs WHERE visited_at >= v_prior_start AND visited_at <= v_prior_end AND (page_url LIKE '%article.html%' OR page_url LIKE '%article%'))
     INTO v_prior_total_visits, v_prior_active_users, v_prior_avg_duration, v_prior_articles_read;
 
@@ -1121,7 +1119,7 @@ BEGIN
     SELECT COALESCE(json_agg(t), '[]'::json) INTO v_visits_trend FROM (
         SELECT 
             date_trunc(v_trunc_unit, visited_at) as bucket_time,
-            COUNT(*)::INT8 as count
+            COUNT(DISTINCT COALESCE(session_id::text, id::text))::INT8 as count
         FROM public.visit_logs
         WHERE visited_at >= p_start_date AND visited_at <= p_end_date
         GROUP BY bucket_time
@@ -1145,8 +1143,6 @@ BEGIN
             SELECT 
                 date_trunc(v_trunc_unit, visited_at) as bucket_time,
                 COALESCE(session_id::text, id::text) as s_id,
-                MIN(visited_at) as min_time,
-                MAX(visited_at) as max_time,
                 COUNT(*) as page_views
             FROM public.visit_logs
             WHERE visited_at >= p_start_date AND visited_at <= p_end_date
@@ -1163,7 +1159,7 @@ BEGIN
         )
         SELECT 
             bs.bucket_time,
-            ROUND(AVG(EXTRACT(EPOCH FROM (max_time - min_time)) + CASE WHEN page_views = 1 THEN 15 ELSE 0 END))::INT8 as avg_duration,
+            ROUND((SUM(CASE WHEN bs.page_views = 1 THEN 1 ELSE 0 END)::NUMERIC / COUNT(*)::NUMERIC) * 100)::INT8 as avg_duration,
             COALESCE(br.reads_count, 0)::INT8 as articles_read
         FROM bucket_sessions bs
         LEFT JOIN bucket_reads br ON br.bucket_time = bs.bucket_time

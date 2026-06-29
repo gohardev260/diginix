@@ -220,7 +220,7 @@ async function loadAnalyticsData() {
 
     document.getElementById('stat-users').innerText = Number(res.active_users || 0).toLocaleString();
     document.getElementById('stat-visits').innerText = Number(res.total_visits || 0).toLocaleString();
-    document.getElementById('stat-session').innerText = formatDuration(res.avg_session_duration || 0);
+    document.getElementById('stat-session').innerText = `${res.avg_session_duration || 0}%`;
     document.getElementById('stat-reads').innerText = Number(res.articles_read || 0).toLocaleString();
 
     const updateChangeLabel = (elementId, current, prior) => {
@@ -487,7 +487,7 @@ function renderAnalyticsCharts(
                 datasets: [
                     {
                         type: 'bar',
-                        label: 'Duration (sec)',
+                        label: 'Bounce Rate (%)',
                         data: retentionData,
                         backgroundColor: 'rgba(245, 158, 11, 0.25)',
                         borderRadius: 4,
@@ -521,8 +521,7 @@ function renderAnalyticsCharts(
                         callbacks: {
                             label: ctx => {
                                 if (ctx.datasetIndex === 0) {
-                                    const s = ctx.parsed.y;
-                                    return ` ${Math.floor(s / 60)}m ${s % 60}s avg duration`;
+                                    return ` ${ctx.parsed.y}% bounce rate`;
                                 }
                                 return null;
                             }
@@ -532,11 +531,12 @@ function renderAnalyticsCharts(
                 scales: {
                     y: {
                         beginAtZero: true,
+                        max: 100,
                         grid: { color: '#f0f0f0', lineWidth: 1 },
                         border: { display: false },
                         ticks: {
                             color: '#888', font: { size: 10 },
-                            callback: v => `${Math.floor(v / 60)}m`
+                            callback: v => `${v}%`
                         }
                     },
                     x: {
@@ -1391,7 +1391,24 @@ window.exportUsersPDF = function () {
         columnStyles: { 0: { cellWidth: 60 }, 1: { cellWidth: 90 }, 2: { cellWidth: 36, halign: 'right' } },
         margin: { top: 55, left: 14, right: 14 }
     });
-    doc.save('diginixit_users_report.pdf');
+
+    // Dynamic filename based on date/timeline range or generation date
+    let filename = 'diginixit_users_report';
+    if (startDateVal && endDateVal) {
+        filename += `_${startDateVal}_to_${endDateVal}`;
+    } else if (startDateVal) {
+        filename += `_from_${startDateVal}`;
+    } else if (endDateVal) {
+        filename += `_until_${endDateVal}`;
+    } else {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        filename += `_${yyyy}-${mm}-${dd}`;
+    }
+    filename += '.pdf';
+    doc.save(filename);
 };
 
 window.toggleUserStatus = async function (email) {
