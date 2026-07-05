@@ -1483,4 +1483,16 @@ code:not(.code-block code) {
 
 @keyframes ui-spin {
     to { transform: rotate(360deg); }
-}
+}
+
+/* --- Strict Tab Control --- */
+.admin-tab-content {
+    display: none !important;
+}
+
+.admin-tab-content.active {
+    display: flex !important;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+

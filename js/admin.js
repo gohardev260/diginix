@@ -33,15 +33,19 @@ function initTabs() {
         window.adminState.activeTab = tabId;
         sidebarBtns.forEach(btn => {
             const match = btn.getAttribute('data-tab') === tabId;
-            btn.className = match ?
-                "w-full flex items-center text-sm px-4 py-3 rounded-lg bg-primary text-white font-medium hover:bg-black transition-colors admin-tab-btn" :
-                "w-full flex items-center text-sm px-4 py-3 rounded-lg text-secondary hover:bg-surface hover:text-primary transition-colors admin-tab-btn font-medium";
+            btn.setAttribute('data-state', match ? 'active' : 'inactive');
         });
         mobileBtns.forEach(btn => {
             const match = btn.getAttribute('data-tab') === tabId;
-            btn.className = match ?
-                "px-4 py-2 bg-primary text-white text-xs font-bold rounded-full whitespace-nowrap mobile-tab-btn" :
-                "px-4 py-2 bg-white text-secondary text-xs font-bold rounded-full whitespace-nowrap border border-border mobile-tab-btn";
+            if (match) {
+                btn.classList.add('ui-btn-primary');
+                btn.classList.remove('ui-btn-outline');
+                btn.setAttribute('aria-pressed', 'true');
+            } else {
+                btn.classList.add('ui-btn-outline');
+                btn.classList.remove('ui-btn-primary');
+                btn.setAttribute('aria-pressed', 'false');
+            }
         });
         contents.forEach(content => {
             content.classList.toggle('active', content.id === `tab-${tabId}`);
@@ -1240,25 +1244,25 @@ function renderBlogTable() {
     else if (filter === 'draft') posts = posts.filter(p => p.status === 'draft');
 
     if (posts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-secondary font-light">No articles found.</td></tr>`;
+        tbody.innerHTML = `<tr class="ui-tr"><td colspan="6" class="ui-td text-center py-8 text-ink-mute">No articles found.</td></tr>`;
         return;
     }
 
     tbody.innerHTML = posts.map(post => {
         const isDraft = post.status === 'draft';
         const statusBadge = isDraft
-            ? `<span class="badge-draft">&#9679; Draft</span>`
-            : `<span class="badge-published">&#9679; Published</span>`;
+            ? `<span class="ui-badge ui-badge-outline">&#9679; Draft</span>`
+            : `<span class="ui-badge ui-badge-emerald">&#9679; Published</span>`;
         return `
-        <tr class="border-b border-border hover:bg-surface transition-colors">
-            <td class="p-4 font-bold text-primary max-w-xs truncate">${window.escapeHtml(post.title)}</td>
-            <td class="p-4"><span class="px-2.5 py-1 bg-surface border border-border text-xs rounded-full uppercase tracking-wider text-secondary">${window.escapeHtml(post.category)}</span></td>
-            <td class="p-4 text-secondary text-xs">${window.escapeHtml(post.author)}</td>
-            <td class="p-4">${statusBadge}</td>
-            <td class="p-4 text-secondary text-xs">${window.escapeHtml(formatLocalShortDate(post.date))}</td>
-            <td class="p-4 text-right space-x-2">
-                <button class="text-xs font-semibold text-primary hover:underline edit-blog-btn" data-id="${post.id}">Edit</button>
-                <button class="text-xs font-semibold text-red-500 hover:underline delete-blog-btn" data-id="${post.id}">Delete</button>
+        <tr class="ui-tr">
+            <td class="ui-td font-medium max-w-xs truncate">${window.escapeHtml(post.title)}</td>
+            <td class="ui-td"><span class="ui-badge ui-badge-default">${window.escapeHtml(post.category)}</span></td>
+            <td class="ui-td text-xs text-ink-mute">${window.escapeHtml(post.author)}</td>
+            <td class="ui-td">${statusBadge}</td>
+            <td class="ui-td text-xs text-ink-mute">${window.escapeHtml(formatLocalShortDate(post.date))}</td>
+            <td class="ui-td text-right space-x-2">
+                <button class="ui-btn ui-btn-outline ui-btn-sm edit-blog-btn" data-id="${post.id}">Edit</button>
+                <button class="ui-btn ui-btn-danger ui-btn-sm delete-blog-btn" data-id="${post.id}">Delete</button>
             </td>
         </tr>`;
     }).join('');
@@ -1522,7 +1526,7 @@ function filterAndRenderUsers() {
     window.currentFilteredUsers = filteredUsers;
 
     if (filteredUsers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-secondary font-light">No clients found matching the search criteria.</td></tr>`;
+        tbody.innerHTML = `<tr class="ui-tr"><td colspan="6" class="ui-td text-center py-8 text-ink-mute">No clients found matching the search criteria.</td></tr>`;
         return;
     }
     const startDateInput = document.getElementById('users-start-date');
@@ -1530,23 +1534,23 @@ function filterAndRenderUsers() {
     const isFiltered = !!(startDateInput?.value || endDateInput?.value);
 
     tbody.innerHTML = filteredUsers.map(user => `
-        <tr class="border-b border-border hover:bg-surface transition-colors">
-            <td class="p-4 font-bold text-primary">${window.escapeHtml(user.name)}</td>
-            <td class="p-4 text-xs font-mono text-secondary">${window.escapeHtml(user.email)}</td>
-            <td class="p-4 text-xs text-secondary">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
-            <td class="p-4 text-xs font-bold text-primary">
-                ${isFiltered ? `${user.rangeVisits || 0} <span class="text-secondary font-normal text-[10px]">/ ${user.totalVisits || 0}</span>` : (user.totalVisits || 0)}
+        <tr class="ui-tr">
+            <td class="ui-td font-medium">${window.escapeHtml(user.name)}</td>
+            <td class="ui-td text-xs font-mono text-ink-mute">${window.escapeHtml(user.email)}</td>
+            <td class="ui-td text-xs text-ink-mute">${window.escapeHtml(formatLocalShortDate(user.date))}</td>
+            <td class="ui-td text-xs font-medium text-ink">
+                ${isFiltered ? `${user.rangeVisits || 0} <span class="text-ink-mute text-[10px]">/ ${user.totalVisits || 0}</span>` : (user.totalVisits || 0)}
             </td>
-            <td class="p-4">
-                <span class="px-2.5 py-1 text-xs rounded-full uppercase tracking-wider font-bold ${user.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
+            <td class="ui-td">
+                <span class="ui-badge ${user.status === 'Blocked' ? 'ui-badge-danger' : 'ui-badge-emerald'}">
                     ${window.escapeHtml(user.status || 'Active')}
                 </span>
             </td>
-            <td class="p-4 text-right space-x-2">
-                <button class="text-xs font-semibold text-primary hover:underline toggle-user-status-btn" data-email="${window.escapeHtml(user.email)}">
+            <td class="ui-td text-right space-x-2">
+                <button class="ui-btn ui-btn-outline ui-btn-sm toggle-user-status-btn" data-email="${window.escapeHtml(user.email)}">
                     ${user.status === 'Blocked' ? 'Activate' : 'Block'}
                 </button>
-                <button class="text-xs font-semibold text-red-500 hover:underline delete-user-btn" data-email="${window.escapeHtml(user.email)}">Delete</button>
+                <button class="ui-btn ui-btn-danger ui-btn-sm delete-user-btn" data-email="${window.escapeHtml(user.email)}">Delete</button>
             </td>
         </tr>
     `).join('');
