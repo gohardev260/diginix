@@ -115,9 +115,9 @@
             max-width: 100%;
         }
 
-        /* ── Article Body (Medium-like consistent typography) ────────── */
+        /* ── Article Body (Medium-style Editorial Typography) ────────── */
         #article-content {
-            font-family: 'Lora', Georgia, Cambria, 'Times New Roman', Times, serif !important;
+            font-family: 'Lora', Georgia, Cambria, serif;
             color: var(--color-ink, #171717);
             font-size: 1.125rem;
             line-height: 1.8;
@@ -126,23 +126,44 @@
             overflow-wrap: break-word;
         }
 
-        /* Prevent inline styles or nested elements from changing fonts randomly */
-        #article-content *:not(pre):not(code):not(pre *):not(code *):not(i):not(svg):not(.lucide) {
-            font-family: inherit !important;
-        }
-
         @media (min-width: 640px) {
             #article-content {
                 font-size: 1.25rem;
             }
         }
 
+        /* Medium-style Body Paragraphs */
         #article-content p {
-            margin-bottom: 1.75rem;
-            font-weight: 400;
             font-family: 'Lora', Georgia, Cambria, serif !important;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            font-weight: 400;
+            color: #171717;
+            margin-bottom: 2rem;
         }
 
+        @media (min-width: 640px) {
+            #article-content p {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Medium-style Lead Paragraph (Intro) */
+        #article-content > p:first-of-type,
+        #article-content p.lead {
+            font-size: 1.2rem;
+            line-height: 1.75;
+            color: #242424;
+        }
+
+        @media (min-width: 640px) {
+            #article-content > p:first-of-type,
+            #article-content p.lead {
+                font-size: 1.35rem;
+            }
+        }
+
+        /* Medium-style Headings: Bold Inter Sans-Serif for sharp contrast */
         #article-content h1,
         #article-content h2,
         #article-content h3,
@@ -151,24 +172,45 @@
         #article-content h6 {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
             color: var(--color-ink, #171717);
-            font-weight: 700;
+            font-weight: 700 !important;
             line-height: 1.3;
-            margin-top: 2.5rem;
+            margin-top: 3rem;
             margin-bottom: 1rem;
             letter-spacing: -0.02em;
             word-break: break-word;
         }
 
         #article-content h1 {
-            font-size: clamp(1.5rem, 4vw, 2.25rem);
+            font-size: clamp(1.75rem, 4vw, 2.35rem);
         }
 
         #article-content h2 {
-            font-size: clamp(1.3rem, 3.5vw, 1.85rem);
+            font-size: clamp(1.4rem, 3.5vw, 1.85rem);
         }
 
         #article-content h3 {
-            font-size: clamp(1.15rem, 3vw, 1.45rem);
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        }
+
+        /* Medium-style Lists */
+        #article-content ul,
+        #article-content ol {
+            font-family: 'Lora', Georgia, serif !important;
+            font-size: 1.125rem;
+            line-height: 1.75;
+            margin-bottom: 1.75rem;
+        }
+
+        @media (min-width: 640px) {
+            #article-content ul,
+            #article-content ol {
+                font-size: 1.25rem;
+            }
+        }
+
+        #article-content li {
+            font-family: 'Lora', Georgia, serif !important;
+            margin-bottom: 0.5rem;
         }
 
         #article-content a {
@@ -568,7 +610,7 @@
     </div>
 
     <!-- Main Content Container -->
-    <main class="pt-32 pb-20 px-6">
+    <main class="pt-36 sm:pt-44 pb-20 px-6">
         <div class="max-w-[1280px] mx-auto">
             <div class="max-w-3xl mx-auto" id="main-article-view">
 
@@ -843,11 +885,12 @@
                     }).join('');
                 }
 
-                // ── Post-render font-family override cleanup ─────────────────────
-                // Remove inline font-family declarations so Medium-like typography remains 100% consistent
+                // ── Post-render font & inline override cleanup ─────────────────────
+                // Remove inline font-family & font-size declarations so article typography remains 100% uniform
                 contentsContainer.querySelectorAll('*[style]').forEach((el) => {
                     if (el.tagName !== 'PRE' && el.tagName !== 'CODE') {
                         el.style.fontFamily = '';
+                        el.style.fontSize = '';
                     }
                 });
 
