@@ -177,32 +177,47 @@
         /* Restore standard native HTML list styling on the article page */
         #article-content ul {
             list-style-type: disc !important;
-            padding-left: 1.5rem !important;
-            margin-bottom: 1.75rem;
+            padding-left: 1.75rem !important;
+            margin-bottom: 1.25rem !important;
         }
         #article-content ol {
             list-style-type: decimal !important;
-            padding-left: 1.5rem !important;
-            margin-bottom: 1.75rem;
+            padding-left: 1.75rem !important;
+            margin-bottom: 1.25rem !important;
         }
-        #article-content ul li,
-        #article-content li[data-list="bullet"] {
-            list-style-type: disc !important;
+        #article-content ul ul {
+            list-style-type: circle !important;
+            margin-bottom: 0.25rem !important;
         }
-        #article-content ol li,
-        #article-content li[data-list="ordered"] {
-            list-style-type: decimal !important;
+        #article-content ol ol {
+            list-style-type: lower-alpha !important;
+            margin-bottom: 0.25rem !important;
         }
         #article-content li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem !important;
+            line-height: 1.6;
         }
-        #article-content li::before,
-        #article-content .ql-ui {
-            display: none !important;
-            content: none !important;
+        #article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
         }
-
-
+        #article-content th, #article-content td {
+            border: 1px solid var(--color-hairline, #e5e5e5);
+            padding: 0.65rem 0.85rem;
+            text-align: left;
+        }
+        #article-content th {
+            background-color: var(--color-canvas-soft, #f9f9f9);
+            font-weight: 600;
+        }
+        #article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            display: block;
+        }
 
         #article-content blockquote {
             border-left: 3px solid var(--color-primary);
@@ -210,6 +225,10 @@
             font-style: italic;
             color: var(--color-ink-mute);
             margin: 2rem 0;
+        }
+
+        #article-content .faq-delete-btn {
+            display: none !important;
         }
 
         #article-content pre,
@@ -787,34 +806,29 @@
             const contentsContainer = document.getElementById('article-content');
             if (post.content && contentsContainer) {
                 const hasHtml = /<[a-z][\s\S]*>/i.test(post.content);
+                const allowedTags = ['p', 'br', 'strong', 'em', 'u', 's', 'strike', 'sub', 'sup', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'span', 'blockquote', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'hr', 'details', 'summary'];
+                const allowedAttr = ['href', 'target', 'rel', 'style', 'class', 'start', 'src', 'alt', 'width', 'align', 'colspan', 'rowspan', 'open'];
+
                 if (hasHtml) {
                     contentsContainer.innerHTML = DOMPurify.sanitize(post.content, {
-                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 's', 'strike', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'span', 'blockquote'],
-                        ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'class', 'start'],
-                        FORCE_HTTPS: true
+                        ALLOWED_TAGS: allowedTags,
+                        ALLOWED_ATTR: allowedAttr
                     });
                 } else {
                     const paragraphs = post.content.split('\n\n');
                     contentsContainer.innerHTML = paragraphs.map((p) => {
                         const cleanP = DOMPurify.sanitize(p, {
-                            ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'code', 'pre'],
-                            ALLOWED_ATTR: ['href', 'target', 'rel', 'start'],
-                            FORCE_HTTPS: true
+                            ALLOWED_TAGS: allowedTags,
+                            ALLOWED_ATTR: allowedAttr
                         });
                         return `<p>${cleanP}</p>`;
                     }).join('');
                 }
 
 
-                // ── Post-render diagram fix ─────────────────────────────────
-                // Quill sometimes stores newlines inside <pre.ql-diagram> as <br>
-                // tags (old storage) or collapses spaces. We rebuild each diagram
-                // block from its innerText (which preserves \n and spaces correctly)
-                // and set it as textContent so CSS white-space:pre renders it perfectly.
-                contentsContainer.querySelectorAll('pre.ql-diagram').forEach(pre => {
-                    // innerText respects <br> → \n and preserved whitespace nodes
+                // ── Post-render ASCII diagram formatting ──────────────────────────────
+                contentsContainer.querySelectorAll('pre.ascii-diagram, pre.ql-diagram').forEach(pre => {
                     const rawText = pre.innerText;
-                    // Re-set as textContent (no HTML parsing, spaces/newlines kept)
                     pre.textContent = rawText;
                 });
 

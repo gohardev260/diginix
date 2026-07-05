@@ -760,242 +760,268 @@ function initAnalyticsPresets() {
     if (endInput) endInput.value = end.toISOString().slice(0, 10);
 }
 
-// ── Blog Management Tab ──────────────────────────────────────────────
+// ── Blog Management Tab & Custom Rich Text Editor ─────────────────────
 
-// Quill DiagramBlot registration
-function registerDiagramBlot() {
-    if (typeof Quill === 'undefined') return;
-    try { if (Quill.find && Quill.find('diagram')) return; } catch (e) { }
-    try {
-        const BlockEmbed = Quill.import('blots/block/embed');
-        class DiagramBlot extends BlockEmbed {
-            static create(value) {
-                const node = super.create();
-                node.textContent = typeof value === 'string' ? value : '';
-                return node;
-            }
-            static value(domNode) { return domNode.textContent; }
-        }
-        DiagramBlot.blotName = 'diagram';
-        DiagramBlot.tagName = 'pre';
-        DiagramBlot.className = 'ql-diagram';
-        Quill.register(DiagramBlot, true);
-    } catch (e) { console.warn('DiagramBlot registration failed:', e); }
-}
+function updateToolbarActiveStates() {
+    const editorArea = document.getElementById('article-editor-area');
+    const toolbar = document.getElementById('msword-toolbar');
+    if (!editorArea || !toolbar) return;
 
-function initQuill() {
-    const editorEl = document.getElementById('blog-quill-editor');
-    if (editorEl && typeof Quill !== 'undefined' && !window.adminState.quill) {
-        registerDiagramBlot();
-        window.adminState.quill = new Quill('#blog-quill-editor', {
-            theme: 'snow',
-            modules: {
-                toolbar: {
-                    container: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['blockquote', 'code-block'],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'align': [] }],
-                        ['link', 'clean']
-                    ]
-                }
-            }
-        });
-
-        const quill = window.adminState.quill;
-        const toolbar = quill.getModule('toolbar');
-        const toolbarContainer = toolbar.container;
-
-        const tipMap = {
-            'ql-bold': 'Bold (Ctrl+B)', 'ql-italic': 'Italic (Ctrl+I)',
-            'ql-underline': 'Underline (Ctrl+U)', 'ql-strike': 'Strikethrough',
-            'ql-blockquote': 'Blockquote', 'ql-code-block': 'Code Block',
-            'ql-link': 'Insert / Edit Link', 'ql-clean': 'Remove Formatting',
-            'ql-header': 'Heading Level', 'ql-list': 'List',
-            'ql-color': 'Text Colour', 'ql-background': 'Highlight Colour',
-            'ql-align': 'Text Alignment'
-        };
-        toolbarContainer.querySelectorAll('button, .ql-picker-label').forEach(el => {
-            for (const [cls, tip] of Object.entries(tipMap)) {
-                if (el.classList.contains(cls) && !el.title) { el.title = tip; break; }
-            }
-        });
-
-        // Diagram button
-        const diagramGroup = document.createElement('span');
-        diagramGroup.className = 'ql-formats';
-        const diagramBtn = document.createElement('button');
-        diagramBtn.type = 'button';
-        diagramBtn.className = 'ql-diagram-insert';
-        diagramBtn.title = 'Insert ASCII / Text Diagram';
-        diagramBtn.innerHTML = `<svg viewBox="0 0 18 18" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2"  y="1"  width="14" height="4" rx="1"/>
-            <rect x="1"  y="13" width="7"  height="4" rx="1"/>
-            <rect x="10" y="13" width="7"  height="4" rx="1"/>
-            <line x1="9"  y1="5"  x2="9"  y2="9"/>
-            <line x1="4"  y1="9"  x2="14" y2="9"/>
-            <line x1="4"  y1="9"  x2="4"  y2="13"/>
-            <line x1="14" y1="9" x2="14" y2="13"/>
-        </svg>`;
-        diagramBtn.addEventListener('click', () => window.openDiagramModal());
-        diagramGroup.appendChild(diagramBtn);
-        toolbarContainer.appendChild(diagramGroup);
-
-        // Append the List Start controller directly into the Quill toolbar container
-        const listStartGroup = document.createElement('span');
-        listStartGroup.className = 'ql-formats ql-list-start-group';
-        listStartGroup.style.display = 'none'; // hidden by default
-        listStartGroup.style.alignItems = 'center';
-        listStartGroup.style.gap = '6px';
-        listStartGroup.style.borderLeft = '1px solid #dfdfdf';
-        listStartGroup.style.paddingLeft = '8px';
-        listStartGroup.style.marginLeft = '8px';
-
-        listStartGroup.innerHTML = `
-            <span style="font-size: 11px; font-weight: 500; color: #707070; white-space: nowrap;">Starts at:</span>
-            <input type="number" id="ql-list-start-input" min="1" value="1" style="width: 44px; height: 24px; border: 1px solid #dfdfdf; border-radius: 4px; text-align: center; font-size: 11px; font-weight: 600; outline: none; background: #ffffff; color: #171717;">
-            <button type="button" id="ql-list-follow-btn" title="Follow Previous List Number" style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1px solid #dfdfdf; border-radius: 4px; cursor: pointer; padding: 0; background: none; color: #555;">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11a5 5 0 0 1 5 5v2a5 5 0 0 1-5 5H3"/><polyline points="7 11 3 7 7 3"/></svg>
-            </button>
-        `;
-
-        toolbarContainer.appendChild(listStartGroup);
-
-        const input = listStartGroup.querySelector('#ql-list-start-input');
-        const followBtn = listStartGroup.querySelector('#ql-list-follow-btn');
-
-        // Handle typing in the Starts At input box
-        input.addEventListener('input', (e) => {
-            const ol = listStartGroup.activeOl;
-            if (ol) {
-                const val = parseInt(e.target.value, 10);
-                const allOls = Array.from(quill.root.querySelectorAll('ol'));
-                const olIndex = allOls.indexOf(ol);
-
-                window.adminState.manualListStarts = window.adminState.manualListStarts || new Map();
-                if (!isNaN(val) && val > 0) {
-                    window.adminState.manualListStarts.set(olIndex, val);
-                    ol.setAttribute('start', val);
+    const cmds = ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull', 'insertUnorderedList', 'insertOrderedList'];
+    cmds.forEach(cmd => {
+        const btn = toolbar.querySelector(`button[data-cmd="${cmd}"]`);
+        if (btn) {
+            try {
+                const isActive = document.queryCommandState(cmd);
+                if (isActive) {
+                    btn.classList.add('active');
                 } else {
-                    window.adminState.manualListStarts.delete(olIndex);
-                    ol.removeAttribute('start');
+                    btn.classList.remove('active');
                 }
-                window.autoAlignListStartAttributes();
-                quill.update();
+            } catch (e) {
+                btn.classList.remove('active');
             }
-        });
-
-        // Handle clicking the Follow Previous button
-        followBtn.addEventListener('click', () => {
-            const ol = listStartGroup.activeOl;
-            if (!ol) return;
-            const allOls = Array.from(quill.root.querySelectorAll('ol'));
-            const index = allOls.indexOf(ol);
-
-            window.adminState.manualListStarts = window.adminState.manualListStarts || new Map();
-            if (index > 0) {
-                let totalItems = 0;
-                for (let i = 0; i < index; i++) {
-                    const prevOl = allOls[i];
-                    const startVal = parseInt(prevOl.getAttribute('start') || '1', 10);
-                    const numItems = prevOl.querySelectorAll('li').length;
-                    totalItems = startVal + numItems - 1;
-                }
-                const nextStart = totalItems + 1;
-                ol.setAttribute('start', nextStart);
-                input.value = nextStart;
-                window.adminState.manualListStarts.set(index, nextStart);
-            } else {
-                ol.setAttribute('start', 1);
-                input.value = 1;
-                window.adminState.manualListStarts.set(index, 1);
-            }
-            window.autoAlignListStartAttributes();
-            quill.update();
-        });
-
-        // Bind editor selection-change and text-change events to toggle toolbar control and auto-align
-        quill.on('selection-change', () => {
-            window.autoAlignListStartAttributes();
-            updateListStartToolbarControl();
-        });
-        quill.on('text-change', () => {
-            window.autoAlignListStartAttributes();
-            updateListStartToolbarControl();
-        });
-
-    }
-}
-
-// ── List Start Toolbar Controller Helper ───────────────────────────────
-window.updateListStartToolbarControl = function () {
-    const group = document.querySelector('.ql-list-start-group');
-    const input = document.getElementById('ql-list-start-input');
-    const quill = window.adminState.quill;
-    if (!quill || !group || !input) return;
-
-    const range = quill.getSelection();
-    if (!range) {
-        group.style.display = 'none';
-        return;
-    }
-
-    const [line, offset] = quill.getLine(range.index);
-    if (!line || !line.domNode) {
-        group.style.display = 'none';
-        return;
-    }
-
-    const ol = line.domNode.closest('ol');
-    if (!ol) {
-        group.style.display = 'none';
-        return;
-    }
-
-    // Toggle display of control inside toolbar
-    group.style.display = 'inline-flex';
-    group.activeOl = ol;
-    input.value = ol.getAttribute('start') || '1';
-};
-
-window.autoAlignListStartAttributes = function () {
-    const quill = window.adminState.quill;
-    if (!quill) return;
-
-    const allOls = Array.from(quill.root.querySelectorAll('ol'));
-    let currentCounter = 1;
-
-    // Walk through all direct block-level children of the editor root
-    const children = Array.from(quill.root.children);
-    children.forEach((child) => {
-        const tagName = child.tagName;
-        if (tagName === 'H1' || tagName === 'H2' || tagName === 'H3' || tagName === 'HR') {
-            // Reset counter to 1 when entering a new section
-            currentCounter = 1;
-        } else if (tagName === 'OL') {
-            const olIndex = allOls.indexOf(child);
-            const manualStart = window.adminState.manualListStarts?.get(olIndex);
-
-            if (manualStart !== undefined) {
-                currentCounter = manualStart;
-            }
-
-            // Directly inject the start attribute in the editor's live DOM
-            child.setAttribute('start', currentCounter);
-
-            // Increment counter by the number of list items (li) in this block
-            const numItems = child.querySelectorAll('li').length;
-            currentCounter += numItems;
         }
     });
+
+    const blockFormat = document.getElementById('toolbar-block-format');
+    if (blockFormat) {
+        try {
+            const val = document.queryCommandValue('formatBlock');
+            if (val) {
+                const lower = String(val).toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (['h1', 'h2', 'h3', 'h4', 'p'].includes(lower)) {
+                    blockFormat.value = lower;
+                } else {
+                    blockFormat.value = 'p';
+                }
+            }
+        } catch (e) {}
+    }
+}
+
+function initCustomRichEditor() {
+    const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea || editorArea.getAttribute('data-editor-initialized') === 'true') return;
+    editorArea.setAttribute('data-editor-initialized', 'true');
+
+    const toolbar = document.getElementById('msword-toolbar');
+    if (toolbar) {
+        toolbar.querySelectorAll('button[data-cmd]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cmd = btn.getAttribute('data-cmd');
+                if (cmd) {
+                    document.execCommand(cmd, false, null);
+                    editorArea.focus();
+                    updateEditorWordCount();
+                    updateToolbarActiveStates();
+                }
+            });
+        });
+    }
+
+    const blockFormat = document.getElementById('toolbar-block-format');
+    if (blockFormat) {
+        blockFormat.addEventListener('change', (e) => {
+            const tag = e.target.value;
+            if (tag) {
+                document.execCommand('formatBlock', false, `<${tag}>`);
+                editorArea.focus();
+                updateToolbarActiveStates();
+            }
+        });
+    }
+
+    const foreColor = document.getElementById('toolbar-forecolor');
+    if (foreColor) {
+        foreColor.addEventListener('input', (e) => {
+            document.execCommand('foreColor', false, e.target.value);
+            editorArea.focus();
+        });
+    }
+
+    const backColor = document.getElementById('toolbar-backcolor');
+    if (backColor) {
+        backColor.addEventListener('input', (e) => {
+            document.execCommand('hiliteColor', false, e.target.value) || document.execCommand('backColor', false, e.target.value);
+            editorArea.focus();
+        });
+    }
+
+    editorArea.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            if (e.shiftKey) {
+                document.execCommand('outdent', false, null);
+            } else {
+                document.execCommand('indent', false, null);
+            }
+            updateEditorWordCount();
+            updateToolbarActiveStates();
+        }
+    });
+
+    // Handle FAQ Deletion inside editor
+    editorArea.addEventListener('click', (e) => {
+        const delBtn = e.target.closest('.faq-delete-btn');
+        if (delBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const accordion = delBtn.closest('details.article-accordion');
+            if (accordion) {
+                accordion.remove();
+                updateEditorWordCount();
+            }
+        }
+        updateToolbarActiveStates();
+    });
+
+    editorArea.addEventListener('input', () => {
+        updateEditorWordCount();
+        updateToolbarActiveStates();
+    });
+    editorArea.addEventListener('keyup', () => {
+        updateEditorWordCount();
+        updateToolbarActiveStates();
+    });
+    editorArea.addEventListener('mouseup', updateToolbarActiveStates);
+
+    document.addEventListener('selectionchange', () => {
+        const sel = window.getSelection();
+        if (sel && sel.anchorNode && editorArea.contains(sel.anchorNode)) {
+            updateToolbarActiveStates();
+        }
+    });
+
+    updateEditorWordCount();
+    updateToolbarActiveStates();
+}
+
+function updateEditorWordCount() {
+    const editorArea = document.getElementById('article-editor-area');
+    const wordCountEl = document.getElementById('editor-word-count');
+    const charCountEl = document.getElementById('editor-char-count');
+    if (!editorArea || !wordCountEl || !charCountEl) return;
+
+    const text = editorArea.innerText || '';
+    const cleanText = text.trim();
+    const words = cleanText ? cleanText.split(/\s+/).filter(Boolean).length : 0;
+    const chars = text.length;
+
+    wordCountEl.innerText = `${words} ${words === 1 ? 'word' : 'words'}`;
+    charCountEl.innerText = `${chars} ${chars === 1 ? 'character' : 'characters'}`;
+}
+
+window.toggleEditorSourceMode = function () {
+    const editorArea = document.getElementById('article-editor-area');
+    const sourceArea = document.getElementById('article-source-area');
+    const btn = document.getElementById('toggle-source-mode-btn');
+    if (!editorArea || !sourceArea) return;
+
+    if (sourceArea.classList.contains('hidden')) {
+        sourceArea.value = editorArea.innerHTML;
+        editorArea.classList.add('hidden');
+        sourceArea.classList.remove('hidden');
+        if (btn) btn.classList.add('active');
+    } else {
+        editorArea.innerHTML = sourceArea.value;
+        sourceArea.classList.add('hidden');
+        editorArea.classList.remove('hidden');
+        if (btn) btn.classList.remove('active');
+        updateEditorWordCount();
+    }
 };
 
+window.editorInsertBlockquote = function () {
+    document.execCommand('formatBlock', false, '<blockquote>');
+    const editorArea = document.getElementById('article-editor-area');
+    if (editorArea) editorArea.focus();
+    updateEditorWordCount();
+    updateToolbarActiveStates();
+};
 
+window.editorInsertCodeBlock = function () {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    const range = sel.getRangeAt(0);
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    code.textContent = sel.toString() || '// Code snippet goes here';
+    pre.appendChild(code);
+    range.deleteContents();
+    range.insertNode(pre);
+    updateEditorWordCount();
+};
 
+window.editorInsertAccordion = function () {
+    const question = prompt('Enter Question / FAQ Title:', 'What is DiginixIT?');
+    if (!question || !question.trim()) return;
+    const answer = prompt('Enter Answer / Explanation:', 'DiginixIT is a leading software & technology engineering agency...');
+    if (!answer || !answer.trim()) return;
 
-// Diagram Modal helpers
+    const safeQ = window.escapeHtml ? window.escapeHtml(question.trim()) : question.trim();
+    const safeA = window.escapeHtml ? window.escapeHtml(answer.trim()) : answer.trim();
+
+    const accordionHtml = `<details class="article-accordion my-4 border border-hairline rounded-xl overflow-hidden bg-canvas-soft" open><summary class="flex items-center justify-between p-4 font-semibold text-ink cursor-pointer select-none"><span>${safeQ}</span><button type="button" class="faq-delete-btn text-[11px] font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-0.5 rounded transition-colors ml-3" title="Delete FAQ Block">✕ Remove FAQ</button></summary><div class="p-4 text-ink-mute border-t border-hairline bg-canvas"><p>${safeA}</p></div></details><p></p>`;
+    document.execCommand('insertHTML', false, accordionHtml);
+    updateEditorWordCount();
+};
+
+window.editorPromptLink = function () {
+    const url = prompt('Enter web address for link:', 'https://');
+    if (url && url.trim()) {
+        document.execCommand('createLink', false, url.trim());
+    }
+};
+
+window.editorPromptImage = function () {
+    const choice = prompt('Type 1 to insert Image URL, or Type 2 to Upload Image File:', '1');
+    if (choice === '1') {
+        const url = prompt('Enter Image URL:', 'https://');
+        if (url && url.trim()) {
+            document.execCommand('insertImage', false, url.trim());
+        }
+    } else if (choice === '2') {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.execCommand('insertImage', false, event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        fileInput.click();
+    }
+};
+
+window.editorPromptTable = function () {
+    const rows = parseInt(prompt('Number of table rows:', '3') || '3', 10);
+    const cols = parseInt(prompt('Number of table columns:', '3') || '3', 10);
+    if (isNaN(rows) || isNaN(cols) || rows <= 0 || cols <= 0) return;
+
+    let tableHtml = '<table><thead><tr>';
+    for (let c = 0; c < cols; c++) {
+        tableHtml += `<th>Header ${c + 1}</th>`;
+    }
+    tableHtml += '</tr></thead><tbody>';
+    for (let r = 0; r < rows; r++) {
+        tableHtml += '<tr>';
+        for (let c = 0; c < cols; c++) {
+            tableHtml += `<td>Cell ${r + 1},${c + 1}</td>`;
+        }
+        tableHtml += '</tr>';
+    }
+    tableHtml += '</tbody></table><p></p>';
+    document.execCommand('insertHTML', false, tableHtml);
+    updateEditorWordCount();
+};
+
 window.openDiagramModal = function () {
     const modal = document.getElementById('diagram-modal');
     if (!modal) return;
@@ -1011,12 +1037,24 @@ window.insertDiagramToEditor = function () {
     const ta = document.getElementById('diagram-textarea');
     const text = ta ? ta.value : '';
     if (!text.trim()) { window.closeDiagramModal(); return; }
-    const quill = window.adminState.quill;
-    if (!quill) return;
-    const range = quill.getSelection(true) || { index: quill.getLength() - 1, length: 0 };
-    quill.insertEmbed(range.index, 'diagram', text, 'user');
-    quill.setSelection(range.index + 1, 0, 'silent');
+
+    const editorArea = document.getElementById('article-editor-area');
+    if (editorArea) {
+        const pre = document.createElement('pre');
+        pre.className = 'ascii-diagram';
+        pre.textContent = text;
+
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0 && editorArea.contains(sel.anchorNode)) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(pre);
+        } else {
+            editorArea.appendChild(pre);
+        }
+    }
     window.closeDiagramModal();
+    updateEditorWordCount();
 };
 
 // ── Blog: Load & Filter ──────────────────────────────────────────────
@@ -1091,47 +1129,62 @@ function initBlogFilterTabs() {
     });
 }
 
-const editorPanel = document.getElementById('blog-editor-panel');
-const editorContent = document.getElementById('blog-editor-content');
+window.openArticleEditor = function (id = null) {
+    const contents = document.querySelectorAll('.admin-tab-content');
+    contents.forEach(c => c.classList.remove('active'));
 
-window.toggleBlogModal = function (show, isEdit = false) {
-    if (!editorPanel || !editorContent) return;
-    initQuill();
-    if (show) {
-        if (!isEdit) {
-            document.getElementById('edit-post-id').value = '';
-            document.getElementById('blog-title').value = '';
-            document.getElementById('blog-category').value = '';
-            document.getElementById('blog-author').value = '';
-            document.getElementById('blog-summary').value = '';
-            if (window.adminState.quill) window.adminState.quill.setContents([]);
-            document.getElementById('blog-editor-title').innerText = 'Write New Article';
-        }
-        editorPanel.classList.remove('pointer-events-none');
-        gsap.to(editorPanel, { opacity: 1, duration: 0.3 });
-        gsap.to(editorContent, { x: 0, duration: 0.3, ease: 'power2.out' });
-    } else {
-        const listTooltip = document.getElementById('list-start-tooltip');
-        if (listTooltip) listTooltip.style.display = 'none';
+    const editorTab = document.getElementById('tab-article-editor');
+    if (editorTab) editorTab.classList.add('active');
 
-        gsap.to(editorPanel, { opacity: 0, duration: 0.2 });
-        gsap.to(editorContent, { x: '100%', duration: 0.2 });
-        setTimeout(() => editorPanel.classList.add('pointer-events-none'), 200);
+    window.adminState.activeTab = 'article-editor';
+    initCustomRichEditor();
+
+    const pageTitle = document.getElementById('article-editor-page-title');
+    const editorArea = document.getElementById('article-editor-area');
+    const sourceArea = document.getElementById('article-source-area');
+
+    if (sourceArea && !sourceArea.classList.contains('hidden')) {
+        toggleEditorSourceMode();
     }
+
+    if (id) {
+        const post = window.adminState.blogs.find(b => b.id == id);
+        if (post) {
+            document.getElementById('edit-post-id').value = post.id;
+            document.getElementById('blog-title').value = post.title || '';
+            document.getElementById('blog-category').value = post.category || '';
+            document.getElementById('blog-author').value = post.author || '';
+            document.getElementById('blog-summary').value = post.summary || '';
+            if (editorArea) editorArea.innerHTML = post.content || '<p></p>';
+            if (pageTitle) pageTitle.innerText = 'Edit Article';
+        }
+    } else {
+        document.getElementById('edit-post-id').value = '';
+        document.getElementById('blog-title').value = '';
+        document.getElementById('blog-category').value = '';
+        document.getElementById('blog-author').value = '';
+        document.getElementById('blog-summary').value = '';
+        if (editorArea) editorArea.innerHTML = '<p>Start writing your article here...</p>';
+        if (pageTitle) pageTitle.innerText = 'Write New Article';
+    }
+
+    updateEditorWordCount();
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+};
+
+window.closeArticleEditor = function () {
+    const contents = document.querySelectorAll('.admin-tab-content');
+    contents.forEach(c => c.classList.remove('active'));
+
+    const blogTab = document.getElementById('tab-blog');
+    if (blogTab) blogTab.classList.add('active');
+
+    window.adminState.activeTab = 'blog';
+    loadBlogData();
 };
 
 window.editBlogPost = function (id) {
-    const post = window.adminState.blogs.find(b => b.id == id);
-    if (!post) return;
-    initQuill();
-    document.getElementById('edit-post-id').value = post.id;
-    document.getElementById('blog-title').value = post.title;
-    document.getElementById('blog-category').value = post.category;
-    document.getElementById('blog-author').value = post.author;
-    document.getElementById('blog-summary').value = post.summary;
-    if (window.adminState.quill) window.adminState.quill.root.innerHTML = post.content || '';
-    document.getElementById('blog-editor-title').innerText = 'Edit Article';
-    toggleBlogModal(true, true);
+    window.openArticleEditor(id);
 };
 
 window.deleteBlogPost = async function (id) {
@@ -1147,31 +1200,37 @@ window.deleteBlogPost = async function (id) {
 };
 
 function getBlogFormValues() {
-    if (window.adminState.quill) {
-        window.autoAlignListStartAttributes();
+    const editorArea = document.getElementById('article-editor-area');
+    const sourceArea = document.getElementById('article-source-area');
+
+    let htmlContent = '';
+    if (sourceArea && !sourceArea.classList.contains('hidden')) {
+        htmlContent = sourceArea.value;
+    } else if (editorArea) {
+        htmlContent = editorArea.innerHTML;
     }
+
     return {
         id: document.getElementById('edit-post-id').value,
         title: document.getElementById('blog-title').value.trim(),
         category: document.getElementById('blog-category').value.trim(),
         author: document.getElementById('blog-author').value.trim(),
         summary: document.getElementById('blog-summary').value.trim(),
-        content: window.adminState.quill ? window.adminState.quill.root.innerHTML : ''
+        content: htmlContent
     };
 }
 
-
 window.handleBlogSave = async function (e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     const fields = getBlogFormValues();
+    if (!fields.title) { alert('Please enter an article title.'); return; }
     const payload = { ...fields, status: 'published', _csrf_token: window.csrfToken };
     await window.backendReady;
     const res = await window.apiCall('save_blog', payload);
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
         alert('Blog post published successfully.');
-        toggleBlogModal(false);
-        await loadBlogData();
+        window.closeArticleEditor();
     } else {
         alert('Failed to save blog post.');
     }
@@ -1186,8 +1245,7 @@ window.handleBlogSaveAsDraft = async function () {
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
         alert('Article saved as draft.');
-        toggleBlogModal(false);
-        await loadBlogData();
+        window.closeArticleEditor();
     } else {
         alert('Failed to save draft.');
     }
@@ -1500,6 +1558,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initTabs();
     initAnalyticsPresets();
     initBlogFilterTabs();
+    initCustomRichEditor();
     await loadAnalyticsData();
     subscribeToRealtime();
 
