@@ -9,7 +9,7 @@
                 document.documentElement.style.display = 'none';
                 window.location.replace('maintenance.html');
             }
-        } catch (e) {}
+        } catch (e) { }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -189,37 +189,46 @@
             padding-left: 1.75rem !important;
             margin-bottom: 1.25rem !important;
         }
+
         #article-content ol {
             list-style-type: decimal !important;
             padding-left: 1.75rem !important;
             margin-bottom: 1.25rem !important;
         }
+
         #article-content ul ul {
             list-style-type: circle !important;
             margin-bottom: 0.25rem !important;
         }
+
         #article-content ol ol {
             list-style-type: lower-alpha !important;
             margin-bottom: 0.25rem !important;
         }
+
         #article-content li {
             margin-bottom: 0.35rem !important;
             line-height: 1.6;
         }
+
         #article-content table {
             width: 100%;
             border-collapse: collapse;
             margin: 1.5rem 0;
         }
-        #article-content th, #article-content td {
+
+        #article-content th,
+        #article-content td {
             border: 1px solid var(--color-hairline, #e5e5e5);
             padding: 0.65rem 0.85rem;
             text-align: left;
         }
+
         #article-content th {
             background-color: var(--color-canvas-soft, #f9f9f9);
             font-weight: 600;
         }
+
         #article-content img {
             max-width: 100%;
             height: auto;

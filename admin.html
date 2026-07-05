@@ -839,15 +839,15 @@
 
                                 <!-- Blocks & Inserts -->
                                 <div class="flex items-center gap-0.5 border-r border-hairline pr-2 mr-1">
-                                    <button type="button" class="toolbar-btn" onclick="editorInsertBlockquote()" title="Blockquote"><i data-lucide="quote" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" onclick="editorInsertCodeBlock()" title="Code Block"><i data-lucide="code" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" onclick="editorInsertAccordion()" title="Insert FAQ / Accordion (Q&amp;A)"><i data-lucide="help-circle" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="insertHorizontalRule" title="Horizontal Line"><i data-lucide="minus" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" onclick="editorPromptLink()" title="Insert Link"><i data-lucide="link" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="unlink" title="Remove Link"><i data-lucide="unlink" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" onclick="editorPromptImage()" title="Insert Image / Upload"><i data-lucide="image" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" onclick="editorPromptTable()" title="Insert Table"><i data-lucide="table" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" onclick="openDiagramModal()" title="Insert ASCII Diagram"><i data-lucide="workflow" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="blockquote" onclick="editorInsertBlockquote()" title="Blockquote"><i data-lucide="quote" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="codeblock" onclick="editorInsertCodeBlock()" title="Code Block"><i data-lucide="code" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="accordion" onclick="editorInsertAccordion()" title="Insert FAQ / Accordion (Q&amp;A)"><i data-lucide="help-circle" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="horizontalRule" data-cmd="insertHorizontalRule" title="Horizontal Line"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="link" onclick="editorPromptLink()" title="Insert Link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="unlink" data-cmd="unlink" title="Remove Link"><i data-lucide="unlink" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="image" onclick="editorPromptImage()" title="Insert Image / Upload"><i data-lucide="image" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="table" onclick="editorPromptTable()" title="Insert Table"><i data-lucide="table" class="w-4 h-4"></i></button>
+                                    <button type="button" class="toolbar-btn" data-tool="diagram" onclick="openDiagramModal()" title="Insert ASCII Diagram"><i data-lucide="workflow" class="w-4 h-4"></i></button>
                                 </div>
 
                                 <!-- Utilities -->

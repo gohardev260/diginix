@@ -767,36 +767,105 @@ function updateToolbarActiveStates() {
     const toolbar = document.getElementById('msword-toolbar');
     if (!editorArea || !toolbar) return;
 
-    const cmds = ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull', 'insertUnorderedList', 'insertOrderedList'];
-    cmds.forEach(cmd => {
-        const btn = toolbar.querySelector(`button[data-cmd="${cmd}"]`);
-        if (btn) {
-            try {
-                const isActive = document.queryCommandState(cmd);
-                if (isActive) {
-                    btn.classList.add('active');
+    const sel = window.getSelection();
+    let node = null;
+    if (sel && sel.rangeCount > 0) {
+        node = sel.anchorNode;
+        if (node && node.nodeType === Node.TEXT_NODE) {
+            node = node.parentElement;
+        }
+    }
+
+    let isBold = false, isItalic = false, isUnderline = false, isStrike = false, isSub = false, isSup = false;
+    let isUl = false, isOl = false, isBlockquote = false, isCodeblock = false, isAccordion = false, isLink = false, isTable = false, isDiagram = false;
+    let headingTag = 'p';
+    let textAlign = '';
+
+    if (node && editorArea.contains(node)) {
+        let curr = node;
+        while (curr && curr !== editorArea && curr.parentElement) {
+            const tag = curr.tagName ? curr.tagName.toLowerCase() : '';
+            if (tag === 'b' || tag === 'strong' || (curr.style && (curr.style.fontWeight === 'bold' || parseInt(curr.style.fontWeight) >= 600))) isBold = true;
+            if (tag === 'i' || tag === 'em' || (curr.style && curr.style.fontStyle === 'italic')) isItalic = true;
+            if (tag === 'u' || (curr.style && curr.style.textDecoration && curr.style.textDecoration.includes('underline'))) isUnderline = true;
+            if (tag === 's' || tag === 'strike' || (curr.style && curr.style.textDecoration && curr.style.textDecoration.includes('line-through'))) isStrike = true;
+            if (tag === 'sub') isSub = true;
+            if (tag === 'sup') isSup = true;
+            if (tag === 'ul') isUl = true;
+            if (tag === 'ol') isOl = true;
+            if (tag === 'blockquote') isBlockquote = true;
+            if (tag === 'code' || tag === 'pre') {
+                if (curr.classList && (curr.classList.contains('ascii-diagram') || curr.classList.contains('ql-diagram'))) {
+                    isDiagram = true;
                 } else {
-                    btn.classList.remove('active');
+                    isCodeblock = true;
                 }
-            } catch (e) {
-                btn.classList.remove('active');
+            }
+            if (tag === 'details' || (curr.classList && curr.classList.contains('article-accordion'))) isAccordion = true;
+            if (tag === 'a') isLink = true;
+            if (tag === 'table' || tag === 'tr' || tag === 'td' || tag === 'th') isTable = true;
+
+            if (['h1', 'h2', 'h3', 'h4', 'p'].includes(tag) && headingTag === 'p') {
+                headingTag = tag;
+            }
+            if (curr.style && curr.style.textAlign && !textAlign) {
+                textAlign = curr.style.textAlign.toLowerCase();
+            }
+            curr = curr.parentElement;
+        }
+    }
+
+    const checkState = (cmd, domBool) => {
+        try {
+            return domBool || document.queryCommandState(cmd);
+        } catch (e) {
+            return domBool;
+        }
+    };
+
+    const states = {
+        'bold': checkState('bold', isBold),
+        'italic': checkState('italic', isItalic),
+        'underline': checkState('underline', isUnderline),
+        'strikeThrough': checkState('strikeThrough', isStrike),
+        'subscript': checkState('subscript', isSub),
+        'superscript': checkState('superscript', isSup),
+        'insertUnorderedList': checkState('insertUnorderedList', isUl),
+        'insertOrderedList': checkState('insertOrderedList', isOl),
+        'justifyLeft': textAlign === 'left' || checkState('justifyLeft', false),
+        'justifyCenter': textAlign === 'center' || checkState('justifyCenter', false),
+        'justifyRight': textAlign === 'right' || checkState('justifyRight', false),
+        'justifyFull': textAlign === 'justify' || checkState('justifyFull', false),
+        'blockquote': isBlockquote,
+        'codeblock': isCodeblock,
+        'accordion': isAccordion,
+        'link': isLink,
+        'table': isTable,
+        'diagram': isDiagram
+    };
+
+    Object.keys(states).forEach(key => {
+        const btn = toolbar.querySelector(`button[data-cmd="${key}"], button[data-tool="${key}"]`);
+        if (btn) {
+            if (states[key]) {
+                btn.classList.add('active', 'bg-neutral-200', 'text-primary-deep', 'border-primary');
+            } else {
+                btn.classList.remove('active', 'bg-neutral-200', 'text-primary-deep', 'border-primary');
             }
         }
     });
 
     const blockFormat = document.getElementById('toolbar-block-format');
     if (blockFormat) {
+        let val = headingTag;
         try {
-            const val = document.queryCommandValue('formatBlock');
-            if (val) {
-                const lower = String(val).toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (['h1', 'h2', 'h3', 'h4', 'p'].includes(lower)) {
-                    blockFormat.value = lower;
-                } else {
-                    blockFormat.value = 'p';
-                }
+            const cmdVal = document.queryCommandValue('formatBlock');
+            if (cmdVal) {
+                const lower = String(cmdVal).toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (['h1', 'h2', 'h3', 'h4', 'p'].includes(lower)) val = lower;
             }
         } catch (e) {}
+        blockFormat.value = val;
     }
 }
 
@@ -934,27 +1003,87 @@ window.toggleEditorSourceMode = function () {
 };
 
 window.editorInsertBlockquote = function () {
-    document.execCommand('formatBlock', false, '<blockquote>');
     const editorArea = document.getElementById('article-editor-area');
-    if (editorArea) editorArea.focus();
+    if (!editorArea) return;
+
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+        let node = sel.anchorNode;
+        if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        const bq = node ? node.closest('blockquote') : null;
+        if (bq && editorArea.contains(bq)) {
+            // Already inside blockquote -> Toggle OFF (convert to paragraph)
+            const p = document.createElement('p');
+            p.innerHTML = bq.innerHTML;
+            bq.parentNode.replaceChild(p, bq);
+            editorArea.focus();
+            updateEditorWordCount();
+            updateToolbarActiveStates();
+            return;
+        }
+    }
+
+    // Toggle ON
+    document.execCommand('formatBlock', false, '<blockquote>');
+    editorArea.focus();
     updateEditorWordCount();
     updateToolbarActiveStates();
 };
 
 window.editorInsertCodeBlock = function () {
+    const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea) return;
+
     const sel = window.getSelection();
     if (!sel || !sel.rangeCount) return;
+
+    let node = sel.anchorNode;
+    if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+    const pre = node ? node.closest('pre') : null;
+    if (pre && editorArea.contains(pre)) {
+        // Already inside code block -> Toggle OFF (convert to paragraph)
+        const p = document.createElement('p');
+        p.textContent = pre.textContent;
+        pre.parentNode.replaceChild(p, pre);
+        editorArea.focus();
+        updateEditorWordCount();
+        updateToolbarActiveStates();
+        return;
+    }
+
+    // Toggle ON
     const range = sel.getRangeAt(0);
-    const pre = document.createElement('pre');
+    const newPre = document.createElement('pre');
     const code = document.createElement('code');
     code.textContent = sel.toString() || '// Code snippet goes here';
-    pre.appendChild(code);
+    newPre.appendChild(code);
     range.deleteContents();
-    range.insertNode(pre);
+    range.insertNode(newPre);
+    editorArea.focus();
     updateEditorWordCount();
+    updateToolbarActiveStates();
 };
 
 window.editorInsertAccordion = function () {
+    const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea) return;
+
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+        let node = sel.anchorNode;
+        if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        const accordion = node ? node.closest('details.article-accordion') : null;
+        if (accordion && editorArea.contains(accordion)) {
+            // Already inside accordion -> Toggle OFF (Remove accordion)
+            accordion.remove();
+            editorArea.focus();
+            updateEditorWordCount();
+            updateToolbarActiveStates();
+            return;
+        }
+    }
+
+    // Toggle ON
     const question = prompt('Enter Question / FAQ Title:', 'What is DiginixIT?');
     if (!question || !question.trim()) return;
     const answer = prompt('Enter Answer / Explanation:', 'DiginixIT is a leading software & technology engineering agency...');
@@ -965,13 +1094,37 @@ window.editorInsertAccordion = function () {
 
     const accordionHtml = `<details class="article-accordion my-4 border border-hairline rounded-xl overflow-hidden bg-canvas-soft" open><summary class="flex items-center justify-between p-4 font-semibold text-ink cursor-pointer select-none"><span>${safeQ}</span><button type="button" class="faq-delete-btn text-[11px] font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-0.5 rounded transition-colors ml-3" title="Delete FAQ Block">✕ Remove FAQ</button></summary><div class="p-4 text-ink-mute border-t border-hairline bg-canvas"><p>${safeA}</p></div></details><p></p>`;
     document.execCommand('insertHTML', false, accordionHtml);
+    editorArea.focus();
     updateEditorWordCount();
+    updateToolbarActiveStates();
 };
 
 window.editorPromptLink = function () {
+    const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea) return;
+
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+        let node = sel.anchorNode;
+        if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        const link = node ? node.closest('a') : null;
+        if (link && editorArea.contains(link)) {
+            // Already inside link -> Toggle OFF (Remove link)
+            document.execCommand('unlink', false, null);
+            editorArea.focus();
+            updateEditorWordCount();
+            updateToolbarActiveStates();
+            return;
+        }
+    }
+
+    // Toggle ON
     const url = prompt('Enter web address for link:', 'https://');
     if (url && url.trim()) {
         document.execCommand('createLink', false, url.trim());
+        editorArea.focus();
+        updateEditorWordCount();
+        updateToolbarActiveStates();
     }
 };
 
