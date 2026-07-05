@@ -115,15 +115,20 @@
             max-width: 100%;
         }
 
-        /* ── Article Body ────────────────────────────────────────────── */
+        /* ── Article Body (Medium-like consistent typography) ────────── */
         #article-content {
-            font-family: 'Lora', Georgia, serif;
-            color: var(--color-ink);
+            font-family: 'Lora', Georgia, Cambria, 'Times New Roman', Times, serif !important;
+            color: var(--color-ink, #171717);
             font-size: 1.125rem;
             line-height: 1.8;
             letter-spacing: -0.003em;
             word-break: break-word;
             overflow-wrap: break-word;
+        }
+
+        /* Prevent inline styles or nested elements from changing fonts randomly */
+        #article-content *:not(pre):not(code):not(pre *):not(code *):not(i):not(svg):not(.lucide) {
+            font-family: inherit !important;
         }
 
         @media (min-width: 640px) {
@@ -135,31 +140,35 @@
         #article-content p {
             margin-bottom: 1.75rem;
             font-weight: 400;
+            font-family: 'Lora', Georgia, Cambria, serif !important;
         }
 
         #article-content h1,
         #article-content h2,
-        #article-content h3 {
-            font-family: 'Inter', sans-serif;
-            color: var(--color-ink);
-            font-weight: 500;
-            line-height: 1.2;
+        #article-content h3,
+        #article-content h4,
+        #article-content h5,
+        #article-content h6 {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            color: var(--color-ink, #171717);
+            font-weight: 700;
+            line-height: 1.3;
             margin-top: 2.5rem;
             margin-bottom: 1rem;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.02em;
             word-break: break-word;
         }
 
         #article-content h1 {
-            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-size: clamp(1.5rem, 4vw, 2.25rem);
         }
 
         #article-content h2 {
-            font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+            font-size: clamp(1.3rem, 3.5vw, 1.85rem);
         }
 
         #article-content h3 {
-            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            font-size: clamp(1.15rem, 3vw, 1.45rem);
         }
 
         #article-content a {
@@ -825,6 +834,13 @@
                     }).join('');
                 }
 
+                // ── Post-render font-family override cleanup ─────────────────────
+                // Remove inline font-family declarations so Medium-like typography remains 100% consistent
+                contentsContainer.querySelectorAll('*[style]').forEach((el) => {
+                    if (el.tagName !== 'PRE' && el.tagName !== 'CODE') {
+                        el.style.fontFamily = '';
+                    }
+                });
 
                 // ── Post-render ASCII diagram formatting ──────────────────────────────
                 contentsContainer.querySelectorAll('pre.ascii-diagram, pre.ql-diagram').forEach(pre => {
