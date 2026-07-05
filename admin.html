@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-adsense-account" content="ca-pub-3363493243397953">
     <title>DiginixIT | Admin Console</title>
-    <meta name="description" content="Private administration panel console for managing DiginixIT analytics, blog insights, and user database.">
+    <meta name="description" content="Private administration console for managing DiginixIT analytics, blog insights, and user database.">
     <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://diginixit.com/admin.html">
 
     <!-- DNS Prefetch & Preconnect -->
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net font-sans">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,8 +44,7 @@
                         hairline: '#dfdfdf',
                         'hairline-strong': '#c7c7c7',
                         'hairline-cool': '#ededed'
-                    },
-                    letterSpacing: { tighter: '-0.04em', tight: '-0.02em' }
+                    }
                 }
             }
         };
@@ -64,22 +63,21 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     
-    <!-- Guard style overlay & dynamic style overrides -->
+    <!-- Custom Editor & Guard Overrides -->
     <style>
-        /* ── Rich Text Editor Toolbar Buttons ──────────────────────── */
         .toolbar-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             padding: 0;
-            border-radius: 6px;
+            border-radius: 4px;
             color: var(--color-ink);
             background: transparent;
             border: 1px solid transparent;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.15s ease;
         }
@@ -88,80 +86,21 @@
             border-color: var(--color-hairline);
         }
         .toolbar-btn.active {
-            background: rgba(99, 102, 241, 0.15) !important;
-            color: #6366f1 !important;
-            border-color: rgba(99, 102, 241, 0.4) !important;
-            font-weight: 700 !important;
-            box-shadow: 0 1px 4px rgba(99, 102, 241, 0.25) !important;
+            background: rgba(62, 207, 142, 0.15) !important;
+            color: var(--color-ink) !important;
+            border-color: var(--color-primary) !important;
+            font-weight: 600 !important;
         }
 
-        /* ── Article Writer Surface Styling & List Formatting Fixes ─ */
         .article-writer-content {
             outline: none !important;
         }
-        .article-writer-content p {
-            margin-bottom: 1rem;
-            line-height: 1.7;
-        }
-        .article-writer-content h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.02em;
-        }
-        .article-writer-content h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-top: 1.25rem;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.01em;
-        }
-        .article-writer-content h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        .article-writer-content h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-top: 0.85rem;
-            margin-bottom: 0.4rem;
-        }
-        .article-writer-content ul {
-            list-style-type: disc !important;
-            padding-left: 1.75rem !important;
-            margin-top: 0.5rem !important;
-            margin-bottom: 1rem !important;
-        }
-        .article-writer-content ol {
-            list-style-type: decimal !important;
-            padding-left: 1.75rem !important;
-            margin-top: 0.5rem !important;
-            margin-bottom: 1rem !important;
-        }
-        .article-writer-content ul ul {
-            list-style-type: circle !important;
-            margin-bottom: 0.25rem !important;
-        }
-        .article-writer-content ol ol {
-            list-style-type: lower-alpha !important;
-            margin-bottom: 0.25rem !important;
-        }
-        .article-writer-content li {
-            margin-bottom: 0.35rem !important;
-            line-height: 1.6;
-        }
-        .article-writer-content blockquote {
-            border-left: 4px solid #6366f1;
-            padding: 0.75rem 1.25rem;
-            margin: 1.25rem 0;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: 0 8px 8px 0;
-            font-style: italic;
-            color: var(--color-ink-mute);
-        }
+        .article-writer-content p { margin-bottom: 1rem; line-height: 1.7; }
+        .article-writer-content h1 { font-size: 2rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .article-writer-content h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+        .article-writer-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+        .article-writer-content ul { list-style-type: disc !important; padding-left: 1.75rem !important; margin-bottom: 1rem !important; }
+        .article-writer-content ol { list-style-type: decimal !important; padding-left: 1.75rem !important; margin-bottom: 1rem !important; }
         .article-writer-content pre {
             font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             background: #111111;
@@ -171,81 +110,6 @@
             overflow-x: auto;
             white-space: pre-wrap;
             margin: 1.25rem 0;
-        }
-        .article-writer-content pre.ascii-diagram {
-            white-space: pre !important;
-            overflow-x: auto !important;
-            background: #0f172a !important;
-            color: #38bdf8 !important;
-            border-left: 4px solid #38bdf8 !important;
-        }
-        .article-writer-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.25rem 0;
-        }
-        .article-writer-content th,
-        .article-writer-content td {
-            border: 1px solid var(--color-hairline);
-            padding: 0.6rem 0.8rem;
-            text-align: left;
-        }
-        .article-writer-content th {
-            background: var(--color-canvas-soft);
-            font-weight: 600;
-        }
-        .article-writer-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin: 1rem 0;
-            display: block;
-        }
-        .article-writer-content hr {
-            border: none;
-            border-top: 1px solid var(--color-hairline);
-            margin: 1.75rem 0;
-        }
-        .article-writer-content details.article-accordion,
-        #article-content details.article-accordion {
-            border: 1px solid var(--color-hairline, #e5e5e5);
-            border-radius: 12px;
-            margin: 1.25rem 0;
-            overflow: hidden;
-            background: var(--color-canvas-soft, #f9f9f9);
-        }
-        .article-writer-content details.article-accordion summary,
-        #article-content details.article-accordion summary {
-            padding: 0.85rem 1.15rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--color-ink, #111);
-            list-style: none;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            user-select: none;
-        }
-        .article-writer-content details.article-accordion summary::-webkit-details-marker,
-        #article-content details.article-accordion summary::-webkit-details-marker {
-            display: none;
-        }
-        .article-writer-content details.article-accordion summary::after,
-        #article-content details.article-accordion summary::after {
-            content: "＋";
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--color-ink-mute, #666);
-        }
-        .article-writer-content details.article-accordion[open] summary::after,
-        #article-content details.article-accordion[open] summary::after {
-            content: "－";
-        }
-        .article-writer-content details.article-accordion div,
-        #article-content details.article-accordion div {
-            padding: 0.85rem 1.15rem;
-            border-top: 1px solid var(--color-hairline, #e5e5e5);
-            background: var(--color-canvas, #fff);
         }
 
         #admin-guard {
@@ -266,122 +130,56 @@
             display: none;
         }
 
-        /* Overrides to map dynamic elements from admin.js to design.md specs */
-        #blog-table-body td.text-primary, 
-        #users-table-body td.text-primary {
-            color: var(--color-ink) !important;
-            font-weight: 500 !important;
-        }
-        
-        .edit-blog-btn, .toggle-user-status-btn {
-            color: var(--color-ink) !important;
-            font-weight: 500 !important;
-            text-decoration: underline !important;
-        }
-        
-        .edit-blog-btn:hover, .toggle-user-status-btn:hover {
-            color: var(--color-ink-mute) !important;
-        }
-        
-        /* Dynamic Status Badges */
-        .bg-green-100 {
-            background-color: rgba(62, 207, 142, 0.1) !important;
-            color: #24b47e !important;
-            border-radius: var(--radius-xs) !important;
-            font-weight: 500 !important;
-        }
-        
-        .bg-red-100 {
-            background-color: rgba(239, 68, 68, 0.1) !important;
-            color: #ef4444 !important;
-            border-radius: var(--radius-xs) !important;
-            font-weight: 500 !important;
-        }
-        
-        /* Dynamic Sidebar Active Tab Overrides */
-        .admin-tab-btn.bg-primary {
-            background-color: var(--color-canvas-soft) !important;
-            color: var(--color-ink) !important;
-            border-radius: var(--radius-sm) !important;
-        }
-        
-        .mobile-tab-btn.bg-primary {
-            background-color: var(--color-canvas-soft) !important;
-            color: var(--color-ink) !important;
-            border-radius: var(--radius-full) !important;
+        /* Strict Tab Control (Prevents Tailwind CDN from overriding display:none) */
+        .admin-tab-content:not(.active) {
+            display: none !important;
+            height: 0 !important;
+            max-height: 0 !important;
+            overflow: hidden !important;
+            visibility: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none !important;
         }
 
-        /* Analytics Timeline Preset Buttons */
-        .analytics-preset-btn {
+        .admin-tab-content.active {
+            display: block !important;
+        }
+
+        /* Sidebar Item States */
+        .admin-sidebar-btn {
+            color: var(--color-ink-mute);
             background: transparent;
-            color: #707070;
-            transition: all 0.15s ease;
         }
-        .analytics-preset-btn:hover {
-            background: rgba(99,102,241,0.08);
-            color: #6366f1;
+        .admin-sidebar-btn:hover {
+            background-color: var(--color-canvas-soft);
+            color: var(--color-ink);
         }
-        .analytics-preset-btn.active-preset {
-            background: #6366f1;
-            color: #fff !important;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.35);
+        .admin-sidebar-btn[data-state="active"] {
+            background-color: var(--color-canvas-soft);
+            color: var(--color-ink);
+            font-weight: 600;
+        }
+        .admin-sidebar-btn[data-state="active"] i {
+            color: var(--color-primary);
         }
 
-        /* Blog Filter Tab Buttons */
-        .blog-filter-btn {
-            background: transparent;
-            color: #707070;
-            border: 1px solid #dfdfdf;
-            transition: all 0.15s ease;
-        }
-        .blog-filter-btn:hover {
-            background: #fafafa;
-            color: #171717;
-        }
-        .blog-filter-btn.active-filter {
-            background: #171717;
-            color: #fff !important;
-            border-color: #171717;
-        }
-
-        /* Blog Status Badges */
-        .badge-published {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            background: rgba(16,185,129,0.1);
-            color: #059669;
-        }
-        .badge-draft {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            background: rgba(245,158,11,0.12);
-            color: #b45309;
+        .chart-box {
+            position: relative;
+            width: 100%;
+            height: 280px;
         }
     </style>
 </head>
 
-<body class="bg-canvas min-h-screen">
+<body class="bg-canvas min-h-screen text-ink">
 
     <div class="noise"></div>
 
     <!-- Guard Overlay Screen -->
     <div id="admin-guard">
         <div class="text-center space-y-4">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
             <p class="text-xs uppercase tracking-widest text-white/50 font-medium">Establishing secure session</p>
         </div>
     </div>
@@ -451,274 +249,275 @@
     </script>
 
     <!-- Wrap all page HTML in #admin-app -->
-    <div id="admin-app">
-        <!-- Navbar -->
-        <nav class="bg-canvas border-b border-hairline fixed w-full top-0 z-50 py-4 px-6 md:px-12 flex justify-between items-center h-20" aria-label="Admin Console Navigation">
-            <div class="flex items-center">
-                <span class="text-xl font-medium tracking-tighter text-ink" style="letter-spacing: -0.04em;">DIGINIXIT.</span>
+    <div id="admin-app" class="min-h-screen bg-canvas text-ink flex flex-col">
+        <!-- Top Nav Header -->
+        <header class="h-14 border-b border-hairline bg-canvas flex items-center justify-between px-4 sm:px-6 fixed top-0 left-0 right-0 z-50">
+            <div class="flex items-center gap-3">
+                <span class="text-base font-semibold tracking-tight text-ink">DIGINIXIT.</span>
+                <span class="ui-badge ui-badge-emerald">Admin Console</span>
             </div>
-            <div class="flex items-center space-x-3 sm:space-x-6 text-xs">
-                <a href="./" target="_blank" class="text-ink-mute hover:text-ink font-medium transition-colors">Open Client Site &nearr;</a>
-                <button onclick="handleAdminSignOut()" class="font-medium text-ink hover:text-ink-mute transition-colors">Terminate Session</button>
+            <div class="flex items-center gap-2">
+                <a href="./" target="_blank" class="ui-btn ui-btn-outline ui-btn-sm">
+                    Open Site &nearr;
+                </a>
+                <button onclick="handleAdminSignOut()" class="ui-btn ui-btn-secondary ui-btn-sm">
+                    Terminate Session
+                </button>
             </div>
-        </nav>
+        </header>
 
-        <!-- Layout Container -->
-        <div class="flex pt-20 h-screen overflow-hidden">
-            <!-- Sidebar Navigation (Borderless design) -->
-            <div class="w-64 bg-canvas hidden md:flex flex-col justify-between p-6">
-                <div class="space-y-6">
-                    <div class="flex items-center space-x-3 bg-canvas-soft p-4 rounded-xl">
-                        <div class="w-10 h-10 bg-canvas text-ink border border-hairline rounded-full flex items-center justify-center font-medium">A</div>
-                        <div>
-                            <div class="font-semibold text-sm text-ink">System Admin</div>
-                            <div class="text-[10px] text-ink-mute">Secured Token</div>
+        <!-- App Layout Shell -->
+        <div class="flex flex-1 pt-14 min-h-screen">
+            <!-- Scrollable Fixed Sidebar (shadcn Style) -->
+            <aside class="w-64 border-r border-hairline bg-canvas flex-col justify-between hidden md:flex fixed top-14 bottom-0 left-0 z-40 p-4 overflow-y-auto">
+                <div class="space-y-4">
+                    <!-- Profile Card -->
+                    <div class="p-3 rounded-lg bg-canvas-soft border border-hairline flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary/20 text-primary-deep flex items-center justify-center font-semibold text-xs">A</div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-xs font-semibold text-ink truncate">System Admin</div>
+                            <div class="text-[10px] text-ink-mute truncate">Secured Token</div>
                         </div>
                     </div>
 
-                    <div class="space-y-1">
-                        <button class="w-full flex items-center text-sm px-4 py-3 rounded-md bg-canvas-soft text-ink font-medium admin-tab-btn" data-tab="analytics">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4 mr-3"></i> Analytics
+                    <!-- Sidebar Tabs List -->
+                    <nav class="space-y-1" data-ui-tabs>
+                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="analytics" data-state="active">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Analytics
                         </button>
-                        <button class="w-full flex items-center text-sm px-4 py-3 rounded-md text-ink-mute hover:bg-canvas-soft hover:text-ink transition-colors admin-tab-btn font-medium" data-tab="blog">
-                            <i data-lucide="book-open" class="w-4 h-4 mr-3"></i> Blog Manager
+                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="blog" data-state="inactive">
+                            <i data-lucide="book-open" class="w-4 h-4"></i> Blog Manager
                         </button>
-                        <button class="w-full flex items-center text-sm px-4 py-3 rounded-md text-ink-mute hover:bg-canvas-soft hover:text-ink transition-colors admin-tab-btn font-medium" data-tab="users">
-                            <i data-lucide="users" class="w-4 h-4 mr-3"></i> User Portal
+                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="users" data-state="inactive">
+                            <i data-lucide="users" class="w-4 h-4"></i> User Portal
                         </button>
-                        <button class="w-full flex items-center text-sm px-4 py-3 rounded-md text-ink-mute hover:bg-canvas-soft hover:text-ink transition-colors admin-tab-btn font-medium" data-tab="settings">
-                            <i data-lucide="settings" class="w-4 h-4 mr-3"></i> Global Settings
+                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="settings" data-state="inactive">
+                            <i data-lucide="settings" class="w-4 h-4"></i> Global Settings
                         </button>
-                    </div>
+                    </nav>
                 </div>
 
-                <div class="text-[10px] text-ink-mute text-center pt-4">
-                    Node ID: DIGINIXIT-W10
+                <div class="pt-4 border-t border-hairline text-[10px] text-ink-mute text-center font-mono">
+                    System Node: DIGINIXIT-W10
                 </div>
-            </div>
+            </aside>
 
-            <!-- Main Dashboard Viewport -->
-            <div class="flex-1 min-w-0 p-6 md:p-10 overflow-y-auto hide-scrollbar pb-24 h-full bg-canvas-soft">
-
-                <!-- Mobile Tab Quick Filters -->
-                <div class="flex md:hidden gap-2 overflow-x-auto pb-4 mb-6 border-b border-hairline" id="mobile-tabs-container">
-                    <button class="px-4 py-2 bg-canvas-soft text-ink text-xs font-medium border border-hairline rounded-full whitespace-nowrap mobile-tab-btn" data-tab="analytics">Analytics</button>
-                    <button class="px-4 py-2 bg-canvas text-ink-mute text-xs font-medium rounded-full whitespace-nowrap border border-hairline mobile-tab-btn" data-tab="blog">Blogs</button>
-                    <button class="px-4 py-2 bg-canvas text-ink-mute text-xs font-medium rounded-full whitespace-nowrap border border-hairline mobile-tab-btn" data-tab="users">Users</button>
-                    <button class="px-4 py-2 bg-canvas text-ink-mute text-xs font-medium rounded-full whitespace-nowrap border border-hairline mobile-tab-btn" data-tab="settings">Settings</button>
+            <!-- Main Content Area -->
+            <main class="flex-1 md:ml-64 p-4 sm:p-6 lg:p-8 bg-canvas-soft min-h-[calc(100vh-3.5rem)] overflow-y-auto">
+                
+                <!-- Mobile Horizontal Tabs Bar -->
+                <div class="flex md:hidden gap-2 overflow-x-auto pb-3 mb-6 border-b border-hairline hide-scrollbar" id="mobile-tabs-container">
+                    <button class="ui-btn ui-btn-primary ui-btn-sm flex-shrink-0 mobile-tab-btn" data-tab="analytics">Analytics</button>
+                    <button class="ui-btn ui-btn-outline ui-btn-sm flex-shrink-0 mobile-tab-btn" data-tab="blog">Blogs</button>
+                    <button class="ui-btn ui-btn-outline ui-btn-sm flex-shrink-0 mobile-tab-btn" data-tab="users">Users</button>
+                    <button class="ui-btn ui-btn-outline ui-btn-sm flex-shrink-0 mobile-tab-btn" data-tab="settings">Settings</button>
                 </div>
 
                 <!-- ========================================== -->
-                <!-- TAB: ANALYTICS                             -->
+                <!-- TAB 1: ANALYTICS                           -->
                 <!-- ========================================== -->
-                <div id="tab-analytics" class="admin-tab-content active space-y-8">
-                    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                <div id="tab-analytics" class="admin-tab-content active space-y-6">
+                    <!-- Page Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-hairline">
                         <div>
-                            <h2 class="display-lg">Platform Analytics</h2>
-                            <p class="text-ink-mute text-sm mt-1">Realtime usage diagnostics and business metrics.</p>
+                            <h1 class="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Platform Analytics</h1>
+                            <p class="text-xs text-ink-mute mt-1">Realtime usage diagnostics and performance metrics.</p>
                         </div>
-                        <!-- Timeline Filter Bar -->
                         <div class="flex flex-wrap items-center gap-2" id="analytics-timeline-bar">
-                            <div class="flex items-center gap-1 bg-canvas rounded-xl px-3 py-2 border border-hairline flex-wrap">
-                                <span class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mr-1">Period:</span>
-                                <button class="analytics-preset-btn active-preset px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="30d">30D</button>
-                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="7d">7D</button>
-                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="90d">90D</button>
-                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="1y">1Y</button>
-                                <button class="analytics-preset-btn px-2.5 py-1 rounded-md text-[11px] font-semibold" data-preset="all">All</button>
-                                <span class="w-px h-4 bg-hairline mx-1"></span>
-                                <input type="date" id="analytics-start-date" class="bg-transparent border-none text-[11px] font-medium text-ink focus:ring-0 outline-none cursor-pointer" aria-label="Analytics Start Date">
-                                <span class="text-ink-faint text-[11px]">→</span>
-                                <input type="date" id="analytics-end-date" class="bg-transparent border-none text-[11px] font-medium text-ink focus:ring-0 outline-none cursor-pointer" aria-label="Analytics End Date">
+                            <span class="text-xs font-medium text-ink-mute">Period:</span>
+                            <button class="ui-btn ui-btn-primary ui-btn-sm analytics-preset-btn active-preset" data-preset="30d">30D</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="7d">7D</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="90d">90D</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="1y">1Y</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="all">All</button>
+                            <input type="date" id="analytics-start-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
+                            <span class="text-xs text-ink-mute">→</span>
+                            <input type="date" id="analytics-end-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
+                        </div>
+                    </div>
+
+                    <!-- KPI Stats Row (4 Cards Grid) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="ui-card p-5">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-medium text-ink-mute uppercase tracking-wider">Active Users</span>
+                                <span class="ui-badge ui-badge-soft">Users</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="text-2xl font-semibold text-ink" id="stat-users">0</div>
+                                <div class="text-xs text-ink-mute mt-1" id="stat-users-change">0% vs last period</div>
+                            </div>
+                        </div>
+
+                        <div class="ui-card p-5">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-medium text-ink-mute uppercase tracking-wider">Total Visits</span>
+                                <span class="ui-badge ui-badge-soft">Traffic</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="text-2xl font-semibold text-ink" id="stat-visits">0</div>
+                                <div class="text-xs text-ink-mute mt-1" id="stat-visits-change">0% vs last period</div>
+                            </div>
+                        </div>
+
+                        <div class="ui-card p-5">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-medium text-ink-mute uppercase tracking-wider">Bounce Rate</span>
+                                <span class="ui-badge ui-badge-outline">Session</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="text-2xl font-semibold text-ink" id="stat-session">0%</div>
+                                <div class="text-xs text-ink-mute mt-1" id="stat-session-change">0% vs last period</div>
+                            </div>
+                        </div>
+
+                        <div class="ui-card p-5">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-medium text-ink-mute uppercase tracking-wider">Articles Read</span>
+                                <span class="ui-badge ui-badge-emerald">Insights</span>
+                            </div>
+                            <div class="mt-3">
+                                <div class="text-2xl font-semibold text-ink" id="stat-reads">0</div>
+                                <div class="text-xs text-ink-mute mt-1" id="stat-reads-change">0% vs last period</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- KPI Stats Row (4 cards - 100% responsive) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
-                            <div class="absolute inset-0 opacity-[0.03]" style="background-color: #6366f1"></div>
-                            <div class="relative">
-                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Active Users</div>
-                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-users">0</div>
-                                <div class="text-[10px] text-ink-mute mt-1" id="stat-users-change">0% vs last period</div>
-                            </div>
-                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(99,102,241,0.12)">
-                                <i data-lucide="users" class="w-4 h-4" style="color:#6366f1"></i>
-                            </div>
-                        </div>
-                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
-                            <div class="absolute inset-0 opacity-[0.03]" style="background-color: #06b6d4"></div>
-                            <div class="relative">
-                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Total Visits</div>
-                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-visits">0</div>
-                                <div class="text-[10px] text-ink-mute mt-1" id="stat-visits-change">0% vs last period</div>
-                            </div>
-                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(6,182,212,0.12)">
-                                <i data-lucide="eye" class="w-4 h-4" style="color:#06b6d4"></i>
-                            </div>
-                        </div>
-                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
-                            <div class="absolute inset-0 opacity-[0.03]" style="background-color: #f59e0b"></div>
-                            <div class="relative">
-                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Bounce Rate</div>
-                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-session">0%</div>
-                                <div class="text-[10px] text-ink-mute mt-1" id="stat-session-change">0% vs last period</div>
-                            </div>
-                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,0.12)">
-                                <i data-lucide="percent" class="w-4 h-4" style="color:#f59e0b"></i>
-                            </div>
-                        </div>
-                        <div class="bg-canvas p-5 rounded-xl border border-hairline relative overflow-hidden">
-                            <div class="absolute inset-0 opacity-[0.03]" style="background-color: #10b981"></div>
-                            <div class="relative">
-                                <div class="text-[10px] font-bold text-ink-mute uppercase tracking-wider mb-2">Articles Read</div>
-                                <div class="text-2xl font-semibold tracking-tight text-ink" id="stat-reads">0</div>
-                                <div class="text-[10px] text-ink-mute mt-1" id="stat-reads-change">0% vs last period</div>
-                            </div>
-                            <div class="absolute right-4 top-4 w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,0.12)">
-                                <i data-lucide="book-open" class="w-4 h-4" style="color:#10b981"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 1: Traffic Trendline (wide) + Device Doughnut -->
+                    <!-- Charts Grid Row 1 -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="bg-canvas p-6 rounded-xl lg:col-span-2 border border-hairline" style="height:340px; display:flex; flex-direction:column;">
-                            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                        <div class="ui-card p-5 lg:col-span-2">
+                            <div class="flex justify-between items-center mb-4">
                                 <div>
-                                    <h3 class="font-semibold text-sm text-ink">Website Traffic</h3>
-                                    <p class="text-[11px] text-ink-mute mt-0.5">Visitor trend over selected period</p>
+                                    <h3 class="text-sm font-semibold text-ink">Website Traffic Trends</h3>
+                                    <p class="text-xs text-ink-mute">Visitor trends over selected period</p>
                                 </div>
-                                <span class="text-[10px] px-2 py-1 rounded-full font-semibold" style="background:rgba(99,102,241,0.1);color:#6366f1" id="traffic-period-label">Last 30 Days</span>
+                                <span class="ui-badge ui-badge-default" id="traffic-period-label">Last 30 Days</span>
                             </div>
-                            <div class="flex-1 min-h-0">
+                            <div class="chart-box">
                                 <canvas id="adminVisitsChart"></canvas>
                             </div>
                         </div>
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:340px; display:flex; flex-direction:column;">
-                            <div class="mb-4 flex-shrink-0">
-                                <h3 class="font-semibold text-sm text-ink">Device Breakdown</h3>
-                                <p class="text-[11px] text-ink-mute mt-0.5">Traffic by device type</p>
+
+                        <div class="ui-card p-5">
+                            <div class="mb-4">
+                                <h3 class="text-sm font-semibold text-ink">Device Breakdown</h3>
+                                <p class="text-xs text-ink-mute">Traffic by device type</p>
                             </div>
-                            <div class="flex-1 min-h-0 flex flex-col items-center justify-center">
-                                <canvas id="adminDeviceChart" style="max-height:200px"></canvas>
+                            <div class="chart-box flex flex-col items-center justify-center">
+                                <canvas id="adminDeviceChart"></canvas>
                                 <div class="flex gap-4 mt-3 flex-wrap justify-center" id="device-legend"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Row 2: User Acquisitions (slim bars) + Retention -->
+                    <!-- Charts Grid Row 2 -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
-                            <div class="flex justify-between items-center mb-4 flex-shrink-0">
-                                <div>
-                                    <h3 class="font-semibold text-sm text-ink">User Acquisitions</h3>
-                                    <p class="text-[11px] text-ink-mute mt-0.5">New signups per month</p>
-                                </div>
+                        <div class="ui-card p-5">
+                            <div class="mb-4">
+                                <h3 class="text-sm font-semibold text-ink">User Acquisitions</h3>
+                                <p class="text-xs text-ink-mute">New signups timeline</p>
                             </div>
-                            <div class="flex-1 min-h-0">
+                            <div class="chart-box">
                                 <canvas id="adminUsersChart"></canvas>
                             </div>
                         </div>
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
-                            <div class="flex justify-between items-center mb-4 flex-shrink-0">
-                                <div>
-                                    <h3 class="font-semibold text-sm text-ink">Bounce Rate Trend</h3>
-                                    <p class="text-[11px] text-ink-mute mt-0.5">Bounce rate percentage by period</p>
-                                </div>
+
+                        <div class="ui-card p-5">
+                            <div class="mb-4">
+                                <h3 class="text-sm font-semibold text-ink">Bounce Rate Trend</h3>
+                                <p class="text-xs text-ink-mute">Bounce percentage by period</p>
                             </div>
-                            <div class="flex-1 min-h-0">
+                            <div class="chart-box">
                                 <canvas id="adminRetentionChart"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Row 3: Top Pages (horiz bar) + Locations (horiz bar) -->
+                    <!-- Charts Grid Row 3 -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
-                            <div class="mb-4 flex-shrink-0">
-                                <h3 class="font-semibold text-sm text-ink">Top Pages</h3>
-                                <p class="text-[11px] text-ink-mute mt-0.5">Most visited pages</p>
+                        <div class="ui-card p-5">
+                            <div class="mb-4">
+                                <h3 class="text-sm font-semibold text-ink">Top Visited Pages</h3>
+                                <p class="text-xs text-ink-mute">Highest traffic content routes</p>
                             </div>
-                            <div class="flex-1 min-h-0">
+                            <div class="chart-box">
                                 <canvas id="adminTopPagesChart"></canvas>
                             </div>
                         </div>
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:320px; display:flex; flex-direction:column;">
-                            <div class="mb-4 flex-shrink-0">
-                                <h3 class="font-semibold text-sm text-ink">Visitor Locations</h3>
-                                <p class="text-[11px] text-ink-mute mt-0.5">Top countries by visits</p>
+
+                        <div class="ui-card p-5">
+                            <div class="mb-4">
+                                <h3 class="text-sm font-semibold text-ink">Visitor Geographic Locations</h3>
+                                <p class="text-xs text-ink-mute">Top countries by traffic volume</p>
                             </div>
-                            <div class="flex-1 min-h-0">
+                            <div class="chart-box">
                                 <canvas id="adminLocationsChart"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Row 4: Bounce Rate Trendline + Recent IPs Table -->
+                    <!-- Charts Grid Row 4 -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:300px; display:flex; flex-direction:column;">
-                            <div class="mb-4 flex-shrink-0">
-                                <h3 class="font-semibold text-sm text-ink">Articles Read Trend</h3>
-                                <p class="text-[11px] text-ink-mute mt-0.5">Total article reads over selected period</p>
+                        <div class="ui-card p-5">
+                            <div class="mb-4">
+                                <h3 class="text-sm font-semibold text-ink">Articles Read Trend</h3>
+                                <p class="text-xs text-ink-mute">Total article reads over time</p>
                             </div>
-                            <div class="flex-1 min-h-0">
+                            <div class="chart-box">
                                 <canvas id="adminBounceChart"></canvas>
                             </div>
                         </div>
-                        <div class="bg-canvas p-6 rounded-xl border border-hairline" style="height:300px; display:flex; flex-direction:column;">
-                            <div class="mb-3 flex-shrink-0 flex justify-between items-center">
+
+                        <div class="ui-card p-5">
+                            <div class="flex justify-between items-center mb-3">
                                 <div>
-                                    <h3 class="font-semibold text-sm text-ink">Recent Visitors</h3>
-                                    <p class="text-[11px] text-ink-mute mt-0.5">Latest IP addresses &amp; locations</p>
+                                    <h3 class="text-sm font-semibold text-ink">Recent Visitors</h3>
+                                    <p class="text-xs text-ink-mute">Latest IP addresses &amp; locations</p>
                                 </div>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold" style="background:rgba(16,185,129,0.1);color:#10b981">Live</span>
+                                <span class="ui-badge ui-badge-emerald">Live</span>
                             </div>
-                            <div class="flex-1 overflow-y-auto hide-scrollbar" id="recent-visitors-list">
-                                <!-- Populated by JS -->
+                            <div class="flex-1 overflow-y-auto hide-scrollbar max-h-[220px]" id="recent-visitors-list">
+                                <!-- Populated dynamically -->
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- ========================================== -->
-                <!-- TAB: BLOG MANAGER                          -->
+                <!-- TAB 2: BLOG MANAGER                        -->
                 <!-- ========================================== -->
-                <div id="tab-blog" class="admin-tab-content space-y-8">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div id="tab-blog" class="admin-tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-hairline">
                         <div>
-                            <h2 class="display-lg">Blog Manager</h2>
-                            <p class="text-ink-mute text-sm mt-1">Publish, edit, and curate insights content.</p>
+                            <h1 class="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Blog & Content Manager</h1>
+                            <p class="text-xs text-ink-mute mt-1">Publish, update, and curate technical articles.</p>
                         </div>
-                        <button onclick="openArticleEditor()" class="btn-primary px-5 py-2.5 text-xs font-medium self-start sm:self-auto flex items-center gap-2">
+                        <button onclick="openArticleEditor()" class="ui-btn ui-btn-primary">
                             <i data-lucide="plus" class="w-4 h-4"></i> Add Article
                         </button>
                     </div>
 
-                    <!-- Status Filter Tabs -->
-                    <div class="flex items-center gap-2">
-                        <button class="blog-filter-btn active-filter px-4 py-1.5 rounded-full text-xs font-semibold" data-filter="all">All Articles</button>
-                        <button class="blog-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold" data-filter="published">Published</button>
-                        <button class="blog-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold" data-filter="draft">Drafts</button>
-                    </div>
+                    <div class="ui-card p-5">
+                        <div class="flex items-center gap-2 mb-4">
+                            <button class="blog-filter-btn active-filter px-3 py-1.5 rounded-md text-xs font-semibold" data-filter="all">All Articles</button>
+                            <button class="blog-filter-btn px-3 py-1.5 rounded-md text-xs font-semibold" data-filter="published">Published</button>
+                            <button class="blog-filter-btn px-3 py-1.5 rounded-md text-xs font-semibold" data-filter="draft">Drafts</button>
+                        </div>
 
-                    <!-- Blog Table -->
-                    <div class="bg-canvas rounded-xl overflow-hidden">
-                        <div class="responsive-table-container">
-                            <table class="w-full text-left border-collapse text-sm">
+                        <div class="ui-table-container">
+                            <table class="ui-table">
                                 <thead>
-                                    <tr class="bg-canvas-soft text-ink-mute border-b border-hairline">
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Article Title</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Category</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Author</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Status</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Date</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider text-right">Actions</th>
+                                    <tr class="ui-tr-head">
+                                        <th class="ui-th">Article Title</th>
+                                        <th class="ui-th">Category</th>
+                                        <th class="ui-th">Author</th>
+                                        <th class="ui-th">Status</th>
+                                        <th class="ui-th">Date</th>
+                                        <th class="ui-th" style="text-align: right;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="blog-table-body">
-                                    <!-- Populated dynamically -->
+                                    <!-- Dynamic blog rows -->
                                 </tbody>
                             </table>
                         </div>
@@ -726,153 +525,116 @@
                 </div>
 
                 <!-- ========================================== -->
-                <!-- TAB: ARTICLE EDITOR (FULL PAGE WRITER)     -->
+                <!-- TAB 3: ARTICLE EDITOR                      -->
                 <!-- ========================================== -->
                 <div id="tab-article-editor" class="admin-tab-content space-y-6">
-                    <!-- Top Header & Action Controls -->
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline pb-4">
-                        <div class="flex items-center gap-4">
-                            <button type="button" onclick="closeArticleEditor()" class="flex items-center gap-2 text-xs font-semibold text-ink-mute hover:text-ink transition-colors bg-canvas px-3.5 py-2 rounded-xl border border-hairline">
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Articles
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-hairline">
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="closeArticleEditor()" class="ui-btn ui-btn-outline ui-btn-sm">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
                             </button>
                             <div>
-                                <h2 id="article-editor-page-title" class="display-lg text-ink">Write New Article</h2>
-                                <p class="text-ink-mute text-xs mt-0.5">Full-page rich text publishing studio</p>
+                                <h1 id="article-editor-page-title" class="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Write New Article</h1>
+                                <p class="text-xs text-ink-mute mt-0.5">Rich text publishing and editorial suite</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button type="button" onclick="handleBlogSaveAsDraft()" class="px-5 py-2.5 rounded-xl border border-hairline font-medium text-xs transition-colors bg-amber-500/10 border-amber-500/30 text-amber-700 hover:bg-amber-500/20">
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="handleBlogSaveAsDraft()" class="ui-btn ui-btn-secondary">
                                 Save Draft
                             </button>
-                            <button type="button" onclick="handleBlogSave(event)" class="btn-primary px-6 py-2.5 text-xs font-medium">
+                            <button type="button" onclick="handleBlogSave(event)" class="ui-btn ui-btn-primary">
                                 Publish Article
                             </button>
                         </div>
                     </div>
 
-                    <!-- Article Form & Editor Layout -->
                     <form id="article-editor-form" onsubmit="handleBlogSave(event)" class="space-y-6">
                         <input type="hidden" id="edit-post-id">
 
-                        <!-- Article Metadata Box -->
-                        <div class="bg-canvas p-6 rounded-2xl border border-hairline space-y-4">
-                            <div>
-                                <label for="blog-title" class="text-xs font-semibold text-ink-mute uppercase tracking-wider block mb-1.5">Article Title</label>
-                                <input type="text" id="blog-title" class="premium-input text-base p-3 w-full font-medium" required placeholder="e.g. Navigating Modern Web Architecture" style="border-radius: 8px;">
+                        <!-- Metadata Fields Card -->
+                        <div class="ui-card p-5 space-y-4">
+                            <div class="ui-form-field">
+                                <label for="blog-title" class="ui-label">Article Title <span class="ui-required">*</span></label>
+                                <input type="text" id="blog-title" class="ui-input" required placeholder="e.g. Navigating Modern Web Architecture">
                             </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="blog-category" class="text-xs font-semibold text-ink-mute uppercase tracking-wider block mb-1.5">Category</label>
-                                    <input type="text" id="blog-category" class="premium-input text-sm p-3 w-full" required placeholder="e.g. Tech, AI, Design" style="border-radius: 8px;">
+                                <div class="ui-form-field">
+                                    <label for="blog-category" class="ui-label">Category <span class="ui-required">*</span></label>
+                                    <input type="text" id="blog-category" class="ui-input" required placeholder="e.g. Tech, AI, Design">
                                 </div>
-                                <div>
-                                    <label for="blog-author" class="text-xs font-semibold text-ink-mute uppercase tracking-wider block mb-1.5">Author Name</label>
-                                    <input type="text" id="blog-author" class="premium-input text-sm p-3 w-full" required placeholder="e.g. Alex Rivers" style="border-radius: 8px;">
+                                <div class="ui-form-field">
+                                    <label for="blog-author" class="ui-label">Author Name <span class="ui-required">*</span></label>
+                                    <input type="text" id="blog-author" class="ui-input" required placeholder="e.g. Alex Rivers">
                                 </div>
                             </div>
 
-                            <div>
-                                <label for="blog-summary" class="text-xs font-semibold text-ink-mute uppercase tracking-wider block mb-1.5">Excerpt Summary</label>
-                                <textarea id="blog-summary" class="premium-input text-sm p-3 h-20 w-full" required placeholder="Short summary displayed on grid cards and search results..." style="border-radius: 8px; resize: vertical;"></textarea>
+                            <div class="ui-form-field">
+                                <label for="blog-summary" class="ui-label">Excerpt Summary <span class="ui-required">*</span></label>
+                                <textarea id="blog-summary" class="ui-input ui-textarea" required placeholder="Short summary displayed on grid cards and search results..."></textarea>
                             </div>
                         </div>
 
-                        <!-- Rich Text Editor Container -->
-                        <div class="bg-canvas rounded-2xl border border-hairline relative shadow-sm">
-                            <!-- MS Word-like Toolbar (Sticky Top) -->
-                            <div id="msword-toolbar" class="sticky -top-6 md:-top-10 z-40 bg-canvas-soft border-b border-hairline p-2.5 flex flex-wrap items-center gap-1.5 select-none shadow-md rounded-t-2xl">
-                                <!-- Undo / Redo -->
-                                <div class="flex items-center gap-0.5 border-r border-hairline pr-2 mr-1">
-                                    <button type="button" class="toolbar-btn" data-cmd="undo" title="Undo (Ctrl+Z)"><i data-lucide="undo" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="redo" title="Redo (Ctrl+Y)"><i data-lucide="redo" class="w-4 h-4"></i></button>
-                                </div>
+                        <!-- Editor Toolbar & Surface Card -->
+                        <div class="ui-card p-0 overflow-hidden">
+                            <div id="msword-toolbar" class="bg-canvas-soft border-b border-hairline p-2.5 flex flex-wrap items-center gap-1 select-none">
+                                <button type="button" class="toolbar-btn" data-cmd="undo" title="Undo"><i data-lucide="undo" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="redo" title="Redo"><i data-lucide="redo" class="w-4 h-4"></i></button>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
+                                
+                                <select id="toolbar-block-format" class="ui-input text-xs" style="width: auto; padding: 2px 6px;">
+                                    <option value="p">Paragraph</option>
+                                    <option value="h1">Heading 1</option>
+                                    <option value="h2">Heading 2</option>
+                                    <option value="h3">Heading 3</option>
+                                </select>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
 
-                                <!-- Text Block Format Dropdown -->
-                                <div class="flex items-center border-r border-hairline pr-2 mr-1">
-                                    <select id="toolbar-block-format" class="text-xs bg-canvas border border-hairline rounded-lg px-2.5 py-1.5 font-medium text-ink focus:outline-none cursor-pointer">
-                                        <option value="p">Paragraph</option>
-                                        <option value="h1">Heading 1</option>
-                                        <option value="h2">Heading 2</option>
-                                        <option value="h3">Heading 3</option>
-                                        <option value="h4">Heading 4</option>
-                                    </select>
-                                </div>
+                                <button type="button" class="toolbar-btn" data-cmd="bold" title="Bold"><strong>B</strong></button>
+                                <button type="button" class="toolbar-btn" data-cmd="italic" title="Italic"><em>I</em></button>
+                                <button type="button" class="toolbar-btn" data-cmd="underline" title="Underline"><span style="text-decoration: underline;">U</span></button>
+                                <button type="button" class="toolbar-btn" data-cmd="strikeThrough" title="Strikethrough"><span style="text-decoration: line-through;">S</span></button>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
 
-                                <!-- Font Formatting (Bold, Italic, Underline, Strike, Sub, Sup) -->
-                                <div class="flex items-center gap-0.5 border-r border-hairline pr-2 mr-1">
-                                    <button type="button" class="toolbar-btn" data-cmd="bold" title="Bold (Ctrl+B)"><strong>B</strong></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="italic" title="Italic (Ctrl+I)"><em>I</em></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="underline" title="Underline (Ctrl+U)"><span style="text-decoration: underline;">U</span></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="strikeThrough" title="Strikethrough"><span style="text-decoration: line-through;">S</span></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="subscript" title="Subscript">X<sub>2</sub></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="superscript" title="Superscript">X<sup>2</sup></button>
-                                </div>
+                                <label class="flex items-center gap-1 text-[11px] text-ink-mute font-medium cursor-pointer" title="Text Color">
+                                    Text: <input type="color" id="toolbar-forecolor" value="#000000" class="w-5 h-5 p-0 border-0 bg-transparent cursor-pointer">
+                                </label>
+                                <label class="flex items-center gap-1 text-[11px] text-ink-mute font-medium cursor-pointer" title="Highlight Color">
+                                    BG: <input type="color" id="toolbar-backcolor" value="#ffff00" class="w-5 h-5 p-0 border-0 bg-transparent cursor-pointer">
+                                </label>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
 
-                                <!-- Text & Background Colors -->
-                                <div class="flex items-center gap-2 border-r border-hairline pr-2 mr-1">
-                                    <label class="flex items-center gap-1 text-[11px] text-ink-mute font-medium cursor-pointer" title="Text Color">
-                                        <i data-lucide="palette" class="w-3.5 h-3.5"></i> Text:
-                                        <input type="color" id="toolbar-forecolor" value="#000000" class="w-6 h-6 p-0 border-0 bg-transparent cursor-pointer rounded">
-                                    </label>
-                                    <label class="flex items-center gap-1 text-[11px] text-ink-mute font-medium cursor-pointer" title="Highlight Color">
-                                        <i data-lucide="highlighter" class="w-3.5 h-3.5"></i> BG:
-                                        <input type="color" id="toolbar-backcolor" value="#ffff00" class="w-6 h-6 p-0 border-0 bg-transparent cursor-pointer rounded">
-                                    </label>
-                                </div>
+                                <button type="button" class="toolbar-btn" data-cmd="justifyLeft" title="Left"><i data-lucide="align-left" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="justifyCenter" title="Center"><i data-lucide="align-center" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="justifyRight" title="Right"><i data-lucide="align-right" class="w-4 h-4"></i></button>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
 
-                                <!-- Alignments -->
-                                <div class="flex items-center gap-0.5 border-r border-hairline pr-2 mr-1">
-                                    <button type="button" class="toolbar-btn" data-cmd="justifyLeft" title="Align Left"><i data-lucide="align-left" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="justifyCenter" title="Align Center"><i data-lucide="align-center" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="justifyRight" title="Align Right"><i data-lucide="align-right" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="justifyFull" title="Justify"><i data-lucide="align-justify" class="w-4 h-4"></i></button>
-                                </div>
+                                <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList" title="Bullets"><i data-lucide="list" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="insertOrderedList" title="Numbers"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="outdent" title="Outdent"><i data-lucide="indent-decrease" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="indent" title="Indent"><i data-lucide="indent-increase" class="w-4 h-4"></i></button>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
 
-                                <!-- Lists & Indent (BULLETS & NUMBERING) -->
-                                <div class="flex items-center gap-0.5 border-r border-hairline pr-2 mr-1">
-                                    <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList" title="Bullet List (•)"><i data-lucide="list" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="insertOrderedList" title="Numbered List (1. 2. 3.)"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="outdent" title="Decrease Indent (Shift+Tab)"><i data-lucide="indent-decrease" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-cmd="indent" title="Increase Indent (Tab)"><i data-lucide="indent-increase" class="w-4 h-4"></i></button>
-                                </div>
+                                <button type="button" class="toolbar-btn" data-tool="link" onclick="editorPromptLink()" title="Link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="image" onclick="editorPromptImage()" title="Image"><i data-lucide="image" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="table" onclick="editorPromptTable()" title="Table"><i data-lucide="table" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="diagram" onclick="openDiagramModal()" title="Diagram"><i data-lucide="workflow" class="w-4 h-4"></i></button>
+                                <span class="w-px h-4 bg-hairline mx-1"></span>
 
-                                <!-- Blocks & Inserts -->
-                                <div class="flex items-center gap-0.5 border-r border-hairline pr-2 mr-1">
-                                    <button type="button" class="toolbar-btn" data-tool="blockquote" onclick="editorInsertBlockquote()" title="Blockquote"><i data-lucide="quote" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="codeblock" onclick="editorInsertCodeBlock()" title="Code Block"><i data-lucide="code" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="accordion" onclick="editorInsertAccordion()" title="Insert FAQ / Accordion (Q&amp;A)"><i data-lucide="help-circle" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="horizontalRule" data-cmd="insertHorizontalRule" title="Horizontal Line"><i data-lucide="minus" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="link" onclick="editorPromptLink()" title="Insert Link"><i data-lucide="link" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="unlink" data-cmd="unlink" title="Remove Link"><i data-lucide="unlink" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="image" onclick="editorPromptImage()" title="Insert Image / Upload"><i data-lucide="image" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="table" onclick="editorPromptTable()" title="Insert Table"><i data-lucide="table" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" data-tool="diagram" onclick="openDiagramModal()" title="Insert ASCII Diagram"><i data-lucide="workflow" class="w-4 h-4"></i></button>
-                                </div>
-
-                                <!-- Utilities -->
-                                <div class="flex items-center gap-0.5">
-                                    <button type="button" class="toolbar-btn" data-cmd="removeFormat" title="Clear Formatting"><i data-lucide="remove-formatting" class="w-4 h-4"></i></button>
-                                    <button type="button" class="toolbar-btn" id="toggle-source-mode-btn" onclick="toggleEditorSourceMode()" title="Toggle View HTML Source Code"><i data-lucide="code-2" class="w-4 h-4"></i></button>
-                                </div>
+                                <button type="button" class="toolbar-btn" id="toggle-source-mode-btn" onclick="toggleEditorSourceMode()" title="Source"><i data-lucide="code-2" class="w-4 h-4"></i></button>
                             </div>
 
-                            <!-- Content Editable Writing Surface -->
-                            <div class="p-6 relative bg-canvas min-h-[480px]">
-                                <div id="article-editor-area" contenteditable="true" class="article-writer-content focus:outline-none min-h-[440px] max-h-[600px] overflow-y-auto text-ink text-base leading-relaxed p-1">
+                            <div class="p-6 bg-canvas min-h-[400px]">
+                                <div id="article-editor-area" contenteditable="true" class="article-writer-content min-h-[360px] max-h-[600px] overflow-y-auto text-ink text-base leading-relaxed">
                                     <p>Start writing your article here...</p>
                                 </div>
-                                <textarea id="article-source-area" class="hidden font-mono text-xs p-4 w-full min-h-[440px] max-h-[600px] bg-neutral-900 text-neutral-100 rounded-lg focus:outline-none" style="resize: vertical;"></textarea>
+                                <textarea id="article-source-area" class="hidden ui-input font-mono text-xs min-h-[360px] bg-canvas-night text-white"></textarea>
                             </div>
 
-                            <!-- Editor Status Bar (Word & Character Counter) -->
-                            <div class="bg-canvas-soft border-t border-hairline px-6 py-2.5 flex items-center justify-between text-xs text-ink-mute font-medium">
+                            <div class="bg-canvas-soft border-t border-hairline px-6 py-2.5 flex items-center justify-between text-xs text-ink-mute">
                                 <div class="flex items-center gap-4">
                                     <span id="editor-word-count">0 words</span>
                                     <span id="editor-char-count">0 characters</span>
-                                </div>
-                                <div class="text-[11px] text-ink-faint">
-                                    Tip: Press Tab / Shift+Tab inside lists to create nested bullet or numbered lists.
                                 </div>
                             </div>
                         </div>
@@ -880,72 +642,53 @@
                 </div>
 
                 <!-- ========================================== -->
-                <!-- TAB: USERS PORTAL                          -->
+                <!-- TAB 4: USERS PORTAL                        -->
                 <!-- ========================================== -->
-                <div id="tab-users" class="admin-tab-content space-y-8">
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div id="tab-users" class="admin-tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-hairline">
                         <div>
-                            <h2 class="display-lg">User Portal</h2>
-                            <p class="text-ink-mute text-sm mt-1">Manage registered users, tier levels and access privileges.</p>
+                            <h1 class="text-xl sm:text-2xl font-semibold text-ink tracking-tight">User Management Portal</h1>
+                            <p class="text-xs text-ink-mute mt-1">Manage accounts, authentication state, and user records.</p>
                         </div>
-                        <!-- Controls -->
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full lg:w-auto flex-wrap">
-                            <!-- Date Range Calendar Pickers (Borderless cardless) -->
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-canvas p-3 rounded-xl w-full sm:w-auto">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-[10px] font-bold text-ink-mute uppercase tracking-wider">From:</span>
-                                    <input type="date" id="users-start-date" class="bg-transparent border-none p-1 text-xs text-ink font-medium focus:ring-0 cursor-pointer outline-none w-full sm:w-auto" aria-label="Select Start Date">
-                                </div>
-                                <div class="flex items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-hairline pt-2 sm:pt-0 sm:pl-2">
-                                    <span class="text-[10px] font-bold text-ink-mute uppercase tracking-wider">To:</span>
-                                    <input type="date" id="users-end-date" class="bg-transparent border-none p-1 text-xs text-ink font-medium focus:ring-0 cursor-pointer outline-none w-full sm:w-auto" aria-label="Select End Date">
-                                </div>
-                                <div class="flex items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-hairline pt-2 sm:pt-0 sm:pl-2">
-                                    <span class="text-[10px] font-bold text-ink-mute uppercase tracking-wider">Preset:</span>
-                                    <select id="users-date-preset" class="bg-transparent border-none p-1 text-xs text-ink font-medium focus:ring-0 cursor-pointer outline-none w-full sm:w-auto bg-canvas" aria-label="Select Date Preset">
-                                        <option value="custom">Custom</option>
-                                        <option value="all-time">All Time</option>
-                                        <option value="today">Today</option>
-                                        <option value="yesterday">Yesterday</option>
-                                        <option value="last-7-days">Last 7 Days</option>
-                                        <option value="last-30-days">Last 30 Days</option>
-                                        <option value="this-month">This Month</option>
-                                        <option value="last-month">Last Month</option>
-                                    </select>
-                                </div>
-                                <button id="users-clear-date" class="text-xs text-ink-mute hover:text-ink font-medium border-t sm:border-t-0 sm:border-l border-hairline pt-2 sm:pt-0 sm:pl-2 flex items-center justify-center gap-1" title="Clear Date Filter">
-                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear
-                                </button>
-                            </div>
-                            <!-- Search Input -->
-                            <div class="relative w-full sm:w-64">
-                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                    <i data-lucide="search" class="w-4 h-4 text-ink-mute"></i>
-                                </div>
-                                <input type="text" id="users-search-input" placeholder="Search users..." class="pl-10 pr-4 py-2.5 w-full bg-canvas border border-hairline rounded-md text-xs placeholder-ink-faint focus:outline-none focus:border-hairline-strong transition-all">
-                            </div>
-                            <!-- Export PDF Button -->
-                            <button onclick="exportUsersPDF()" class="btn-primary px-4 py-2.5 text-xs font-medium flex items-center gap-2 whitespace-nowrap justify-center w-full sm:w-auto">
-                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export PDF
-                            </button>
-                        </div>
+                        <button onclick="exportUsersPDF()" class="ui-btn ui-btn-primary">
+                            <i data-lucide="download" class="w-4 h-4"></i> Export PDF Report
+                        </button>
                     </div>
-                    <!-- Users Table (Borderless) -->
-                    <div class="bg-canvas rounded-xl overflow-hidden">
-                        <div class="responsive-table-container">
-                            <table class="w-full text-left border-collapse text-sm">
+
+                    <div class="ui-card p-5 space-y-4">
+                        <!-- Controls Row -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-wrap">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="text-xs font-medium text-ink-mute">From:</span>
+                                <input type="date" id="users-start-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
+                                <span class="text-xs font-medium text-ink-mute">To:</span>
+                                <input type="date" id="users-end-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
+                                <select id="users-date-preset" class="ui-input text-xs" style="width: 110px; padding: 4px 8px;">
+                                    <option value="custom">Custom</option>
+                                    <option value="all-time">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="last-7-days">Last 7 Days</option>
+                                    <option value="last-30-days">Last 30 Days</option>
+                                </select>
+                                <button id="users-clear-date" class="ui-btn ui-btn-outline ui-btn-sm">Clear</button>
+                            </div>
+                            <input type="text" id="users-search-input" placeholder="Search user name or email..." class="ui-input text-xs" style="width: 240px; padding: 6px 12px;">
+                        </div>
+
+                        <div class="ui-table-container">
+                            <table class="ui-table">
                                 <thead>
-                                    <tr class="bg-canvas-soft text-ink-mute border-b border-hairline">
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Client Name</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Email Address</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Joined Date</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Visits</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider">Access Status</th>
-                                        <th class="p-4 font-medium text-xs uppercase tracking-wider text-right">Actions</th>
+                                    <tr class="ui-tr-head">
+                                        <th class="ui-th">Client Name</th>
+                                        <th class="ui-th">Email Address</th>
+                                        <th class="ui-th">Joined Date</th>
+                                        <th class="ui-th">Visits</th>
+                                        <th class="ui-th">Access Status</th>
+                                        <th class="ui-th" style="text-align: right;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="users-table-body">
-                                    <!-- Populated dynamically -->
+                                    <!-- Dynamic user rows -->
                                 </tbody>
                             </table>
                         </div>
@@ -953,126 +696,96 @@
                 </div>
 
                 <!-- ========================================== -->
-                <!-- TAB: SETTINGS                              -->
+                <!-- TAB 5: GLOBAL SETTINGS                     -->
                 <!-- ========================================== -->
-                <div id="tab-settings" class="admin-tab-content space-y-8">
-                    <div>
-                        <h2 class="display-lg">Global Settings</h2>
-                        <p class="text-ink-mute text-sm mt-1">System parameters and brand controls.</p>
+                <div id="tab-settings" class="admin-tab-content space-y-6">
+                    <div class="pb-4 border-b border-hairline">
+                        <h1 class="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Global Platform Settings</h1>
+                        <p class="text-xs text-ink-mute mt-1">System parameters and brand preferences.</p>
                     </div>
 
-                    <!-- Settings (Cardless block layout) -->
-                    <div class="max-w-2xl bg-canvas p-8 rounded-xl space-y-6">
-                        <form onsubmit="handleSettingsUpdate(event)" class="space-y-5">
-                            <div>
-                                <label for="settings-sitename" class="text-xs font-medium text-ink-mute block mb-2">Agency Brand Name (Navbar Text)</label>
-                                <input type="text" id="settings-sitename" class="premium-input text-sm" required style="border-radius: 6px;">
+                    <div class="ui-card p-6 max-w-2xl">
+                        <form onsubmit="handleSettingsUpdate(event)" class="space-y-4">
+                            <div class="ui-form-field">
+                                <label for="settings-sitename" class="ui-label">Agency Brand Name</label>
+                                <input type="text" id="settings-sitename" class="ui-input" required>
                             </div>
-                            <div>
-                                <label for="settings-email" class="text-xs font-medium text-ink-mute block mb-2">Administrative Contact Email</label>
-                                <input type="email" id="settings-email" class="premium-input text-sm" required style="border-radius: 6px;">
+
+                            <div class="ui-form-field">
+                                <label for="settings-email" class="ui-label">Administrative Contact Email</label>
+                                <input type="email" id="settings-email" class="ui-input" required>
                             </div>
-                            <div>
-                                <label for="settings-phone" class="text-xs font-medium text-ink-mute block mb-2">Administrative Contact Phone Number</label>
-                                <input type="text" id="settings-phone" class="premium-input text-sm" placeholder="+92 300 7960300" style="border-radius: 6px;">
+
+                            <div class="ui-form-field">
+                                <label for="settings-phone" class="ui-label">Contact Phone Number</label>
+                                <input type="text" id="settings-phone" class="ui-input" placeholder="+92 300 7960300">
                             </div>
-                            <div>
-                                <label for="settings-linkedin" class="text-xs font-medium text-ink-mute block mb-2">LinkedIn Profile/Company URL</label>
-                                <input type="url" id="settings-linkedin" class="premium-input text-sm" placeholder="https://linkedin.com/company/diginix" style="border-radius: 6px;">
+
+                            <div class="ui-form-field">
+                                <label for="settings-linkedin" class="ui-label">LinkedIn URL</label>
+                                <input type="url" id="settings-linkedin" class="ui-input">
                             </div>
-                            <div>
-                                <label for="settings-instagram" class="text-xs font-medium text-ink-mute block mb-2">Instagram Profile URL</label>
-                                <input type="url" id="settings-instagram" class="premium-input text-sm" placeholder="https://instagram.com/diginix" style="border-radius: 6px;">
+
+                            <div class="ui-form-field">
+                                <label for="settings-instagram" class="ui-label">Instagram URL</label>
+                                <input type="url" id="settings-instagram" class="ui-input">
                             </div>
-                            <div>
-                                <label for="settings-twitter" class="text-xs font-medium text-ink-mute block mb-2">Twitter/X Profile URL</label>
-                                <input type="url" id="settings-twitter" class="premium-input text-sm" placeholder="https://twitter.com/diginix" style="border-radius: 6px;">
+
+                            <div class="ui-form-field">
+                                <label for="settings-twitter" class="ui-label">Twitter/X URL</label>
+                                <input type="url" id="settings-twitter" class="ui-input">
                             </div>
-                            <div>
-                                <label for="settings-facebook" class="text-xs font-medium text-ink-mute block mb-2">Facebook Profile URL</label>
-                                <input type="url" id="settings-facebook" class="premium-input text-sm" placeholder="https://facebook.com/diginix" style="border-radius: 6px;">
+
+                            <div class="ui-form-field">
+                                <label for="settings-facebook" class="ui-label">Facebook URL</label>
+                                <input type="url" id="settings-facebook" class="ui-input">
                             </div>
-                            <div>
-                                <label for="settings-youtube" class="text-xs font-medium text-ink-mute block mb-2">YouTube Channel URL</label>
-                                <input type="url" id="settings-youtube" class="premium-input text-sm" placeholder="https://youtube.com/c/diginix" style="border-radius: 6px;">
+
+                            <div class="ui-form-field">
+                                <label for="settings-youtube" class="ui-label">YouTube URL</label>
+                                <input type="url" id="settings-youtube" class="ui-input">
                             </div>
-                            <div class="flex items-center justify-between p-4 bg-canvas-soft rounded-xl border border-hairline">
+
+                            <div class="flex items-center justify-between p-4 bg-canvas-soft border border-hairline rounded-md">
                                 <div>
                                     <h4 class="font-medium text-sm text-ink">Global Maintenance Mode</h4>
-                                    <p class="text-xs text-ink-mute mt-1">Lock down client-facing pages behind notice screen.</p>
+                                    <p class="text-xs text-ink-mute">Lock client pages behind maintenance screen</p>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="settings-maintenance" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                                </label>
+                                <input type="checkbox" id="settings-maintenance" class="w-5 h-5 accent-emerald-500 cursor-pointer">
                             </div>
-                            <button type="submit" class="w-full btn-primary py-4 font-medium transition-colors mt-6">Apply Configuration</button>
+
+                            <button type="submit" class="ui-btn ui-btn-primary ui-btn-lg w-full mt-4">
+                                Apply System Configuration
+                            </button>
                         </form>
                     </div>
                 </div>
 
-            </div>
+            </main>
         </div>
+    </div>
 
     <!-- Diagram Insert Modal -->
     <div id="diagram-modal" style="display:none;" class="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-canvas rounded-2xl shadow-2xl w-full max-w-2xl" style="max-height: 90vh; display:flex; flex-direction:column;">
-            <!-- Header -->
-            <div class="flex justify-between items-center px-6 pt-5 pb-4 border-b border-hairline flex-shrink-0">
+        <div class="ui-card max-w-2xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center pb-3 border-b border-hairline">
                 <div>
-                    <h4 class="font-medium text-ink text-base">Insert Diagram / ASCII Art</h4>
-                    <p class="text-[11px] text-ink-mute mt-0.5">Paste or type your diagram. Every space and line break will be preserved exactly.</p>
+                    <h3 class="text-base font-semibold text-ink">Insert Diagram / ASCII Art</h3>
+                    <p class="text-xs text-ink-mute">Paste or type your diagram. Spaces and line breaks are preserved.</p>
                 </div>
-                <button onclick="closeDiagramModal()" class="p-1.5 hover:bg-canvas-soft rounded-lg transition-colors text-ink-mute hover:text-ink">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+                <button onclick="closeDiagramModal()" class="ui-btn ui-btn-ghost ui-btn-sm">&times;</button>
             </div>
-
-            <!-- Textarea -->
-            <div class="px-6 py-4 flex-1 overflow-auto">
-                <textarea
-                    id="diagram-textarea"
-                    placeholder="[Human Intent]
-       │
-       ▼
-┌──────────────────────────────┐
-│     Orchestrator Agent       │
-└──────────────┬───────────────┘
-               │ (Allocates Tasks)
-               ▼"
-                    style="
-                        font-family: ui-monospace, 'Courier New', Consolas, monospace;
-                        font-size: 13px;
-                        line-height: 1.65;
-                        white-space: pre;
-                        tab-size: 4;
-                        resize: vertical;
-                        background: #111111;
-                        color: #d4d4d4;
-                        min-height: 260px;
-                        border: 1px solid #2a2a2a;
-                        border-left: 3px solid #3ecf8e;
-                        border-radius: 8px;
-                        padding: 1rem 1.25rem;
-                        width: 100%;
-                        outline: none;
-                        overflow-x: auto;
-                    "
-                ></textarea>
-                <p class="text-[10px] text-ink-faint mt-2">
-                    Tip: Use box-drawing characters like ─ │ ┌ ┐ └ ┘ ┬ ┴ ├ ┤ ┼. Paste directly from any text editor.
-                </p>
+            <div>
+                <textarea id="diagram-textarea" class="ui-input font-mono text-xs min-h-[220px]" placeholder="[Human Intent] -> [System Agent]"></textarea>
             </div>
-
-            <!-- Footer -->
-            <div class="flex justify-end gap-3 px-6 pb-5 pt-3 border-t border-hairline flex-shrink-0">
-                <button onclick="closeDiagramModal()" class="px-4 py-2 text-sm font-medium text-ink-mute hover:text-ink border border-hairline rounded-lg transition-colors">Cancel</button>
-                <button onclick="insertDiagramToEditor()" class="btn-primary px-6 py-2 text-sm font-medium">Insert Diagram</button>
+            <div class="flex justify-end gap-3 pt-3 border-t border-hairline">
+                <button onclick="closeDiagramModal()" class="ui-btn ui-btn-outline">Cancel</button>
+                <button onclick="insertDiagramToEditor()" class="ui-btn ui-btn-primary">Insert Diagram</button>
             </div>
         </div>
     </div>
 
-
+    <!-- Scripts -->
     <script src="js/ui-primitives.js" defer></script>
     <script src="js/ui-components.js" defer></script>
     <script src="js/common.js" defer></script>

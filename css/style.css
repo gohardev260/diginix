@@ -1486,13 +1486,18 @@ code:not(.code-block code) {
 }
 
 /* --- Strict Tab Control --- */
-.admin-tab-content {
+.admin-tab-content:not(.active) {
     display: none !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
 }
 
 .admin-tab-content.active {
-    display: flex !important;
-    flex-direction: column;
-    gap: var(--space-xl);
+    display: block !important;
 }
 
