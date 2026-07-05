@@ -197,6 +197,8 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="js/ui-primitives.js" defer></script>
+    <script src="js/ui-components.js" defer></script>
     <script src="js/common.js" defer></script>
     <script src="js/script.js" defer></script>
     
@@ -233,16 +235,11 @@
                 const isActive = activeCategory === cat;
                 return `
                     <button
-                        class="px-4 py-2 text-sm font-medium border rounded-md transition-all duration-200 ${
-                            isActive
-                                ? 'bg-ink text-white border-ink shadow-sm'
-                                : 'bg-canvas text-ink-mute border-hairline hover:bg-canvas-soft hover:text-ink hover:border-hairline-strong hover:shadow-sm'
-                        }"
-                        style="border-radius: 6px;"
+                        class="ui-btn ${isActive ? 'ui-btn-primary' : 'ui-btn-outline'} ui-btn-sm"
                         data-category="${window.escapeHtml(cat)}"
                         aria-pressed="${isActive}"
                     >
-                        ${isActive ? '<span style="display:inline-block;width:6px;height:6px;background:#3ecf8e;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>' : ''}${window.escapeHtml(cat === 'All' ? 'All Articles' : cat)}
+                        ${isActive ? '<span style="display:inline-block;width:6px;height:6px;background:currentColor;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>' : ''}${window.escapeHtml(cat === 'All' ? 'All Articles' : cat)}
                     </button>
                 `;
             }).join('');
@@ -270,10 +267,12 @@
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full text-center py-20">
-                        <i data-lucide="info" class="w-10 h-10 text-ink-faint mx-auto mb-4"></i>
-                        <h2 class="heading-lg mb-2">No articles found</h2>
-                        <p class="text-sm text-ink-mute">Try expanding your search query or switching categories.</p>
+                    <div class="col-span-full">
+                        ${UIComponents.stateBlock({
+                            type: 'empty',
+                            title: 'No articles found',
+                            message: 'Try expanding your search query or switching categories.'
+                        })}
                     </div>
                 `;
             } else {

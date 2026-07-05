@@ -362,6 +362,8 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="js/ui-primitives.js" defer></script>
+    <script src="js/ui-components.js" defer></script>
     <script src="js/common.js" defer></script>
     <script src="js/script.js" defer></script>
     <script>
@@ -378,9 +380,13 @@
                 if (settings.contactPhone) {
                     const phoneLink = document.getElementById('contact-display-phone');
                     if (phoneLink) {
-                        phoneLink.innerText = settings.contactPhone;
                         phoneLink.href = `tel:${settings.contactPhone.replace(/\s+/g, '')}`;
+                        phoneLink.innerText = settings.contactPhone;
                     }
+                }
+                if (settings.contactAddress) {
+                    const addrText = document.getElementById('contact-display-address');
+                    if (addrText) addrText.innerText = settings.contactAddress;
                 }
 
                 // Dynamic Contact Socials Updates
@@ -411,7 +417,6 @@
             e.preventDefault();
             const form = e.target;
             const submitBtn = form.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerText;
 
             const name = document.getElementById('contact-name').value.trim();
             const subject = document.getElementById('contact-subject').value.trim();
@@ -421,11 +426,10 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                // Set loading state
-                submitBtn.disabled = true;
-                submitBtn.innerText = "Transmitting Message...";
-                submitBtn.style.opacity = "0.7";
-                submitBtn.style.cursor = "not-allowed";
+                // Set loading state using system primitive
+                if (window.UIPrimitives) {
+                    window.UIPrimitives.ButtonState.setLoading(submitBtn, true, "Transmitting Message...");
+                }
 
                 // Post to Cloudflare Worker
                 const response = await fetch("https://contact-form-handler.diginixhub90.workers.dev", {
@@ -445,13 +449,12 @@
             } catch (err) {
                 alert('Failed to submit inquiry: ' + err.message);
             } finally {
-                // Restore original button state
-                submitBtn.disabled = false;
-                submitBtn.innerText = originalBtnText;
-                submitBtn.style.opacity = "1";
-                submitBtn.style.cursor = "pointer";
+                // Restore button state
+                if (window.UIPrimitives) {
+                    window.UIPrimitives.ButtonState.setLoading(submitBtn, false);
+                }
             }
-        }
+        };
 
         document.addEventListener('DOMContentLoaded', async () => {
             await window.backendReady;

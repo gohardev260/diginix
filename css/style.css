@@ -1004,3 +1004,483 @@ code:not(.code-block code) {
 .skip-to-content:focus {
     top: 0;
 }
+
+/* ============================================================
+   DIGINIX SYSTEM COMPONENT ARCHITECTURE (Base UI + shadcn/ui)
+   ============================================================ */
+
+/* --- Focus & Global Interaction Specs --- */
+:focus-visible {
+    outline: 2px solid var(--color-primary) !important;
+    outline-offset: 2px !important;
+}
+
+/* --- Layout Primitives --- */
+.ui-container {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--space-xl);
+    padding-right: var(--space-xl);
+}
+
+.ui-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-gap, var(--space-lg));
+}
+
+.ui-stack-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--ui-gap, var(--space-md));
+}
+
+.ui-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--ui-cols, 12), 1fr);
+    gap: var(--ui-gap, var(--space-xl));
+}
+
+.ui-grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--ui-gap, var(--space-xl));
+}
+
+/* --- Standard 3-Part Information Architecture Shell --- */
+.ui-page-shell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xxl);
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-section);
+}
+
+.ui-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-hairline);
+}
+
+.ui-page-title-group h1,
+.ui-page-title-group .ui-page-title {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 500;
+    letter-spacing: -0.72px;
+    margin: 0;
+    color: var(--color-ink);
+}
+
+.ui-page-subtitle {
+    font-size: 14px;
+    color: var(--color-ink-mute);
+    margin-top: 4px;
+}
+
+.ui-main-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xxl);
+}
+
+@media (min-width: 1024px) {
+    .ui-main-layout.has-panel {
+        grid-template-columns: 1fr 320px;
+    }
+}
+
+/* --- System Button Component (.ui-btn) --- */
+.ui-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+
+.ui-btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+.ui-btn-primary:hover:not([disabled]) {
+    background-color: var(--color-primary-deep);
+}
+
+.ui-btn-secondary {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    border-color: var(--color-hairline-strong);
+}
+
+.ui-btn-secondary:hover:not([disabled]) {
+    background-color: var(--color-canvas-soft);
+    border-color: var(--color-ink);
+}
+
+.ui-btn-outline {
+    background-color: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-hairline);
+}
+
+.ui-btn-outline:hover:not([disabled]) {
+    border-color: var(--color-ink);
+    background-color: var(--color-canvas-soft);
+}
+
+.ui-btn-ghost {
+    background-color: transparent;
+    color: var(--color-ink);
+}
+
+.ui-btn-ghost:hover:not([disabled]) {
+    background-color: var(--color-canvas-soft);
+}
+
+.ui-btn-danger {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.ui-btn-danger:hover:not([disabled]) {
+    background-color: #dc2626;
+}
+
+.ui-btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.ui-btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.ui-btn[disabled],
+.ui-btn[data-loading="true"] {
+    opacity: 0.65;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* --- System Input & Form Components --- */
+.ui-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.ui-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-ink);
+}
+
+.ui-required {
+    color: #ef4444;
+}
+
+.ui-input {
+    width: 100%;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-ink);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ui-input::placeholder {
+    color: var(--color-ink-faint);
+}
+
+.ui-input:focus {
+    border-color: var(--color-ink);
+}
+
+.ui-input[data-invalid="true"] {
+    border-color: #ef4444 !important;
+}
+
+.ui-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.ui-field-help {
+    font-size: 12px;
+    color: var(--color-ink-mute);
+}
+
+.ui-field-error {
+    font-size: 12px;
+    color: #ef4444;
+    font-weight: 500;
+}
+
+/* --- System Card Component (.ui-card) --- */
+.ui-card {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xxl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ui-card-elevated {
+    box-shadow: var(--shadow-1);
+}
+
+.ui-card-interactive:hover {
+    border-color: var(--color-ink);
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
+}
+
+.ui-card-dark {
+    background-color: var(--color-canvas-night);
+    color: var(--color-on-dark);
+    border-color: var(--color-canvas-night-soft);
+}
+
+.ui-card-dark .ui-card-title,
+.ui-card-dark .ui-card-description {
+    color: var(--color-on-dark);
+}
+
+.ui-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+}
+
+.ui-card-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--color-ink);
+}
+
+.ui-card-description {
+    font-size: 14px;
+    color: var(--color-ink-mute);
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+.ui-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-hairline-cool);
+}
+
+/* --- System Table Component (.ui-table) --- */
+.ui-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    background: var(--color-canvas);
+}
+
+.ui-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+
+.ui-tr-head {
+    background-color: var(--color-canvas-soft);
+    border-bottom: 1px solid var(--color-hairline);
+}
+
+.ui-th {
+    padding: 12px 16px;
+    font-weight: 500;
+    color: var(--color-ink-mute);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.ui-tr {
+    border-bottom: 1px solid var(--color-hairline-cool);
+    transition: background-color 0.15s ease;
+}
+
+.ui-tr:last-child {
+    border-bottom: none;
+}
+
+.ui-tr:hover {
+    background-color: var(--color-canvas-soft);
+}
+
+.ui-td {
+    padding: 14px 16px;
+    color: var(--color-ink);
+    vertical-align: middle;
+}
+
+/* --- System Badge Component (.ui-badge) --- */
+.ui-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.ui-badge-default {
+    background-color: var(--color-canvas-soft);
+    color: var(--color-ink);
+    border: 1px solid var(--color-hairline-cool);
+}
+
+.ui-badge-emerald {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+.ui-badge-soft {
+    background-color: rgba(62, 207, 142, 0.12);
+    color: #24b47e;
+}
+
+.ui-badge-outline {
+    background: transparent;
+    border: 1px solid var(--color-hairline-strong);
+    color: var(--color-ink);
+}
+
+.ui-badge-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* --- System Tabs Component (.ui-tabs) --- */
+.ui-tab-list {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--color-hairline);
+    padding-bottom: 0;
+}
+
+.ui-tab-trigger {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink-mute);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-bottom: -1px;
+}
+
+.ui-tab-trigger:hover {
+    color: var(--color-ink);
+}
+
+.ui-tab-trigger[data-state="active"] {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* --- UX State Block (Empty / Error / Skeleton) --- */
+.ui-state-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-huge) var(--space-xl);
+    text-align: center;
+    border: 1px dashed var(--color-hairline-strong);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-canvas-soft);
+}
+
+.ui-state-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--color-ink-mute);
+    margin-bottom: var(--space-md);
+}
+
+.ui-state-icon-error {
+    color: #ef4444;
+}
+
+.ui-state-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    color: var(--color-ink);
+}
+
+.ui-state-message {
+    font-size: 14px;
+    color: var(--color-ink-mute);
+    margin: 0 0 var(--space-lg) 0;
+    max-width: 400px;
+}
+
+.ui-skeleton-line {
+    height: 16px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: ui-skeleton 1.5s infinite;
+    border-radius: var(--radius-xs);
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.ui-skeleton-title {
+    height: 24px;
+    width: 50%;
+}
+
+@keyframes ui-skeleton {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes ui-spin {
+    to { transform: rotate(360deg); }
+}

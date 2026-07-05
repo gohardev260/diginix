@@ -125,29 +125,29 @@
                     <p id="auth-subtitle" class="text-ink-mute text-sm mt-2">Enter details below to access your account dashboard.</p>
                 </div>
 
-                <!-- Form (Borderless inputs) -->
-                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-5">
-                    <div id="field-name" class="hidden">
-                        <label for="auth-name" class="text-xs font-medium text-ink-mute block mb-2">Full Name</label>
-                        <input type="text" id="auth-name" class="premium-input text-sm" placeholder="Sarah Connor" style="border-radius: 6px;">
+                <!-- Form (System Inputs & Components) -->
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="ui-stack" style="--ui-gap: var(--space-lg);">
+                    <div id="field-name" class="ui-form-field hidden">
+                        <label for="auth-name" class="ui-label">Full Name <span class="ui-required">*</span></label>
+                        <input type="text" id="auth-name" class="ui-input" placeholder="Sarah Connor">
                     </div>
-                    <div id="field-email">
-                        <label for="auth-email" class="text-xs font-medium text-ink-mute block mb-2">Email Address</label>
-                        <input type="email" id="auth-email" class="premium-input text-sm" placeholder="sarah@connor.com" required style="border-radius: 6px;">
+                    <div id="field-email" class="ui-form-field">
+                        <label for="auth-email" class="ui-label">Email Address <span class="ui-required">*</span></label>
+                        <input type="email" id="auth-email" class="ui-input" placeholder="sarah@connor.com" required>
                     </div>
-                    <div id="field-password">
-                        <div class="flex justify-between items-center mb-2">
-                            <label id="auth-password-label" for="auth-password" class="text-xs font-medium text-ink-mute block">Password</label>
+                    <div id="field-password" class="ui-form-field">
+                        <div class="flex justify-between items-center mb-1">
+                            <label id="auth-password-label" for="auth-password" class="ui-label">Password <span class="ui-required">*</span></label>
                             <button type="button" id="btn-forgot-password" class="text-xs text-primary hover:underline hover:text-primary-deep font-semibold">Forgot password?</button>
                         </div>
-                        <input type="password" id="auth-password" class="premium-input text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="4" style="border-radius: 6px;">
+                        <input type="password" id="auth-password" class="ui-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="4">
                     </div>
-                    <div id="field-confirm-password" class="hidden">
-                        <label for="auth-confirm-password" class="text-xs font-medium text-ink-mute block mb-2">Confirm New Password</label>
-                        <input type="password" id="auth-confirm-password" class="premium-input text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" minlength="4" style="border-radius: 6px;">
+                    <div id="field-confirm-password" class="ui-form-field hidden">
+                        <label for="auth-confirm-password" class="ui-label">Confirm New Password <span class="ui-required">*</span></label>
+                        <input type="password" id="auth-confirm-password" class="ui-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" minlength="4">
                     </div>
 
-                    <button type="submit" id="btn-auth-submit" class="w-full btn-primary py-4 font-medium transition-colors mt-6">Sign In</button>
+                    <button type="submit" id="btn-auth-submit" class="ui-btn ui-btn-primary ui-btn-lg w-full mt-4">Sign In</button>
                 </form>
 
                 <!-- Footer Switch -->
@@ -161,6 +161,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/ui-primitives.js"></script>
+    <script src="js/ui-components.js"></script>
     <script src="js/common.js" defer></script>
     <script src="js/script.js" defer></script>
     <script>
