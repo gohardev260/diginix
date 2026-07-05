@@ -268,8 +268,8 @@
 
         <!-- App Layout Shell -->
         <div class="flex flex-1 pt-14 min-h-screen">
-            <!-- Scrollable Fixed Sidebar (shadcn Style) -->
-            <aside class="w-64 border-r border-hairline bg-canvas flex-col justify-between hidden md:flex fixed top-14 bottom-0 left-0 z-40 p-4 overflow-y-auto">
+            <!-- Scrollable Fixed Sidebar (Dedicated ui-sidebar Component) -->
+            <aside class="ui-sidebar hidden md:flex">
                 <div class="space-y-4">
                     <!-- Profile Card -->
                     <div class="p-3 rounded-lg bg-canvas-soft border border-hairline flex items-center gap-3">
@@ -282,17 +282,21 @@
 
                     <!-- Sidebar Tabs List -->
                     <nav class="space-y-1" data-ui-tabs>
-                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="analytics" data-state="active">
-                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Analytics
+                        <button class="ui-sidebar-item admin-sidebar-btn admin-tab-btn" data-tab="analytics" data-state="active">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                            <span>Analytics</span>
                         </button>
-                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="blog" data-state="inactive">
-                            <i data-lucide="book-open" class="w-4 h-4"></i> Blog Manager
+                        <button class="ui-sidebar-item admin-sidebar-btn admin-tab-btn" data-tab="blog" data-state="inactive">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Blog Manager</span>
                         </button>
-                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="users" data-state="inactive">
-                            <i data-lucide="users" class="w-4 h-4"></i> User Portal
+                        <button class="ui-sidebar-item admin-sidebar-btn admin-tab-btn" data-tab="users" data-state="inactive">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>User Portal</span>
                         </button>
-                        <button class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-md transition-colors admin-sidebar-btn admin-tab-btn" data-tab="settings" data-state="inactive">
-                            <i data-lucide="settings" class="w-4 h-4"></i> Global Settings
+                        <button class="ui-sidebar-item admin-sidebar-btn admin-tab-btn" data-tab="settings" data-state="inactive">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            <span>Global Settings</span>
                         </button>
                     </nav>
                 </div>
@@ -323,16 +327,16 @@
                             <h1 class="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Platform Analytics</h1>
                             <p class="text-xs text-ink-mute mt-1">Realtime usage diagnostics and performance metrics.</p>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2" id="analytics-timeline-bar">
-                            <span class="text-xs font-medium text-ink-mute">Period:</span>
-                            <button class="ui-btn ui-btn-primary ui-btn-sm analytics-preset-btn active-preset" data-preset="30d">30D</button>
-                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="7d">7D</button>
-                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="90d">90D</button>
-                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="1y">1Y</button>
-                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn" data-preset="all">All</button>
-                            <input type="date" id="analytics-start-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
-                            <span class="text-xs text-ink-mute">→</span>
-                            <input type="date" id="analytics-end-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
+                        <div class="ui-toolbar-scroll flex-nowrap" id="analytics-timeline-bar">
+                            <span class="text-xs font-medium text-ink-mute flex-shrink-0">Period:</span>
+                            <button class="ui-btn ui-btn-primary ui-btn-sm analytics-preset-btn active-preset flex-shrink-0" data-preset="30d">30D</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn flex-shrink-0" data-preset="7d">7D</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn flex-shrink-0" data-preset="90d">90D</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn flex-shrink-0" data-preset="1y">1Y</button>
+                            <button class="ui-btn ui-btn-outline ui-btn-sm analytics-preset-btn flex-shrink-0" data-preset="all">All</button>
+                            <input type="date" id="analytics-start-date" class="ui-input text-xs flex-shrink-0" style="width: 130px; padding: 4px 8px;">
+                            <span class="text-xs text-ink-mute flex-shrink-0">→</span>
+                            <input type="date" id="analytics-end-date" class="ui-input text-xs flex-shrink-0" style="width: 130px; padding: 4px 8px;">
                         </div>
                     </div>
 
@@ -657,22 +661,22 @@
 
                     <div class="ui-card p-5 space-y-4">
                         <!-- Controls Row -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-wrap">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="text-xs font-medium text-ink-mute">From:</span>
-                                <input type="date" id="users-start-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
-                                <span class="text-xs font-medium text-ink-mute">To:</span>
-                                <input type="date" id="users-end-date" class="ui-input text-xs" style="width: 130px; padding: 4px 8px;">
-                                <select id="users-date-preset" class="ui-input text-xs" style="width: 110px; padding: 4px 8px;">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="ui-toolbar-scroll flex-nowrap">
+                                <span class="text-xs font-medium text-ink-mute flex-shrink-0">From:</span>
+                                <input type="date" id="users-start-date" class="ui-input text-xs flex-shrink-0" style="width: 130px; padding: 4px 8px;">
+                                <span class="text-xs font-medium text-ink-mute flex-shrink-0">To:</span>
+                                <input type="date" id="users-end-date" class="ui-input text-xs flex-shrink-0" style="width: 130px; padding: 4px 8px;">
+                                <select id="users-date-preset" class="ui-input text-xs flex-shrink-0" style="width: 110px; padding: 4px 8px;">
                                     <option value="custom">Custom</option>
                                     <option value="all-time">All Time</option>
                                     <option value="today">Today</option>
                                     <option value="last-7-days">Last 7 Days</option>
                                     <option value="last-30-days">Last 30 Days</option>
                                 </select>
-                                <button id="users-clear-date" class="ui-btn ui-btn-outline ui-btn-sm">Clear</button>
+                                <button id="users-clear-date" class="ui-btn ui-btn-outline ui-btn-sm flex-shrink-0">Clear</button>
                             </div>
-                            <input type="text" id="users-search-input" placeholder="Search user name or email..." class="ui-input text-xs" style="width: 240px; padding: 6px 12px;">
+                            <input type="text" id="users-search-input" placeholder="Search user name or email..." class="ui-input text-xs flex-shrink-0" style="width: 240px; padding: 6px 12px;">
                         </div>
 
                         <div class="ui-table-container">

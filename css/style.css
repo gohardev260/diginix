@@ -1500,4 +1500,90 @@ code:not(.code-block code) {
 .admin-tab-content.active {
     display: block !important;
 }
+
+/* --- Dedicated Sidebar Component (.ui-sidebar) --- */
+.ui-sidebar {
+    width: 256px;
+    background-color: var(--color-canvas);
+    border-right: 1px solid var(--color-hairline);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-lg);
+    position: fixed;
+    top: 3.5rem;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-hairline) transparent;
+}
+
+.ui-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+.ui-sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--color-hairline);
+    border-radius: 4px;
+}
+
+.ui-sidebar-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-ink-mute);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: left;
+    outline: none;
+    text-decoration: none;
+}
+
+.ui-sidebar-item:hover {
+    background-color: var(--color-canvas-soft);
+    color: var(--color-ink);
+    transform: translateX(2px);
+}
+
+.ui-sidebar-item:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+.ui-sidebar-item[data-state="active"] {
+    background-color: var(--color-canvas-soft);
+    color: var(--color-ink);
+    font-weight: 600;
+    border-left: 3px solid var(--color-primary);
+}
+
+.ui-sidebar-item[data-state="active"] svg,
+.ui-sidebar-item[data-state="active"] i {
+    color: var(--color-primary);
+}
+
+/* --- Non-wrapping Scrollable Toolbar for Small Screens --- */
+.ui-toolbar-scroll {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 4px;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.ui-toolbar-scroll::-webkit-scrollbar {
+    display: none;
+}
+
 
