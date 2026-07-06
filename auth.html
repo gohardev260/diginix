@@ -150,6 +150,12 @@
                     <button type="submit" id="btn-auth-submit" class="ui-btn ui-btn-primary ui-btn-lg w-full mt-4">Sign In</button>
                 </form>
 
+                <!-- Auth Options / Mode Toggles -->
+                <div class="flex justify-between items-center text-xs text-ink-mute pt-2 border-t border-hairline-cool">
+                    <button type="button" id="btn-mode-magiclink" class="hover:text-primary transition-colors font-medium">✨ Sign in with Magic Link / OTP</button>
+                    <button type="button" id="btn-mode-resend" class="hover:text-primary transition-colors font-medium">✉️ Resend Confirmation Email</button>
+                </div>
+
                 <!-- Footer Switch -->
                 <div id="auth-switch-container" class="text-center text-sm text-ink-mute">
                     <span id="auth-switch-text">Don't have an account?</span>
@@ -184,6 +190,8 @@
         
         const labelPassword = document.getElementById('auth-password-label');
         const btnForgotPassword = document.getElementById('btn-forgot-password');
+        const btnMagiclink = document.getElementById('btn-mode-magiclink');
+        const btnResend = document.getElementById('btn-mode-resend');
         
         const btnSubmit = document.getElementById('btn-auth-submit');
         const switchContainer = document.getElementById('auth-switch-container');
@@ -193,14 +201,13 @@
         function setMode(newMode) {
             mode = newMode;
             
-            // Default reset attributes
+            // Default reset requirements
             inputName.required = false;
             inputEmail.required = false;
             inputPassword.required = false;
             inputConfirmPassword.required = false;
             
-            // Reset input values to prevent bleeding passwords between states
-            if (mode !== 'reset' && mode !== 'signin' && mode !== 'signup') {
+            if (mode !== 'reset' && mode !== 'signin' && mode !== 'signup' && mode !== 'invite') {
                 inputPassword.value = '';
                 inputConfirmPassword.value = '';
             }
@@ -269,6 +276,50 @@
                 btnForgotPassword.classList.add('hidden');
                 btnSubmit.innerText = "Update Password";
                 switchContainer.classList.add('hidden');
+            } else if (mode === 'magiclink') {
+                authTitle.innerText = "Sign in with Magic Link";
+                authSubtitle.innerText = "Enter your email address and we'll send you a passwordless sign-in link.";
+                fieldName.classList.add('hidden');
+                fieldEmail.classList.remove('hidden');
+                fieldPassword.classList.add('hidden');
+                fieldConfirmPassword.classList.add('hidden');
+                
+                inputEmail.required = true;
+                
+                btnSubmit.innerText = "Send Magic Link";
+                switchContainer.classList.remove('hidden');
+                switchText.innerText = "Want to sign in with password?";
+                btnSwitch.innerText = "Sign In";
+            } else if (mode === 'confirm') {
+                authTitle.innerText = "Resend Email Confirmation";
+                authSubtitle.innerText = "Enter your registered email address to receive a new confirmation link.";
+                fieldName.classList.add('hidden');
+                fieldEmail.classList.remove('hidden');
+                fieldPassword.classList.add('hidden');
+                fieldConfirmPassword.classList.add('hidden');
+                
+                inputEmail.required = true;
+                
+                btnSubmit.innerText = "Resend Confirmation";
+                switchContainer.classList.remove('hidden');
+                switchText.innerText = "Already verified?";
+                btnSwitch.innerText = "Sign In";
+            } else if (mode === 'invite') {
+                authTitle.innerText = "Accept Account Invitation";
+                authSubtitle.innerText = "Set your full name and password to complete your account setup.";
+                fieldName.classList.remove('hidden');
+                fieldEmail.classList.add('hidden');
+                fieldPassword.classList.remove('hidden');
+                fieldConfirmPassword.classList.remove('hidden');
+                
+                inputName.required = true;
+                inputPassword.required = true;
+                inputConfirmPassword.required = true;
+                
+                labelPassword.innerText = "Set Password";
+                btnForgotPassword.classList.add('hidden');
+                btnSubmit.innerText = "Complete Setup & Sign In";
+                switchContainer.classList.add('hidden');
             }
         }
 
@@ -284,11 +335,19 @@
             setMode('forgot');
         });
 
-        // Initialize mode based on search parameters
+        btnMagiclink.addEventListener('click', () => {
+            setMode('magiclink');
+        });
+
+        btnResend.addEventListener('click', () => {
+            setMode('confirm');
+        });
+
+        // Initialize mode based on search parameters or hash
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
             const initialMode = params.get('mode');
-            if (initialMode === 'signup' || initialMode === 'signin' || initialMode === 'forgot' || initialMode === 'reset') {
+            if (['signup', 'signin', 'forgot', 'reset', 'magiclink', 'confirm', 'invite'].includes(initialMode)) {
                 setMode(initialMode);
             }
             if (typeof lucide !== 'undefined') {
@@ -299,11 +358,12 @@
             await window.backendReady;
 
             if (window.useSupabase && window.supabase) {
-                // Listen for PASSWORD_RECOVERY auth event
                 window.supabase.auth.onAuthStateChange((event, session) => {
                     if (event === 'PASSWORD_RECOVERY') {
-                        console.log("Supabase: PASSWORD_RECOVERY event received.");
                         setMode('reset');
+                    } else if (event === 'SIGNED_IN' && (mode === 'magiclink' || mode === 'confirm')) {
+                        window.showToast("Successfully authenticated!", "success");
+                        setTimeout(() => { window.location.href = 'profile.html'; }, 1000);
                     }
                 });
             }
@@ -312,8 +372,6 @@
         // Form Submit Handler
         async function handleAuthSubmit(e) {
             e.preventDefault();
-
-            // Wait for backend validation
             await window.backendReady;
 
             if (mode === 'signup') {
@@ -324,59 +382,55 @@
                 const res = await window.apiCall('register', { name, email, password });
                 if (res && res.success === true) {
                     if (res.requiresVerification) {
-                        alert(`Registration successful! We have sent a confirmation link to ${email}. Please check your email to verify your account before logging in.`);
+                        window.showToast(`Registration successful! We sent a confirmation link to ${email}. Please check your inbox.`, 'success', 'Verification Required', 6000);
                         setMode('signin');
                     } else {
                         localStorage.setItem('currentUser', JSON.stringify(res.user));
-                        alert(`Account created successfully! Logged in as ${res.user.name}.`);
-                        window.location.href = 'profile.html';
+                        window.showToast(`Account created! Welcome, ${res.user.name}.`, 'success');
+                        setTimeout(() => { window.location.href = 'profile.html'; }, 1000);
                     }
                 } else {
-                    alert(res && res.error ? res.error : 'Registration failed.');
+                    window.showToast(res && res.error ? res.error : 'Registration failed.', 'error');
                 }
             } else if (mode === 'signin') {
                 const email = document.getElementById('auth-email').value.trim();
                 const password = document.getElementById('auth-password').value;
 
-                // Check if admin login credentials
                 if (email === 'admin@diginix.com') {
-                    alert('Admin accounts must log in via the Secure Admin Panel. Redirecting...');
-                    window.location.href = 'admin_login.html';
+                    window.showToast('Admin accounts must log in via the Secure Admin Panel. Redirecting...', 'info');
+                    setTimeout(() => { window.location.href = 'admin_login.html'; }, 1200);
                     return;
                 }
 
-                // Normal User Sign In
                 const res = await window.apiCall('login', { email, password });
                 if (res && res.success === true) {
                     localStorage.setItem('currentUser', JSON.stringify(res.user));
-                    alert(`Welcome back, ${res.user.name}!`);
-                    window.location.href = 'profile.html';
+                    window.showToast(`Welcome back, ${res.user.name}!`, 'success');
+                    setTimeout(() => { window.location.href = 'profile.html'; }, 800);
                 } else {
-                    alert(res && res.error ? res.error : 'Invalid email or password. Please try again.');
+                    window.showToast(res && res.error ? res.error : 'Invalid email or password. Please try again.', 'error');
                 }
             } else if (mode === 'forgot') {
                 const email = document.getElementById('auth-email').value.trim();
-                
                 btnSubmit.disabled = true;
                 btnSubmit.innerText = "Sending...";
 
                 const res = await window.apiCall('reset_password_request', { email });
-                
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "Send Reset Link";
 
                 if (res && res.success === true) {
-                    alert("A password reset link has been sent to your email address.");
+                    window.showToast("A password reset link has been sent to your email address.", "success", "Check Your Inbox");
                     setMode('signin');
                 } else {
-                    alert(res && res.error ? res.error : 'Failed to send password reset link. Please check the email.');
+                    window.showToast(res && res.error ? res.error : 'Failed to send password reset link.', 'error');
                 }
             } else if (mode === 'reset') {
                 const password = document.getElementById('auth-password').value;
                 const confirmPassword = document.getElementById('auth-confirm-password').value;
 
                 if (password !== confirmPassword) {
-                    alert("Passwords do not match. Please verify.");
+                    window.showToast("Passwords do not match. Please verify.", "warning");
                     return;
                 }
 
@@ -384,20 +438,71 @@
                 btnSubmit.innerText = "Updating...";
 
                 const res = await window.apiCall('update_forgotten_password', { password });
-
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "Update Password";
 
                 if (res && res.success === true) {
-                    alert("Your password has been successfully updated! Please log in with your new password.");
-                    // Log out the temporary recovery session
+                    window.showToast("Your password has been updated! Please sign in with your new credentials.", "success");
                     if (window.useSupabase && window.supabase) {
                         await window.supabase.auth.signOut();
                     }
                     localStorage.removeItem('currentUser');
                     setMode('signin');
                 } else {
-                    alert(res && res.error ? res.error : 'Failed to update password. Please try again.');
+                    window.showToast(res && res.error ? res.error : 'Failed to update password. Please try again.', 'error');
+                }
+            } else if (mode === 'magiclink') {
+                const email = document.getElementById('auth-email').value.trim();
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "Sending...";
+
+                const res = await window.apiCall('send_magic_link', { email });
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Send Magic Link";
+
+                if (res && res.success === true) {
+                    window.showToast(`Magic sign-in link sent to ${email}! Check your inbox.`, 'success', 'Magic Link Sent');
+                    setMode('signin');
+                } else {
+                    window.showToast(res && res.error ? res.error : 'Failed to send Magic Link.', 'error');
+                }
+            } else if (mode === 'confirm') {
+                const email = document.getElementById('auth-email').value.trim();
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "Sending...";
+
+                const res = await window.apiCall('resend_confirmation', { email });
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Resend Confirmation";
+
+                if (res && res.success === true) {
+                    window.showToast(`Confirmation link resent to ${email}! Check your inbox.`, 'success', 'Link Resent');
+                    setMode('signin');
+                } else {
+                    window.showToast(res && res.error ? res.error : 'Failed to resend confirmation email.', 'error');
+                }
+            } else if (mode === 'invite') {
+                const name = document.getElementById('auth-name').value.trim();
+                const password = document.getElementById('auth-password').value;
+                const confirmPassword = document.getElementById('auth-confirm-password').value;
+
+                if (password !== confirmPassword) {
+                    window.showToast("Passwords do not match. Please verify.", "warning");
+                    return;
+                }
+
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "Completing Setup...";
+
+                const res = await window.apiCall('accept_invite', { name, password });
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Complete Setup & Sign In";
+
+                if (res && res.success === true) {
+                    window.showToast("Account setup complete! Welcome to DiginixIT.", "success");
+                    setTimeout(() => { window.location.href = 'profile.html'; }, 1000);
+                } else {
+                    window.showToast(res && res.error ? res.error : 'Failed to complete invitation setup.', 'error');
                 }
             }
         }

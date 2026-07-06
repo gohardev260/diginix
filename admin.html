@@ -192,7 +192,7 @@
             const { data, error } = await window.supabase.rpc('generate_csrf_token');
             if (error || !data || data.length === 0) {
                 console.error('Failed to generate CSRF token:', error);
-                alert('Security token generation failed. Please reload the page.');
+                window.showToast('Security token generation failed. Please reload the page.', 'error');
                 return false;
             }
             window.csrfToken = data[0].csrf_token;
@@ -226,8 +226,8 @@
                     const is_admin = adminCheck && adminCheck.length > 0 && adminCheck[0].is_admin;
                     if (adminError || !is_admin) {
                         await window.supabase.auth.signOut();
-                        alert('Access Denied. Admin privileges required.');
-                        window.location.replace('admin_login.html');
+                        window.showToast('Access Denied. Admin privileges required.', 'error');
+                        setTimeout(() => { window.location.replace('admin_login.html'); }, 1000);
                         return;
                     }
 

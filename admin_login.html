@@ -135,7 +135,7 @@
             const attempts = JSON.parse(sessionStorage.getItem('admin_login_attempts') || '{"count":0,"first":0}');
             if (attempts.count >= 5 && (now - attempts.first) < 15 * 60 * 1000) {
                 const remainingMin = Math.ceil((15 * 60 * 1000 - (now - attempts.first)) / (60 * 1000));
-                alert(`Too many failed login attempts. Please wait ${remainingMin} minute(s) before trying again.`);
+                window.showToast(`Too many failed login attempts. Please wait ${remainingMin} minute(s) before trying again.`, 'warning');
                 return;
             }
 
@@ -144,7 +144,7 @@
 
             await window.backendReady;
             if (!window.useSupabase) {
-                alert('Database connection not established. Admin sign-in is disabled in offline mode. Please configure Supabase URL and Anon Key in common.js.');
+                window.showToast('Database connection not established. Admin sign-in is disabled in offline mode.', 'error');
                 return;
             }
 
@@ -164,7 +164,7 @@
                     attempts.count = (attempts.count || 0) + 1;
                     if (attempts.count === 1) attempts.first = now;
                     sessionStorage.setItem('admin_login_attempts', JSON.stringify(attempts));
-                    alert('Access Denied. Invalid email or password.');
+                    window.showToast('Access Denied. Invalid email or password.', 'error');
                     return;
                 }
 
@@ -184,17 +184,17 @@
                     if (attempts.count === 1) attempts.first = now;
                     sessionStorage.setItem('admin_login_attempts', JSON.stringify(attempts));
                     
-                    alert('Access Denied. Admin privileges required.');
+                    window.showToast('Access Denied. Admin privileges required.', 'error');
                     return;
                 }
 
                 // Clear attempt counter on success
                 sessionStorage.removeItem('admin_login_attempts');
-                alert('Session authenticated successfully. Welcome to DiginixIT Console.');
-                window.location.replace('admin.html');
+                window.showToast('Session authenticated successfully. Welcome to DiginixIT Console.', 'success');
+                setTimeout(() => { window.location.replace('admin.html'); }, 800);
             } catch (err) {
                 console.error("Login exception:", err);
-                alert("An error occurred during authentication.");
+                window.showToast("An error occurred during authentication.", 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalBtnText;

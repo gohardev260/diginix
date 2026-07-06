@@ -441,13 +441,13 @@
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    alert(`Thank you, ${name}! Your inquiry concerning "${subject}" has been successfully transmitted to our team.`);
+                    window.showToast(`Thank you, ${name}! Your inquiry concerning "${subject}" has been successfully transmitted to our team.`, 'success');
                     form.reset();
                 } else {
                     throw new Error(result.error || `Server returned status ${response.status}`);
                 }
             } catch (err) {
-                alert('Failed to submit inquiry: ' + err.message);
+                window.showToast('Failed to submit inquiry: ' + err.message, 'error');
             } finally {
                 // Restore button state
                 if (window.UIPrimitives) {

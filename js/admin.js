@@ -1351,8 +1351,9 @@ window.deleteBlogPost = async function (id) {
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
         await loadBlogData();
+        window.showToast('Blog post deleted successfully.', 'success');
     } else {
-        alert('Failed to delete blog post.');
+        window.showToast('Failed to delete blog post.', 'error');
     }
 };
 
@@ -1380,31 +1381,31 @@ function getBlogFormValues() {
 window.handleBlogSave = async function (e) {
     if (e && e.preventDefault) e.preventDefault();
     const fields = getBlogFormValues();
-    if (!fields.title) { alert('Please enter an article title.'); return; }
+    if (!fields.title) { window.showToast('Please enter an article title.', 'warning'); return; }
     const payload = { ...fields, status: 'published', _csrf_token: window.csrfToken };
     await window.backendReady;
     const res = await window.apiCall('save_blog', payload);
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
-        alert('Blog post published successfully.');
+        window.showToast('Blog post published successfully.', 'success');
         window.closeArticleEditor();
     } else {
-        alert('Failed to save blog post.');
+        window.showToast('Failed to save blog post.', 'error');
     }
 };
 
 window.handleBlogSaveAsDraft = async function () {
     const fields = getBlogFormValues();
-    if (!fields.title) { alert('Please enter an article title before saving as draft.'); return; }
+    if (!fields.title) { window.showToast('Please enter an article title before saving as draft.', 'warning'); return; }
     const payload = { ...fields, status: 'draft', _csrf_token: window.csrfToken };
     await window.backendReady;
     const res = await window.apiCall('save_blog', payload);
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
-        alert('Article saved as draft.');
+        window.showToast('Article saved as draft.', 'success');
         window.closeArticleEditor();
     } else {
-        alert('Failed to save draft.');
+        window.showToast('Failed to save draft.', 'error');
     }
 };
 
@@ -1565,7 +1566,7 @@ function filterAndRenderUsers() {
 
 window.exportUsersPDF = function () {
     const { jsPDF } = window.jspdf;
-    if (!jsPDF) { alert('PDF library is still loading. Please try again in a moment.'); return; }
+    if (!jsPDF) { window.showToast('PDF library is still loading. Please try again in a moment.', 'warning'); return; }
     const doc = new jsPDF();
     doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(17, 17, 17);
     doc.text('DIGINIXIT.', 14, 20);
@@ -1632,7 +1633,8 @@ window.toggleUserStatus = async function (email) {
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
         await loadUserData();
-    } else { alert('Failed to update user status.'); }
+        window.showToast('User status updated successfully.', 'success');
+    } else { window.showToast('Failed to update user status.', 'error'); }
 };
 
 window.deleteUser = async function (email) {
@@ -1642,7 +1644,8 @@ window.deleteUser = async function (email) {
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
         await loadUserData();
-    } else { alert('Failed to delete user.'); }
+        window.showToast('User deleted successfully.', 'success');
+    } else { window.showToast('Failed to delete user.', 'error'); }
 };
 
 // ── Settings Tab ─────────────────────────────────────────────────────
@@ -1679,16 +1682,16 @@ window.handleSettingsUpdate = async function (e) {
     if (res && res.success === true) {
         if (window.useSupabase) await window.fetchCSRFToken();
         document.querySelectorAll('.site-logo-text').forEach(el => { el.innerText = newSettings.siteName; });
-        alert('System settings applied. Site configuration refreshed.');
-    } else { alert('Failed to save settings.'); }
+        window.showToast('System settings applied. Site configuration refreshed.', 'success');
+    } else { window.showToast('Failed to save settings.', 'error'); }
 };
 
 // ── Admin Sign Out ───────────────────────────────────────────────────
 window.handleAdminSignOut = async function () {
     await window.backendReady;
     if (window.useSupabase) await window.supabase.auth.signOut();
-    alert('Secure session terminated.');
-    window.location.replace('admin_login.html');
+    window.showToast('Secure session terminated.', 'info');
+    setTimeout(() => { window.location.replace('admin_login.html'); }, 800);
 };
 
 // ── Realtime Subscription ─────────────────────────────────────────────
