@@ -150,12 +150,6 @@
                     <button type="submit" id="btn-auth-submit" class="ui-btn ui-btn-primary ui-btn-lg w-full mt-4">Sign In</button>
                 </form>
 
-                <!-- Auth Options / Mode Toggles -->
-                <div class="flex justify-between items-center text-xs text-ink-mute pt-2 border-t border-hairline-cool">
-                    <button type="button" id="btn-mode-magiclink" class="hover:text-primary transition-colors font-medium">✨ Sign in with Magic Link / OTP</button>
-                    <button type="button" id="btn-mode-resend" class="hover:text-primary transition-colors font-medium">✉️ Resend Confirmation Email</button>
-                </div>
-
                 <!-- Footer Switch -->
                 <div id="auth-switch-container" class="text-center text-sm text-ink-mute">
                     <span id="auth-switch-text">Don't have an account?</span>
@@ -190,8 +184,6 @@
         
         const labelPassword = document.getElementById('auth-password-label');
         const btnForgotPassword = document.getElementById('btn-forgot-password');
-        const btnMagiclink = document.getElementById('btn-mode-magiclink');
-        const btnResend = document.getElementById('btn-mode-resend');
         
         const btnSubmit = document.getElementById('btn-auth-submit');
         const switchContainer = document.getElementById('auth-switch-container');
@@ -333,14 +325,6 @@
 
         btnForgotPassword.addEventListener('click', () => {
             setMode('forgot');
-        });
-
-        btnMagiclink.addEventListener('click', () => {
-            setMode('magiclink');
-        });
-
-        btnResend.addEventListener('click', () => {
-            setMode('confirm');
         });
 
         // Initialize mode based on search parameters or hash
