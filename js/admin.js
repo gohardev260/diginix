@@ -416,6 +416,9 @@ function renderAnalyticsCharts(
             options: {
                 responsive: true, maintainAspectRatio: false,
                 cutout: '70%',
+                layout: {
+                    padding: 8
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
