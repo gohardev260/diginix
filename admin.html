@@ -551,22 +551,42 @@
                     </div>
 
                     <!-- Controls -->
-                    <div class="admin-toolbar">
+                    <div class="admin-toolbar" id="users-timeline-bar" style="gap: 12px; flex-wrap: wrap; overflow: visible;">
                         <input type="text" id="users-search-input" placeholder="Search name or email..."
-                            class="admin-date-input" style="width:200px;">
+                            class="admin-date-input" style="width:200px; font-family: inherit;">
+                        
+                        <!-- Divider -->
                         <span class="admin-toolbar-sep"></span>
-                        <span class="admin-toolbar-label">From:</span>
-                        <input type="date" id="users-start-date" class="admin-date-input">
-                        <span class="admin-toolbar-label">To:</span>
-                        <input type="date" id="users-end-date" class="admin-date-input">
-                        <select id="users-date-preset" class="admin-date-input" style="width:110px;">
-                            <option value="custom">Custom</option>
-                            <option value="all-time">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="last-7-days">Last 7 Days</option>
-                            <option value="last-30-days">Last 30 Days</option>
-                        </select>
-                        <button id="users-clear-date" class="ui-btn ui-btn-outline ui-btn-sm">Clear</button>
+
+                        <!-- Presets Dropdown styled with Filter Icon -->
+                        <div class="admin-filter-dropdown" style="position: relative; display: inline-flex; align-items: center;">
+                            <button type="button" id="users-preset-btn" class="admin-date-input" style="padding-left: 30px; padding-right: 32px; background: #fff; cursor: pointer; border-radius: var(--radius-sm); border: 1px solid var(--color-hairline); font-size: 13px; height: 32px; font-family: inherit; display: inline-flex; align-items: center; min-width: 120px; text-align: left; position: relative;" onclick="toggleUsersFilterMenu(event)">
+                                <span id="users-preset-label">All Time</span>
+                            </button>
+                            <i data-lucide="filter" style="position: absolute; left: 10px; width: 14px; height: 14px; color: var(--color-ink-mute); pointer-events: none;"></i>
+                            <i data-lucide="chevron-down" style="position: absolute; right: 10px; width: 12px; height: 12px; color: var(--color-ink-mute); pointer-events: none;"></i>
+                            
+                            <!-- Custom System Design Dropdown Menu Dialog -->
+                            <div id="users-filter-menu" class="admin-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 4px); left: 0; min-width: 160px; background: #fff; border: 1px solid var(--color-hairline); border-radius: var(--radius-md); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); z-index: 100; padding: 6px 0;">
+                                <button type="button" class="admin-filter-item" onclick="selectUsersFilterPreset('today')">Today</button>
+                                <button type="button" class="admin-filter-item" onclick="selectUsersFilterPreset('yesterday')">Yesterday</button>
+                                <button type="button" class="admin-filter-item" onclick="selectUsersFilterPreset('last-7-days')">Last 7 Days</button>
+                                <button type="button" class="admin-filter-item" onclick="selectUsersFilterPreset('last-30-days')">Last 30 Days</button>
+                                <button type="button" class="admin-filter-item" onclick="selectUsersFilterPreset('this-month')">This Month</button>
+                                <button type="button" class="admin-filter-item" onclick="selectUsersFilterPreset('last-month')">Last Month</button>
+                                <button type="button" class="admin-filter-item active" onclick="selectUsersFilterPreset('all-time')">All Time</button>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <span class="admin-toolbar-sep"></span>
+
+                        <!-- Custom Date Pickers -->
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="text" id="users-start-date" class="admin-date-input" readonly style="width: 100px; text-align: center; cursor: pointer; font-family: inherit;" placeholder="Start Date" onclick="openUsersCustomDateModal('start')">
+                            <span class="admin-toolbar-label">→</span>
+                            <input type="text" id="users-end-date" class="admin-date-input" readonly style="width: 100px; text-align: center; cursor: pointer; font-family: inherit;" placeholder="End Date" onclick="openUsersCustomDateModal('end')">
+                        </div>
                     </div>
 
                     <!-- Users Table -->

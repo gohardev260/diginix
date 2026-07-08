@@ -820,13 +820,81 @@ window.selectFilterPreset = function(preset) {
     if (menu) menu.style.display = 'none';
 };
 
+// ── Custom Users Filter Menu Functions ──
+window.toggleUsersFilterMenu = function(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('users-filter-menu');
+    if (!menu) return;
+    const isShowing = menu.style.display === 'block';
+    menu.style.display = isShowing ? 'none' : 'block';
+};
+
+window.selectUsersFilterPreset = function(preset) {
+    // Determine target date range
+    const { startStr, endStr } = getPresetDateRange(preset);
+    
+    // Set inputs
+    const startInput = document.getElementById('users-start-date');
+    const endInput = document.getElementById('users-end-date');
+    
+    if (preset === 'all-time') {
+        if (startInput) startInput.value = '';
+        if (endInput) endInput.value = '';
+    } else {
+        if (startInput) startInput.value = startStr;
+        if (endInput) endInput.value = endStr;
+    }
+    
+    // Update label
+    const label = document.getElementById('users-preset-label');
+    if (label) {
+        const labels = {
+            'today': 'Today',
+            'yesterday': 'Yesterday',
+            'last-7-days': 'Last 7 Days',
+            'last-30-days': 'Last 30 Days',
+            'this-month': 'This Month',
+            'last-month': 'Last Month',
+            'all-time': 'All Time'
+        };
+        label.innerText = labels[preset] || preset;
+    }
+    
+    // Update active class on menu items
+    const items = document.querySelectorAll('#users-filter-menu .admin-filter-item');
+    items.forEach(item => {
+        const onclickAttr = item.getAttribute('onclick') || '';
+        const matchPreset = onclickAttr.includes(`'${preset}'`);
+        if (matchPreset) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+    
+    loadUserData();
+    
+    // Close menu
+    const menu = document.getElementById('users-filter-menu');
+    if (menu) menu.style.display = 'none';
+};
+
 // Close menu when clicking outside
 window.addEventListener('click', (e) => {
+    // Analytics preset menu
     const menu = document.getElementById('analytics-filter-menu');
     if (menu && menu.style.display === 'block') {
         const btn = document.getElementById('analytics-preset-btn');
         if (e.target !== btn && !btn.contains(e.target) && e.target !== menu && !menu.contains(e.target)) {
             menu.style.display = 'none';
+        }
+    }
+    // Users preset menu
+    const usersMenu = document.getElementById('users-filter-menu');
+    if (usersMenu && usersMenu.style.display === 'block') {
+        const btn = document.getElementById('users-preset-btn');
+        if (e.target !== btn && !btn.contains(e.target) && e.target !== usersMenu && !usersMenu.contains(e.target)) {
+            usersMenu.style.display = 'none';
         }
     }
 });
@@ -886,15 +954,19 @@ let calSelectedEnd = null;
 let calCurrentMonth = new Date();
 window.calActiveInput = 'start'; // 'start' or 'end'
 
-window.openCustomDateModal = function(activeInput) {
+window.calSourceTab = 'analytics'; // 'analytics' or 'users'
+
+window.openCustomDateModal = function(activeInput, sourceTab = 'analytics') {
     const modal = document.getElementById('custom-date-modal');
     if (!modal) return;
     
     window.calActiveInput = activeInput || 'start';
+    window.calSourceTab = sourceTab;
     
     // Parse current dates from inputs to set initial calendar state
-    const startVal = document.getElementById('analytics-start-date')?.value;
-    const endVal = document.getElementById('analytics-end-date')?.value;
+    const prefix = sourceTab === 'users' ? 'users' : 'analytics';
+    const startVal = document.getElementById(`${prefix}-start-date`)?.value;
+    const endVal = document.getElementById(`${prefix}-end-date`)?.value;
     
     calSelectedStart = startVal ? new Date(startVal + 'T00:00:00') : null;
     calSelectedEnd = endVal ? new Date(endVal + 'T00:00:00') : null;
@@ -904,6 +976,10 @@ window.openCustomDateModal = function(activeInput) {
     
     renderCalendar();
     modal.style.display = 'flex';
+};
+
+window.openUsersCustomDateModal = function(activeInput) {
+    window.openCustomDateModal(activeInput, 'users');
 };
 
 window.closeCustomDateModal = function() {
@@ -1076,8 +1152,9 @@ function initCustomCalendarControls() {
                 return;
             }
             
-            const startInput = document.getElementById('analytics-start-date');
-            const endInput = document.getElementById('analytics-end-date');
+            const prefix = window.calSourceTab === 'users' ? 'users' : 'analytics';
+            const startInput = document.getElementById(`${prefix}-start-date`);
+            const endInput = document.getElementById(`${prefix}-end-date`);
             
             const formatDate = (d) => {
                 const yyyy = d.getFullYear();
@@ -1089,12 +1166,21 @@ function initCustomCalendarControls() {
             if (startInput) startInput.value = formatDate(start);
             if (endInput) endInput.value = formatDate(end);
             
-            window.adminState.analyticsPreset = 'custom';
-            const label = document.getElementById('analytics-preset-label');
-            if (label) label.innerText = '';
-            const items = document.querySelectorAll('.admin-filter-item');
-            items.forEach(item => item.classList.remove('active'));
-            loadAnalyticsData();
+            if (window.calSourceTab === 'users') {
+                const label = document.getElementById('users-preset-label');
+                if (label) label.innerText = '';
+                const items = document.querySelectorAll('#users-filter-menu .admin-filter-item');
+                items.forEach(item => item.classList.remove('active'));
+                loadUserData();
+            } else {
+                window.adminState.analyticsPreset = 'custom';
+                const label = document.getElementById('analytics-preset-label');
+                if (label) label.innerText = '';
+                const items = document.querySelectorAll('#analytics-filter-menu .admin-filter-item');
+                items.forEach(item => item.classList.remove('active'));
+                loadAnalyticsData();
+            }
+            
             window.closeCustomDateModal();
         });
     }
@@ -1864,7 +1950,16 @@ function getLocalDateBounds(dateStr, isEnd = false) {
 function filterAndRenderUsers() {
     const tbody = document.getElementById('users-table-body');
     if (!tbody) return;
-    const filteredUsers = deduplicateUsers(window.adminState.usersList);
+
+    const startDateInput = document.getElementById('users-start-date');
+    const endDateInput = document.getElementById('users-end-date');
+    const isFiltered = !!(startDateInput?.value || endDateInput?.value);
+
+    let filteredUsers = deduplicateUsers(window.adminState.usersList);
+    if (isFiltered) {
+        filteredUsers = filteredUsers.filter(u => (u.rangeVisits || 0) > 0);
+    }
+
     window.adminState.currentFilteredUsers = filteredUsers;
     window.currentFilteredUsers = filteredUsers;
 
@@ -1872,9 +1967,6 @@ function filterAndRenderUsers() {
         tbody.innerHTML = `<tr class="ui-tr"><td colspan="6" class="ui-td text-center py-8 text-ink-mute">No clients found matching the search criteria.</td></tr>`;
         return;
     }
-    const startDateInput = document.getElementById('users-start-date');
-    const endDateInput = document.getElementById('users-end-date');
-    const isFiltered = !!(startDateInput?.value || endDateInput?.value);
 
     tbody.innerHTML = filteredUsers.map(user => `
         <tr class="ui-tr">
@@ -2082,31 +2174,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const startDateInput = document.getElementById('users-start-date');
     const endDateInput = document.getElementById('users-end-date');
-    const clearDateBtn = document.getElementById('users-clear-date');
-    const presetSelect = document.getElementById('users-date-preset');
-
-    const resetPresetToCustom = () => {
-        if (presetSelect) presetSelect.value = 'custom';
-        loadUserData();
-    };
-    if (startDateInput) startDateInput.addEventListener('change', resetPresetToCustom);
-    if (endDateInput) endDateInput.addEventListener('change', resetPresetToCustom);
-    if (presetSelect) {
-        presetSelect.addEventListener('change', () => {
-            const val = presetSelect.value;
-            if (val === 'custom') return;
-            const { startStr, endStr } = getPresetDateRange(val);
-            if (startDateInput) startDateInput.value = startStr;
-            if (endDateInput) endDateInput.value = endStr;
+    [startDateInput, endDateInput].forEach(inp => {
+        if (!inp) return;
+        inp.addEventListener('change', () => {
+            const label = document.getElementById('users-preset-label');
+            if (label) label.innerText = '';
+            
+            const items = document.querySelectorAll('#users-filter-menu .admin-filter-item');
+            items.forEach(item => item.classList.remove('active'));
+            
             loadUserData();
         });
-    }
-    if (clearDateBtn) {
-        clearDateBtn.addEventListener('click', () => {
-            if (startDateInput) startDateInput.value = '';
-            if (endDateInput) endDateInput.value = '';
-            if (presetSelect) presetSelect.value = 'all-time';
-            loadUserData();
-        });
-    }
+    });
 });
