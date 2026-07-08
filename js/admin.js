@@ -20,7 +20,7 @@ window.adminState = {
     activeTab: 'analytics',
     isLoadingUsers: false,
     blogFilter: 'all',
-    analyticsPreset: '30d'
+    analyticsPreset: 'all'
 };
 
 // ── Tab Control Logic ────────────────────────────────────────────────
@@ -209,11 +209,11 @@ async function loadAnalyticsData() {
         startDate = range.start;
         endDate = range.end;
 
-        // Sync UI date pickers
+        // Clear UI custom date picker values when a preset timeline is active
         const startInput = document.getElementById('analytics-start-date');
         const endInput = document.getElementById('analytics-end-date');
-        if (startInput) startInput.value = startDate.toISOString().slice(0, 10);
-        if (endInput) endInput.value = endDate.toISOString().slice(0, 10);
+        if (startInput) startInput.value = '';
+        if (endInput) endInput.value = '';
     }
 
     let res = null;
@@ -752,40 +752,84 @@ function renderRecentVisitorsList(sortedLogs) {
 
 // ── Analytics: Timeline Preset Init ─────────────────────────────────
 function initAnalyticsPresets() {
-    const presetSelect = document.getElementById('analytics-preset-select');
     const startInput = document.getElementById('analytics-start-date');
     const endInput = document.getElementById('analytics-end-date');
 
     initCustomCalendarControls();
-
-    if (presetSelect) {
-        presetSelect.addEventListener('change', () => {
-            const preset = presetSelect.value;
-            window.adminState.analyticsPreset = preset;
-
-            if (preset !== 'custom') {
-                const { start, end } = getAnalyticsDateRange(preset);
-                if (startInput) startInput.value = start.toISOString().slice(0, 10);
-                if (endInput) endInput.value = end.toISOString().slice(0, 10);
-            }
-            loadAnalyticsData();
-        });
-    }
 
     // Custom date range
     [startInput, endInput].forEach(inp => {
         if (!inp) return;
         inp.addEventListener('change', () => {
             window.adminState.analyticsPreset = 'custom';
+            const label = document.getElementById('analytics-preset-label');
+            if (label) label.innerText = '';
+            
+            const items = document.querySelectorAll('.admin-filter-item');
+            items.forEach(item => item.classList.remove('active'));
+            
             loadAnalyticsData();
         });
     });
 
-    // Default bounds (30d)
-    const { start, end } = getAnalyticsDateRange('30d');
-    if (startInput) startInput.value = start.toISOString().slice(0, 10);
-    if (endInput) endInput.value = end.toISOString().slice(0, 10);
+    // Default custom pickers to blank
+    if (startInput) startInput.value = '';
+    if (endInput) endInput.value = '';
 }
+
+// ── Custom Filter Menu Functions ──
+window.toggleFilterMenu = function(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('analytics-filter-menu');
+    if (!menu) return;
+    const isShowing = menu.style.display === 'block';
+    menu.style.display = isShowing ? 'none' : 'block';
+};
+
+window.selectFilterPreset = function(preset) {
+    window.adminState.analyticsPreset = preset;
+    
+    // Update label
+    const label = document.getElementById('analytics-preset-label');
+    if (label) {
+        label.innerText = getPresetLabel(preset);
+    }
+    
+    // Clear date inputs if not custom
+    const startInput = document.getElementById('analytics-start-date');
+    const endInput = document.getElementById('analytics-end-date');
+    if (startInput) startInput.value = '';
+    if (endInput) endInput.value = '';
+    
+    // Update active class on menu items
+    const items = document.querySelectorAll('.admin-filter-item');
+    items.forEach(item => {
+        const onclickAttr = item.getAttribute('onclick') || '';
+        const matchPreset = onclickAttr.includes(`'${preset}'`);
+        if (matchPreset) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+    
+    loadAnalyticsData();
+    
+    // Close menu
+    const menu = document.getElementById('analytics-filter-menu');
+    if (menu) menu.style.display = 'none';
+};
+
+// Close menu when clicking outside
+window.addEventListener('click', (e) => {
+    const menu = document.getElementById('analytics-filter-menu');
+    if (menu && menu.style.display === 'block') {
+        const btn = document.getElementById('analytics-preset-btn');
+        if (e.target !== btn && !btn.contains(e.target) && e.target !== menu && !menu.contains(e.target)) {
+            menu.style.display = 'none';
+        }
+    }
+});
 
 // ── Custom Confirmation Dialog Modal ──
 window.showConfirmDialog = function(title, message, confirmText = 'Confirm', cancelText = 'Cancel') {
@@ -929,34 +973,34 @@ function renderCalendar() {
         const inRange = calSelectedStart && calSelectedEnd && date > calSelectedStart && date < calSelectedEnd;
         
         if (isStart && isEnd) {
-            dayBtn.style.backgroundColor = '#6366f1';
-            dayBtn.style.color = '#fff';
+            dayBtn.style.backgroundColor = 'var(--color-primary, #3ecf8e)';
+            dayBtn.style.color = 'var(--color-on-primary, #171717)';
             dayBtn.style.fontWeight = '600';
         } else if (isStart) {
             if (window.calActiveInput === 'start') {
-                dayBtn.style.backgroundColor = '#6366f1';
-                dayBtn.style.color = '#fff';
+                dayBtn.style.backgroundColor = 'var(--color-primary, #3ecf8e)';
+                dayBtn.style.color = 'var(--color-on-primary, #171717)';
                 dayBtn.style.fontWeight = '600';
             } else {
-                dayBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.12)';
-                dayBtn.style.color = '#6366f1';
-                dayBtn.style.border = '1.5px dashed #6366f1';
+                dayBtn.style.backgroundColor = 'rgba(62, 207, 142, 0.12)';
+                dayBtn.style.color = 'var(--color-primary-deep, #24b47e)';
+                dayBtn.style.border = '1.5px dashed var(--color-primary-deep, #24b47e)';
                 dayBtn.style.fontWeight = '600';
             }
         } else if (isEnd) {
             if (window.calActiveInput === 'end') {
-                dayBtn.style.backgroundColor = '#6366f1';
-                dayBtn.style.color = '#fff';
+                dayBtn.style.backgroundColor = 'var(--color-primary, #3ecf8e)';
+                dayBtn.style.color = 'var(--color-on-primary, #171717)';
                 dayBtn.style.fontWeight = '600';
             } else {
-                dayBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.12)';
-                dayBtn.style.color = '#6366f1';
-                dayBtn.style.border = '1.5px dashed #6366f1';
+                dayBtn.style.backgroundColor = 'rgba(62, 207, 142, 0.12)';
+                dayBtn.style.color = 'var(--color-primary-deep, #24b47e)';
+                dayBtn.style.border = '1.5px dashed var(--color-primary-deep, #24b47e)';
                 dayBtn.style.fontWeight = '600';
             }
         } else if (inRange) {
-            dayBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.08)';
-            dayBtn.style.color = '#6366f1';
+            dayBtn.style.backgroundColor = 'rgba(62, 207, 142, 0.08)';
+            dayBtn.style.color = 'var(--color-primary-deep, #24b47e)';
             dayBtn.style.borderRadius = '0';
         } else {
             dayBtn.addEventListener('mouseenter', () => {
@@ -1046,6 +1090,10 @@ function initCustomCalendarControls() {
             if (endInput) endInput.value = formatDate(end);
             
             window.adminState.analyticsPreset = 'custom';
+            const label = document.getElementById('analytics-preset-label');
+            if (label) label.innerText = '';
+            const items = document.querySelectorAll('.admin-filter-item');
+            items.forEach(item => item.classList.remove('active'));
             loadAnalyticsData();
             window.closeCustomDateModal();
         });

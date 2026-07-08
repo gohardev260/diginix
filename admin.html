@@ -184,21 +184,26 @@
                     </div>
 
                     <!-- Date Controls -->
-                    <div class="admin-toolbar" id="analytics-timeline-bar" style="gap: 12px; flex-wrap: wrap;">
+                    <div class="admin-toolbar" id="analytics-timeline-bar" style="gap: 12px; flex-wrap: wrap; overflow: visible;">
                         <!-- Presets Dropdown styled with Filter Icon -->
                         <div class="admin-filter-dropdown" style="position: relative; display: inline-flex; align-items: center;">
-                            <i data-lucide="filter" style="position: absolute; left: 10px; width: 14px; height: 14px; color: var(--color-ink-mute); pointer-events: none;"></i>
-                            <select id="analytics-preset-select" class="admin-date-input" style="padding-left: 30px; padding-right: 24px; appearance: none; -webkit-appearance: none; background: #fff; cursor: pointer; border-radius: var(--radius-sm); border: 1px solid var(--color-hairline); font-size: 13px; height: 32px; font-family: inherit;">
-                                <option value="today">Today</option>
-                                <option value="yesterday">Yesterday</option>
-                                <option value="3d">Last 3 Days</option>
-                                <option value="7d">Last 7 Days</option>
-                                <option value="30d" selected>Last 30 Days</option>
-                                <option value="90d">Last 90 Days</option>
-                                <option value="1y">Last Year</option>
-                                <option value="all">All Time</option>
-                            </select>
+                            <button type="button" id="analytics-preset-btn" class="admin-date-input" style="padding-left: 30px; padding-right: 32px; background: #fff; cursor: pointer; border-radius: var(--radius-sm); border: 1px solid var(--color-hairline); font-size: 13px; height: 32px; font-family: inherit; display: inline-flex; align-items: center; min-width: 120px; text-align: left; position: relative;" onclick="toggleFilterMenu(event)">
+                                <span id="analytics-preset-label">All Time</span>
+                            </button>
+                             <i data-lucide="filter" style="position: absolute; left: 10px; width: 14px; height: 14px; color: var(--color-ink-mute); pointer-events: none;"></i>
                             <i data-lucide="chevron-down" style="position: absolute; right: 10px; width: 12px; height: 12px; color: var(--color-ink-mute); pointer-events: none;"></i>
+                            
+                            <!-- Custom System Design Dropdown Menu Dialog -->
+                            <div id="analytics-filter-menu" class="admin-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 4px); left: 0; min-width: 160px; background: #fff; border: 1px solid var(--color-hairline); border-radius: var(--radius-md); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); z-index: 100; padding: 6px 0;">
+                                <button type="button" class="admin-filter-item" onclick="selectFilterPreset('today')">Today</button>
+                                <button type="button" class="admin-filter-item" onclick="selectFilterPreset('yesterday')">Yesterday</button>
+                                <button type="button" class="admin-filter-item" onclick="selectFilterPreset('3d')">Last 3 Days</button>
+                                <button type="button" class="admin-filter-item" onclick="selectFilterPreset('7d')">Last 7 Days</button>
+                                <button type="button" class="admin-filter-item" onclick="selectFilterPreset('30d')">Last 30 Days</button>
+                                <button type="button" class="admin-filter-item" onclick="selectFilterPreset('90d')">Last 90 Days</button>
+                                <button type="button" class="admin-filter-item" onclick="selectFilterPreset('1y')">Last Year</button>
+                                <button type="button" class="admin-filter-item active" onclick="selectFilterPreset('all')">All Time</button>
+                            </div>
                         </div>
 
                         <!-- Divider -->
