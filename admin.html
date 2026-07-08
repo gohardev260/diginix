@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-adsense-account" content="ca-pub-3363493243397953">
     <title>DiginixIT | Admin Console</title>
-    <meta name="description" content="Private administration console for managing DiginixIT analytics, blog insights, and user database.">
+    <meta name="description"
+        content="Private administration console for managing DiginixIT analytics, blog insights, and user database.">
     <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://diginixit.com/admin.html">
 
@@ -21,18 +23,20 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Core Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"
+        defer></script>
+
     <!-- DOMPurify for XSS Protection -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/admin.css">
@@ -125,7 +129,8 @@
                 <a href="./" target="_blank" class="admin-topbar-btn" aria-label="Open Site" title="Open Site">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
                 </a>
-                <button onclick="handleAdminSignOut()" class="admin-topbar-btn admin-topbar-btn--danger" aria-label="Sign Out" title="Sign Out">
+                <button onclick="handleAdminSignOut()" class="admin-topbar-btn admin-topbar-btn--danger"
+                    aria-label="Sign Out" title="Sign Out">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -153,7 +158,11 @@
                 </button>
             </nav>
             <button class="admin-sidebar-collapse" onclick="toggleSidebarCollapse()" title="Collapse sidebar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"></polyline><polyline points="18 17 13 12 18 7"></polyline></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="11 17 6 12 11 7"></polyline>
+                    <polyline points="18 17 13 12 18 7"></polyline>
+                </svg>
             </button>
         </aside>
 
@@ -176,7 +185,8 @@
 
                     <!-- Date Controls -->
                     <div class="admin-toolbar" id="analytics-timeline-bar">
-                        <button class="admin-preset-btn analytics-preset-btn active-preset" data-preset="30d">30D</button>
+                        <button class="admin-preset-btn analytics-preset-btn active-preset"
+                            data-preset="30d">30D</button>
                         <button class="admin-preset-btn analytics-preset-btn" data-preset="7d">7D</button>
                         <button class="admin-preset-btn analytics-preset-btn" data-preset="90d">90D</button>
                         <button class="admin-preset-btn analytics-preset-btn" data-preset="1y">1Y</button>
@@ -228,7 +238,8 @@
                             <div class="admin-chart-header">
                                 <h3 class="admin-chart-title">Device Breakdown</h3>
                             </div>
-                            <div class="admin-chart-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                            <div class="admin-chart-box"
+                                style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
                                 <canvas id="adminDeviceChart"></canvas>
                                 <div class="admin-device-legend" id="device-legend"></div>
                             </div>
@@ -308,7 +319,8 @@
                             <p class="admin-page-subtitle">Publish and manage articles</p>
                         </div>
                         <div class="admin-page-actions">
-                            <button onclick="openArticleEditor()" class="ui-btn ui-btn-primary" aria-label="New Article" title="New Article">
+                            <button onclick="openArticleEditor()" class="ui-btn ui-btn-primary" aria-label="New Article"
+                                title="New Article">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -351,22 +363,20 @@
             <div id="tab-article-editor" class="admin-tab-content">
                 <div class="admin-content-inner" style="max-width:800px;">
 
-                    <div class="admin-page-header">
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <button type="button" onclick="closeArticleEditor()" class="ui-btn ui-btn-outline ui-btn-sm">
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
-                            </button>
-                            <div>
-                                <h1 id="article-editor-page-title" class="admin-page-title">New Article</h1>
-                                <p class="admin-page-subtitle">Rich text editor</p>
-                            </div>
+                    <div class="admin-page-header" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+                        <div>
+                            <h1 id="article-editor-page-title" class="admin-page-title">New Article</h1>
+                            <p class="admin-page-subtitle">Rich text editor</p>
                         </div>
-                        <div class="admin-page-actions">
+                        <div class="admin-page-actions" style="display: flex; flex-direction: row; align-items: center; gap: 8px; width: 100%; justify-content: flex-start;">
                             <button type="button" onclick="handleBlogSaveAsDraft()" class="ui-btn ui-btn-secondary">
                                 Save Draft
                             </button>
                             <button type="button" onclick="handleBlogSave(event)" class="ui-btn ui-btn-primary">
                                 Publish
+                            </button>
+                            <button type="button" onclick="closeArticleEditor()" class="ui-btn ui-btn-outline" aria-label="Back" title="Back">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
@@ -377,24 +387,32 @@
                         <!-- Metadata Fields -->
                         <div class="admin-section" style="margin-bottom:16px;">
                             <div class="ui-form-field" style="margin-bottom:16px;">
-                                <label for="blog-title" class="ui-label">Title <span class="ui-required">*</span></label>
-                                <input type="text" id="blog-title" class="ui-input" required placeholder="e.g. Navigating Modern Web Architecture">
+                                <label for="blog-title" class="ui-label">Title <span
+                                        class="ui-required">*</span></label>
+                                <input type="text" id="blog-title" class="ui-input" required
+                                    placeholder="e.g. Navigating Modern Web Architecture">
                             </div>
-                            
+
                             <div class="admin-form-row" style="margin-bottom:16px;">
                                 <div class="ui-form-field">
-                                    <label for="blog-category" class="ui-label">Category <span class="ui-required">*</span></label>
-                                    <input type="text" id="blog-category" class="ui-input" required placeholder="e.g. Tech, AI, Design">
+                                    <label for="blog-category" class="ui-label">Category <span
+                                            class="ui-required">*</span></label>
+                                    <input type="text" id="blog-category" class="ui-input" required
+                                        placeholder="e.g. Tech, AI, Design">
                                 </div>
                                 <div class="ui-form-field">
-                                    <label for="blog-author" class="ui-label">Author <span class="ui-required">*</span></label>
-                                    <input type="text" id="blog-author" class="ui-input" required placeholder="e.g. Alex Rivers">
+                                    <label for="blog-author" class="ui-label">Author <span
+                                            class="ui-required">*</span></label>
+                                    <input type="text" id="blog-author" class="ui-input" required
+                                        placeholder="e.g. Alex Rivers">
                                 </div>
                             </div>
 
                             <div class="ui-form-field">
-                                <label for="blog-summary" class="ui-label">Excerpt <span class="ui-required">*</span></label>
-                                <textarea id="blog-summary" class="ui-input ui-textarea" required placeholder="Short summary for cards and search results..."></textarea>
+                                <label for="blog-summary" class="ui-label">Excerpt <span
+                                        class="ui-required">*</span></label>
+                                <textarea id="blog-summary" class="ui-input ui-textarea" required
+                                    placeholder="Short summary for cards and search results..."></textarea>
                             </div>
                         </div>
 
@@ -402,10 +420,12 @@
                         <div class="admin-section admin-section--flush">
                             <!-- Toolbar -->
                             <div id="msword-toolbar" class="admin-editor-toolbar">
-                                <button type="button" class="toolbar-btn" data-cmd="undo" title="Undo"><i data-lucide="undo" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="redo" title="Redo"><i data-lucide="redo" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="undo" title="Undo"><i
+                                        data-lucide="undo" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="redo" title="Redo"><i
+                                        data-lucide="redo" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
-                                
+
                                 <select id="toolbar-block-format" class="admin-editor-block-select">
                                     <option value="p">Paragraph</option>
                                     <option value="h1">Heading 1</option>
@@ -414,43 +434,66 @@
                                 </select>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <button type="button" class="toolbar-btn" data-cmd="bold" title="Bold"><strong>B</strong></button>
-                                <button type="button" class="toolbar-btn" data-cmd="italic" title="Italic"><em>I</em></button>
-                                <button type="button" class="toolbar-btn" data-cmd="underline" title="Underline"><span style="text-decoration: underline;">U</span></button>
-                                <button type="button" class="toolbar-btn" data-cmd="strikeThrough" title="Strikethrough"><span style="text-decoration: line-through;">S</span></button>
+                                <button type="button" class="toolbar-btn" data-cmd="bold"
+                                    title="Bold"><strong>B</strong></button>
+                                <button type="button" class="toolbar-btn" data-cmd="italic"
+                                    title="Italic"><em>I</em></button>
+                                <button type="button" class="toolbar-btn" data-cmd="underline" title="Underline"><span
+                                        style="text-decoration: underline;">U</span></button>
+                                <button type="button" class="toolbar-btn" data-cmd="strikeThrough"
+                                    title="Strikethrough"><span style="text-decoration: line-through;">S</span></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
                                 <label class="admin-editor-color-label" title="Text Color">
-                                    Text: <input type="color" id="toolbar-forecolor" value="#000000" class="admin-editor-color-input">
+                                    Text: <input type="color" id="toolbar-forecolor" value="#000000"
+                                        class="admin-editor-color-input">
                                 </label>
                                 <label class="admin-editor-color-label" title="Highlight Color">
-                                    BG: <input type="color" id="toolbar-backcolor" value="#ffff00" class="admin-editor-color-input">
+                                    BG: <input type="color" id="toolbar-backcolor" value="#ffff00"
+                                        class="admin-editor-color-input">
                                 </label>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <button type="button" class="toolbar-btn" data-cmd="justifyLeft" title="Left"><i data-lucide="align-left" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="justifyCenter" title="Center"><i data-lucide="align-center" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="justifyRight" title="Right"><i data-lucide="align-right" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="justifyLeft" title="Left"><i
+                                        data-lucide="align-left" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="justifyCenter" title="Center"><i
+                                        data-lucide="align-center" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="justifyRight" title="Right"><i
+                                        data-lucide="align-right" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList" title="Bullets"><i data-lucide="list" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="insertOrderedList" title="Numbers"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="outdent" title="Outdent"><i data-lucide="indent-decrease" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="indent" title="Indent"><i data-lucide="indent-increase" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList"
+                                    title="Bullets"><i data-lucide="list" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="insertOrderedList"
+                                    title="Numbers"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="outdent" title="Outdent"><i
+                                        data-lucide="indent-decrease" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="indent" title="Indent"><i
+                                        data-lucide="indent-increase" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <button type="button" class="toolbar-btn" data-tool="link" onclick="editorPromptLink()" title="Link"><i data-lucide="link" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-tool="image" onclick="editorPromptImage()" title="Image"><i data-lucide="image" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-tool="table" onclick="editorPromptTable()" title="Table"><i data-lucide="table" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-tool="diagram" onclick="openDiagramModal()" title="Diagram"><i data-lucide="workflow" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="link" onclick="editorPromptLink()"
+                                    title="Link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="image"
+                                    onclick="editorPromptImage()" title="Image"><i data-lucide="image"
+                                        class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="table"
+                                    onclick="editorPromptTable()" title="Table"><i data-lucide="table"
+                                        class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="diagram"
+                                    onclick="openDiagramModal()" title="Diagram"><i data-lucide="workflow"
+                                        class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <button type="button" class="toolbar-btn" id="toggle-source-mode-btn" onclick="toggleEditorSourceMode()" title="Source"><i data-lucide="code-2" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" id="toggle-source-mode-btn"
+                                    onclick="toggleEditorSourceMode()" title="Source"><i data-lucide="code-2"
+                                        class="w-4 h-4"></i></button>
                             </div>
 
                             <!-- Editor Surface -->
                             <div class="admin-editor-surface">
-                                <div id="article-editor-area" contenteditable="true" class="article-writer-content" style="min-height:360px;max-height:600px;overflow-y:auto;font-size:16px;line-height:1.6;color:var(--color-ink);">
+                                <div id="article-editor-area" contenteditable="true" class="article-writer-content"
+                                    style="min-height:360px;max-height:600px;overflow-y:auto;font-size:16px;line-height:1.6;color:var(--color-ink);">
                                     <p>Start writing your article here...</p>
                                 </div>
                                 <textarea id="article-source-area" class="admin-editor-source hidden"></textarea>
@@ -481,7 +524,8 @@
                             <p class="admin-page-subtitle">Manage accounts and access</p>
                         </div>
                         <div class="admin-page-actions">
-                            <button onclick="exportUsersPDF()" class="ui-btn ui-btn-primary" aria-label="Export PDF" title="Export PDF">
+                            <button onclick="exportUsersPDF()" class="ui-btn ui-btn-primary" aria-label="Export PDF"
+                                title="Export PDF">
                                 <i data-lucide="download" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -489,7 +533,8 @@
 
                     <!-- Controls -->
                     <div class="admin-toolbar">
-                        <input type="text" id="users-search-input" placeholder="Search name or email..." class="admin-date-input" style="width:200px;">
+                        <input type="text" id="users-search-input" placeholder="Search name or email..."
+                            class="admin-date-input" style="width:200px;">
                         <span class="admin-toolbar-sep"></span>
                         <span class="admin-toolbar-label">From:</span>
                         <input type="date" id="users-start-date" class="admin-date-input">
@@ -557,7 +602,8 @@
 
                                 <div class="ui-form-field" style="margin-bottom:16px;">
                                     <label for="settings-phone" class="ui-label">Phone Number</label>
-                                    <input type="text" id="settings-phone" class="ui-input" placeholder="+92 300 7960300">
+                                    <input type="text" id="settings-phone" class="ui-input"
+                                        placeholder="+92 300 7960300">
                                 </div>
                             </div>
 
@@ -595,9 +641,11 @@
                             <div class="admin-form-toggle">
                                 <div>
                                     <div class="admin-form-toggle-label">Maintenance Mode</div>
-                                    <div class="admin-form-toggle-help">Lock client pages behind maintenance screen</div>
+                                    <div class="admin-form-toggle-help">Lock client pages behind maintenance screen
+                                    </div>
                                 </div>
-                                <input type="checkbox" id="settings-maintenance" style="width:20px;height:20px;accent-color:#3ecf8e;cursor:pointer;">
+                                <input type="checkbox" id="settings-maintenance"
+                                    style="width:20px;height:20px;accent-color:#3ecf8e;cursor:pointer;">
                             </div>
 
                             <button type="submit" class="ui-btn ui-btn-primary" style="width:100%;margin-top:24px;">
@@ -618,12 +666,15 @@
             <div class="admin-modal-header">
                 <div>
                     <h3 class="admin-modal-title">Insert Diagram</h3>
-                    <p class="admin-modal-subtitle">Paste or type your diagram. Spaces and line breaks are preserved.</p>
+                    <p class="admin-modal-subtitle">Paste or type your diagram. Spaces and line breaks are preserved.
+                    </p>
                 </div>
                 <button onclick="closeDiagramModal()" class="admin-modal-close">&times;</button>
             </div>
             <div>
-                <textarea id="diagram-textarea" class="ui-input" style="font-family:var(--font-mono);font-size:12px;min-height:200px;" placeholder="[Human Intent] -> [System Agent]"></textarea>
+                <textarea id="diagram-textarea" class="ui-input"
+                    style="font-family:var(--font-mono);font-size:12px;min-height:200px;"
+                    placeholder="[Human Intent] -> [System Agent]"></textarea>
             </div>
             <div class="admin-modal-footer">
                 <button onclick="closeDiagramModal()" class="ui-btn ui-btn-outline">Cancel</button>
@@ -656,7 +707,7 @@
         }
 
         // Restore sidebar state
-        (function() {
+        (function () {
             const saved = localStorage.getItem('admin-sidebar');
             if (saved === 'collapsed') {
                 const shell = document.querySelector('.admin-shell');
@@ -672,4 +723,5 @@
     <script src="js/script.js" defer></script>
     <script src="js/admin.js" defer></script>
 </body>
+
 </html>
