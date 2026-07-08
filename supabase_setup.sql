@@ -930,7 +930,7 @@ BEGIN
         u.date,
         u.status,
         COALESCE((
-            SELECT COUNT(*)::INT
+            SELECT COUNT(DISTINCT COALESCE(v.session_id::text, v.id::text))::INT
             FROM public.visit_logs v
             WHERE LOWER(v.email) = LOWER(u.email)
               AND (p_start_date IS NULL OR v.visited_at >= p_start_date)

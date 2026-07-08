@@ -899,7 +899,8 @@ function apiCallLocalStorageFallback(action, data) {
 
                 let filtered = users.map(user => {
                     const userLogs = visitLogs.filter(log => log.email && log.email.toLowerCase() === user.email.toLowerCase());
-                    const totalVisits = Math.max(Number(user.visits) || 0, userLogs.length);
+                    const uniqueSessions = new Set(userLogs.map(log => log.session_id || log.id));
+                    const totalVisits = Math.max(Number(user.visits) || 0, uniqueSessions.size);
                     
                     let rangeVisits = 0;
                     if (startDate || endDate) {
@@ -907,7 +908,8 @@ function apiCallLocalStorageFallback(action, data) {
                             const logDate = new Date(log.visited_at);
                             return (!startDate || logDate >= startDate) && (!endDate || logDate <= endDate);
                         });
-                        rangeVisits = logsInRange.length;
+                        const uniqueRangeSessions = new Set(logsInRange.map(log => log.session_id || log.id));
+                        rangeVisits = uniqueRangeSessions.size;
                     } else {
                         rangeVisits = totalVisits;
                     }
