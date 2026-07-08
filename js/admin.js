@@ -20,7 +20,8 @@ window.adminState = {
     activeTab: 'analytics',
     isLoadingUsers: false,
     blogFilter: 'all',
-    analyticsPreset: 'all'
+    analyticsPreset: 'all',
+    usersCurrentPage: 1
 };
 
 // ── Tab Control Logic ────────────────────────────────────────────────
@@ -1907,6 +1908,7 @@ function formatLocalShortDate(dateStr) {
 async function loadUserData() {
     if (window.adminState.isLoadingUsers) return;
     window.adminState.isLoadingUsers = true;
+    window.adminState.usersCurrentPage = 1;
     await window.backendReady;
 
     const searchInput = document.getElementById('users-search-input');
@@ -1963,12 +1965,41 @@ function filterAndRenderUsers() {
     window.adminState.currentFilteredUsers = filteredUsers;
     window.currentFilteredUsers = filteredUsers;
 
+    const pagContainer = document.getElementById('users-pagination');
+    const pagInfo = document.getElementById('users-pagination-info');
+    const pagButtons = document.getElementById('users-pagination-buttons');
+
     if (filteredUsers.length === 0) {
         tbody.innerHTML = `<tr class="ui-tr"><td colspan="6" class="ui-td text-center py-8 text-ink-mute">No clients found matching the search criteria.</td></tr>`;
+        if (pagContainer) pagContainer.style.display = 'none';
         return;
     }
 
-    tbody.innerHTML = filteredUsers.map(user => `
+    if (pagContainer) pagContainer.style.display = 'flex';
+
+    // Pagination constants
+    const USERS_PER_PAGE = 20;
+    const totalRecords = filteredUsers.length;
+    const totalPages = Math.ceil(totalRecords / USERS_PER_PAGE) || 1;
+
+    // Boundary check
+    if (window.adminState.usersCurrentPage < 1) window.adminState.usersCurrentPage = 1;
+    if (window.adminState.usersCurrentPage > totalPages) window.adminState.usersCurrentPage = totalPages;
+
+    const currentPage = window.adminState.usersCurrentPage;
+    const startIdx = (currentPage - 1) * USERS_PER_PAGE;
+    const endIdx = Math.min(startIdx + USERS_PER_PAGE, totalRecords);
+
+    // Get current page subset
+    const pageUsers = filteredUsers.slice(startIdx, endIdx);
+
+    // Render page info
+    if (pagInfo) {
+        pagInfo.innerText = `Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} users`;
+    }
+
+    // Render table rows
+    tbody.innerHTML = pageUsers.map(user => `
         <tr class="ui-tr">
             <td class="ui-td font-medium">${window.escapeHtml(user.name)}</td>
             <td class="ui-td text-xs font-mono text-ink-mute">${window.escapeHtml(user.email)}</td>
@@ -1990,12 +2021,71 @@ function filterAndRenderUsers() {
         </tr>
     `).join('');
 
+    // Attach row events
     tbody.querySelectorAll('.toggle-user-status-btn').forEach(btn => {
         btn.addEventListener('click', e => window.toggleUserStatus(e.currentTarget.getAttribute('data-email')));
     });
     tbody.querySelectorAll('.delete-user-btn').forEach(btn => {
         btn.addEventListener('click', e => window.deleteUser(e.currentTarget.getAttribute('data-email')));
     });
+
+    // Render pagination buttons
+    if (pagButtons) {
+        pagButtons.innerHTML = '';
+
+        // Previous button
+        const prevBtn = document.createElement('button');
+        prevBtn.type = 'button';
+        prevBtn.className = 'ui-btn ui-btn-outline ui-btn-sm';
+        prevBtn.innerHTML = '<span style="font-size:14px; font-weight:600; line-height:1;">&larr;</span>';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.style.cursor = currentPage === 1 ? 'not-allowed' : 'pointer';
+        prevBtn.style.opacity = currentPage === 1 ? '0.5' : '1';
+        prevBtn.addEventListener('click', () => {
+            if (window.adminState.usersCurrentPage > 1) {
+                window.adminState.usersCurrentPage--;
+                filterAndRenderUsers();
+            }
+        });
+        pagButtons.appendChild(prevBtn);
+
+        // Page numbers
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.type = 'button';
+            pageBtn.className = p === currentPage ? 'ui-btn ui-btn-primary ui-btn-sm' : 'ui-btn ui-btn-outline ui-btn-sm';
+            pageBtn.innerText = p;
+            pageBtn.style.minWidth = '32px';
+            pageBtn.style.justifyContent = 'center';
+            pageBtn.addEventListener('click', () => {
+                window.adminState.usersCurrentPage = p;
+                filterAndRenderUsers();
+            });
+            pagButtons.appendChild(pageBtn);
+        }
+
+        // Next button
+        const nextBtn = document.createElement('button');
+        nextBtn.type = 'button';
+        nextBtn.className = 'ui-btn ui-btn-outline ui-btn-sm';
+        nextBtn.innerHTML = '<span style="font-size:14px; font-weight:600; line-height:1;">&rarr;</span>';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.style.cursor = currentPage === totalPages ? 'not-allowed' : 'pointer';
+        nextBtn.style.opacity = currentPage === totalPages ? '0.5' : '1';
+        nextBtn.addEventListener('click', () => {
+            if (window.adminState.usersCurrentPage < totalPages) {
+                window.adminState.usersCurrentPage++;
+                filterAndRenderUsers();
+            }
+        });
+        pagButtons.appendChild(nextBtn);
+    }
 }
 
 window.exportUsersPDF = function () {
