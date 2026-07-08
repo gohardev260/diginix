@@ -824,13 +824,13 @@ window.apiCall = async function (action, data = null) {
             case 'increment_user_visit': {
                 const { data: visits, error } = await window.supabase
                     .rpc('increment_user_visit_secure', { 
-                        p_email: data ? data.email : null,
-                        p_session_id: data ? data.session_id : null,
-                        p_ip_address: data ? data.ip_address : null,
-                        p_country: data ? data.country : null,
-                        p_device: data ? data.device : null,
-                        p_page_url: data ? data.page_url : null,
-                        p_user_agent: data ? data.user_agent : null
+                        p_email: (data && data.email !== undefined) ? data.email : null,
+                        p_session_id: (data && data.session_id !== undefined) ? data.session_id : null,
+                        p_ip_address: (data && data.ip_address !== undefined) ? data.ip_address : null,
+                        p_country: (data && data.country !== undefined) ? data.country : null,
+                        p_device: (data && data.device !== undefined) ? data.device : null,
+                        p_page_url: (data && data.page_url !== undefined) ? data.page_url : null,
+                        p_user_agent: (data && data.user_agent !== undefined) ? data.user_agent : null
                     });
                 if (error) throw error;
                 return { success: true, visits: visits };
