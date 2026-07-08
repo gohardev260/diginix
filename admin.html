@@ -120,14 +120,13 @@
                     <i data-lucide="menu" class="w-4 h-4"></i>
                 </button>
                 <span class="admin-topbar-wordmark">DIGINIXIT.</span>
-                <span class="admin-topbar-context">Console</span>
             </div>
             <div class="admin-topbar-right">
-                <a href="./" target="_blank" class="admin-topbar-btn">
-                    <span class="btn-label-desktop">Open Site</span> &nearr;
+                <a href="./" target="_blank" class="admin-topbar-btn" aria-label="Open Site" title="Open Site">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
                 </a>
-                <button onclick="handleAdminSignOut()" class="admin-topbar-btn admin-topbar-btn--danger">
-                    Sign Out
+                <button onclick="handleAdminSignOut()" class="admin-topbar-btn admin-topbar-btn--danger" aria-label="Sign Out" title="Sign Out">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
                 </button>
             </div>
         </header>
@@ -303,14 +302,14 @@
             <div id="tab-blog" class="admin-tab-content">
                 <div class="admin-content-inner">
 
-                    <div class="admin-page-header">
+                    <div class="admin-page-header admin-page-header--inline">
                         <div>
                             <h1 class="admin-page-title">Blog</h1>
                             <p class="admin-page-subtitle">Publish and manage articles</p>
                         </div>
                         <div class="admin-page-actions">
-                            <button onclick="openArticleEditor()" class="ui-btn ui-btn-primary">
-                                <i data-lucide="plus" class="w-4 h-4"></i> New Article
+                            <button onclick="openArticleEditor()" class="ui-btn ui-btn-primary" aria-label="New Article" title="New Article">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
@@ -476,14 +475,14 @@
             <div id="tab-users" class="admin-tab-content">
                 <div class="admin-content-inner">
 
-                    <div class="admin-page-header">
+                    <div class="admin-page-header admin-page-header--inline">
                         <div>
                             <h1 class="admin-page-title">Users</h1>
                             <p class="admin-page-subtitle">Manage accounts and access</p>
                         </div>
                         <div class="admin-page-actions">
-                            <button onclick="exportUsersPDF()" class="ui-btn ui-btn-primary">
-                                <i data-lucide="download" class="w-4 h-4"></i> Export PDF
+                            <button onclick="exportUsersPDF()" class="ui-btn ui-btn-primary" aria-label="Export PDF" title="Export PDF">
+                                <i data-lucide="download" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
