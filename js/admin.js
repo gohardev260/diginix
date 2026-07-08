@@ -68,6 +68,16 @@ function getAnalyticsDateRange(preset) {
     let start, end = new Date(today.getTime() + 86400000 - 1); // end of today
 
     switch (preset) {
+        case 'today':
+            start = new Date(today);
+            break;
+        case 'yesterday':
+            start = new Date(today); start.setDate(today.getDate() - 1);
+            end = new Date(today.getTime() - 1); // end of yesterday
+            break;
+        case '3d':
+            start = new Date(today); start.setDate(today.getDate() - 2);
+            break;
         case '7d':
             start = new Date(today); start.setDate(today.getDate() - 6);
             break;
@@ -89,7 +99,17 @@ function getAnalyticsDateRange(preset) {
 }
 
 function getPresetLabel(preset) {
-    const labels = { '7d': 'Last 7 Days', '30d': 'Last 30 Days', '90d': 'Last 90 Days', '1y': 'Last Year', 'all': 'All Time' };
+    const labels = {
+        'today': 'Today',
+        'yesterday': 'Yesterday',
+        '3d': 'Last 3 Days',
+        '7d': 'Last 7 Days',
+        '30d': 'Last 30 Days',
+        '90d': 'Last 90 Days',
+        '1y': 'Last Year',
+        'all': 'All Time',
+        'custom': 'Custom Range'
+    };
     return labels[preset] || preset;
 }
 
@@ -732,30 +752,30 @@ function renderRecentVisitorsList(sortedLogs) {
 
 // ── Analytics: Timeline Preset Init ─────────────────────────────────
 function initAnalyticsPresets() {
-    const presetBtns = document.querySelectorAll('.analytics-preset-btn');
+    const presetSelect = document.getElementById('analytics-preset-select');
     const startInput = document.getElementById('analytics-start-date');
     const endInput = document.getElementById('analytics-end-date');
 
-    presetBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            presetBtns.forEach(b => b.classList.remove('active-preset'));
-            btn.classList.add('active-preset');
-            const preset = btn.getAttribute('data-preset');
+    initCustomCalendarControls();
+
+    if (presetSelect) {
+        presetSelect.addEventListener('change', () => {
+            const preset = presetSelect.value;
             window.adminState.analyticsPreset = preset;
 
-            const { start, end } = getAnalyticsDateRange(preset);
-            if (startInput) startInput.value = start.toISOString().slice(0, 10);
-            if (endInput) endInput.value = end.toISOString().slice(0, 10);
-
+            if (preset !== 'custom') {
+                const { start, end } = getAnalyticsDateRange(preset);
+                if (startInput) startInput.value = start.toISOString().slice(0, 10);
+                if (endInput) endInput.value = end.toISOString().slice(0, 10);
+            }
             loadAnalyticsData();
         });
-    });
+    }
 
     // Custom date range
     [startInput, endInput].forEach(inp => {
         if (!inp) return;
         inp.addEventListener('change', () => {
-            presetBtns.forEach(b => b.classList.remove('active-preset'));
             window.adminState.analyticsPreset = 'custom';
             loadAnalyticsData();
         });
@@ -765,6 +785,271 @@ function initAnalyticsPresets() {
     const { start, end } = getAnalyticsDateRange('30d');
     if (startInput) startInput.value = start.toISOString().slice(0, 10);
     if (endInput) endInput.value = end.toISOString().slice(0, 10);
+}
+
+// ── Custom Confirmation Dialog Modal ──
+window.showConfirmDialog = function(title, message, confirmText = 'Confirm', cancelText = 'Cancel') {
+    return new Promise((resolve) => {
+        let modal = document.getElementById('custom-confirm-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'custom-confirm-modal';
+            modal.className = 'admin-modal-overlay';
+            modal.style.display = 'none';
+            modal.innerHTML = `
+                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                    <div class="admin-modal-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h3 class="admin-modal-title" id="confirm-modal-title"></h3>
+                            <p class="admin-modal-subtitle" id="confirm-modal-message" style="margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--color-ink-mute);"></p>
+                        </div>
+                    </div>
+                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; justify-content: flex-end;">
+                        <button id="confirm-modal-cancel" class="ui-btn ui-btn-outline"></button>
+                        <button id="confirm-modal-ok" class="ui-btn ui-btn-danger"></button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        document.getElementById('confirm-modal-title').innerText = title;
+        document.getElementById('confirm-modal-message').innerText = message;
+        
+        const btnCancel = document.getElementById('confirm-modal-cancel');
+        const btnOk = document.getElementById('confirm-modal-ok');
+        
+        btnCancel.innerText = cancelText;
+        btnOk.innerText = confirmText;
+        
+        const cleanup = (value) => {
+            modal.style.display = 'none';
+            btnCancel.onclick = null;
+            btnOk.onclick = null;
+            resolve(value);
+        };
+        
+        btnCancel.onclick = () => cleanup(false);
+        btnOk.onclick = () => cleanup(true);
+        
+        modal.style.display = 'flex';
+    });
+};
+
+// ── Custom Calendar Date Picker Modal ──
+let calSelectedStart = null;
+let calSelectedEnd = null;
+let calCurrentMonth = new Date();
+window.calActiveInput = 'start'; // 'start' or 'end'
+
+window.openCustomDateModal = function(activeInput) {
+    const modal = document.getElementById('custom-date-modal');
+    if (!modal) return;
+    
+    window.calActiveInput = activeInput || 'start';
+    
+    // Parse current dates from inputs to set initial calendar state
+    const startVal = document.getElementById('analytics-start-date')?.value;
+    const endVal = document.getElementById('analytics-end-date')?.value;
+    
+    calSelectedStart = startVal ? new Date(startVal + 'T00:00:00') : null;
+    calSelectedEnd = endVal ? new Date(endVal + 'T00:00:00') : null;
+    
+    const focusDate = window.calActiveInput === 'start' ? calSelectedStart : calSelectedEnd;
+    calCurrentMonth = focusDate ? new Date(focusDate) : (calSelectedStart ? new Date(calSelectedStart) : new Date());
+    
+    renderCalendar();
+    modal.style.display = 'flex';
+};
+
+window.closeCustomDateModal = function() {
+    const modal = document.getElementById('custom-date-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+function renderCalendar() {
+    const monthYearLabel = document.getElementById('cal-month-year');
+    const daysGrid = document.getElementById('cal-days-grid');
+    const preview = document.getElementById('cal-selection-preview');
+    if (!monthYearLabel || !daysGrid || !preview) return;
+    
+    daysGrid.innerHTML = '';
+    
+    const year = calCurrentMonth.getFullYear();
+    const month = calCurrentMonth.getMonth();
+    
+    // Format Month name
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    monthYearLabel.innerText = `${monthNames[month]} ${year}`;
+    
+    // Get first day of month and total days
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    
+    // Add empty space fillers
+    for (let i = 0; i < firstDayIndex; i++) {
+        const filler = document.createElement('div');
+        daysGrid.appendChild(filler);
+    }
+    
+    // Add days
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    
+    for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(year, month, day);
+        const dayBtn = document.createElement('button');
+        dayBtn.type = 'button';
+        dayBtn.innerText = day;
+        dayBtn.style.cssText = `
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 500;
+            height: 32px;
+            width: 32px;
+            margin: 0 auto;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
+        `;
+        
+        // Highlight today
+        if (date.getTime() === today.getTime()) {
+            dayBtn.style.border = '1px solid var(--color-ink-mute)';
+        }
+        
+        // Style selected dates
+        const isStart = calSelectedStart && date.getTime() === calSelectedStart.getTime();
+        const isEnd = calSelectedEnd && date.getTime() === calSelectedEnd.getTime();
+        const inRange = calSelectedStart && calSelectedEnd && date > calSelectedStart && date < calSelectedEnd;
+        
+        if (isStart && isEnd) {
+            dayBtn.style.backgroundColor = '#6366f1';
+            dayBtn.style.color = '#fff';
+            dayBtn.style.fontWeight = '600';
+        } else if (isStart) {
+            if (window.calActiveInput === 'start') {
+                dayBtn.style.backgroundColor = '#6366f1';
+                dayBtn.style.color = '#fff';
+                dayBtn.style.fontWeight = '600';
+            } else {
+                dayBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.12)';
+                dayBtn.style.color = '#6366f1';
+                dayBtn.style.border = '1.5px dashed #6366f1';
+                dayBtn.style.fontWeight = '600';
+            }
+        } else if (isEnd) {
+            if (window.calActiveInput === 'end') {
+                dayBtn.style.backgroundColor = '#6366f1';
+                dayBtn.style.color = '#fff';
+                dayBtn.style.fontWeight = '600';
+            } else {
+                dayBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.12)';
+                dayBtn.style.color = '#6366f1';
+                dayBtn.style.border = '1.5px dashed #6366f1';
+                dayBtn.style.fontWeight = '600';
+            }
+        } else if (inRange) {
+            dayBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.08)';
+            dayBtn.style.color = '#6366f1';
+            dayBtn.style.borderRadius = '0';
+        } else {
+            dayBtn.addEventListener('mouseenter', () => {
+                dayBtn.style.backgroundColor = 'var(--color-canvas-soft)';
+            });
+            dayBtn.addEventListener('mouseleave', () => {
+                if (!isStart && !isEnd && !inRange) dayBtn.style.backgroundColor = 'transparent';
+            });
+        }
+        
+        dayBtn.addEventListener('click', () => {
+            if (window.calActiveInput === 'start') {
+                calSelectedStart = date;
+                if (calSelectedEnd && date > calSelectedEnd) {
+                    calSelectedEnd = date;
+                }
+            } else if (window.calActiveInput === 'end') {
+                calSelectedEnd = date;
+                if (calSelectedStart && date < calSelectedStart) {
+                    calSelectedStart = date;
+                }
+            }
+            renderCalendar();
+        });
+        
+        daysGrid.appendChild(dayBtn);
+    }
+    
+    // Update preview label
+    if (calSelectedStart && calSelectedEnd) {
+        preview.innerHTML = `Range: <strong style="color:var(--color-ink);">${calSelectedStart.toLocaleDateString()}</strong> to <strong style="color:var(--color-ink);">${calSelectedEnd.toLocaleDateString()}</strong>`;
+    } else if (calSelectedStart) {
+        preview.innerHTML = `From: <strong style="color:var(--color-ink);">${calSelectedStart.toLocaleDateString()}</strong>`;
+    } else if (calSelectedEnd) {
+        preview.innerHTML = `To: <strong style="color:var(--color-ink);">${calSelectedEnd.toLocaleDateString()}</strong>`;
+    } else {
+        preview.innerText = 'No date range selected';
+    }
+}
+
+// Attach month navigation and apply action inside custom calendar init
+function initCustomCalendarControls() {
+    const btnPrev = document.getElementById('cal-prev-month');
+    const btnNext = document.getElementById('cal-next-month');
+    const btnApply = document.getElementById('cal-apply-btn');
+    
+    if (btnPrev && !btnPrev.dataset.initialized) {
+        btnPrev.dataset.initialized = 'true';
+        btnPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            calCurrentMonth.setMonth(calCurrentMonth.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+    
+    if (btnNext && !btnNext.dataset.initialized) {
+        btnNext.dataset.initialized = 'true';
+        btnNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            calCurrentMonth.setMonth(calCurrentMonth.getMonth() + 1);
+            renderCalendar();
+        });
+    }
+    
+    if (btnApply && !btnApply.dataset.initialized) {
+        btnApply.dataset.initialized = 'true';
+        btnApply.addEventListener('click', () => {
+            const start = calSelectedStart || calSelectedEnd;
+            const end = calSelectedEnd || calSelectedStart;
+            
+            if (!start || !end) {
+                window.showToast('Please select a date.', 'warning');
+                return;
+            }
+            
+            const startInput = document.getElementById('analytics-start-date');
+            const endInput = document.getElementById('analytics-end-date');
+            
+            const formatDate = (d) => {
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            };
+            
+            if (startInput) startInput.value = formatDate(start);
+            if (endInput) endInput.value = formatDate(end);
+            
+            window.adminState.analyticsPreset = 'custom';
+            loadAnalyticsData();
+            window.closeCustomDateModal();
+        });
+    }
 }
 
 // ── Blog Management Tab & Custom Rich Text Editor ─────────────────────
@@ -1348,7 +1633,13 @@ window.editBlogPost = function (id) {
 };
 
 window.deleteBlogPost = async function (id) {
-    if (!confirm('Are you sure you want to delete this insights article?')) return;
+    const confirmed = await window.showConfirmDialog(
+        'Delete Article',
+        'Are you sure you want to delete this insights article? This action cannot be undone.',
+        'Delete',
+        'Cancel'
+    );
+    if (!confirmed) return;
     await window.backendReady;
     const res = await window.apiCall('delete_blog', { id, _csrf_token: window.csrfToken });
     if (res && res.success === true) {
@@ -1641,7 +1932,13 @@ window.toggleUserStatus = async function (email) {
 };
 
 window.deleteUser = async function (email) {
-    if (!confirm('Are you sure you want to delete this user profile?')) return;
+    const confirmed = await window.showConfirmDialog(
+        'Delete User',
+        `Are you sure you want to delete the user profile for ${email}? This action cannot be undone.`,
+        'Delete',
+        'Cancel'
+    );
+    if (!confirmed) return;
     await window.backendReady;
     const res = await window.apiCall('delete_user', { email, _csrf_token: window.csrfToken });
     if (res && res.success === true) {
