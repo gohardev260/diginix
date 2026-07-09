@@ -172,27 +172,30 @@ window.handleAuthUrlRedirection = function () {
         return;
     }
 
+    const isAuthPage = /\/auth(\.html)?$/.test(window.location.pathname) || window.location.pathname.endsWith('auth.html');
+    const isProfilePage = /\/profile(\.html)?$/.test(window.location.pathname) || window.location.pathname.endsWith('profile.html');
+
     if (type === 'recovery') {
-        if (!window.location.pathname.endsWith('auth.html')) {
+        if (!isAuthPage) {
             window.location.href = 'auth.html?mode=reset' + window.location.hash;
         }
     } else if (type === 'signup' || type === 'email_confirmation') {
         window.showToast("Email address verified successfully! You are logged in.", "success", "Email Verified");
-        if (window.location.pathname.endsWith('auth.html')) {
+        if (isAuthPage) {
             setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
         }
     } else if (type === 'invite') {
-        if (!window.location.pathname.endsWith('auth.html')) {
+        if (!isAuthPage) {
             window.location.href = 'auth.html?mode=invite' + window.location.hash;
         }
     } else if (type === 'magiclink') {
         window.showToast("Successfully signed in via Magic Link!", "success", "Authentication");
-        if (window.location.pathname.endsWith('auth.html')) {
+        if (isAuthPage) {
             setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
         }
     } else if (type === 'email_change') {
         window.showToast("Your email address update has been verified!", "success", "Email Updated");
-        if (!window.location.pathname.endsWith('profile.html')) {
+        if (!isProfilePage) {
             setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
         }
     }
