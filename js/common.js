@@ -422,9 +422,13 @@ async function initSupabase() {
         await loadScript('js/supabase.js');
 
         if (typeof supabase !== 'undefined') {
-            window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: {
+                    flowType: 'implicit'
+                }
+            });
             window.useSupabase = true;
-            console.log("DiginixIT: Live Supabase client initialized.");
+            console.log("DiginixIT: Live Supabase client initialized with implicit flow.");
         } else {
             console.warn("DiginixIT: Failed to define 'supabase'. Falling back to localStorage.");
             window.useSupabase = false;
@@ -732,6 +736,10 @@ window.apiCall = async function (action, data = null) {
             }
 
             case 'accept_invite': {
+                const { data: { session } } = await window.supabase.auth.getSession();
+                if (!session) {
+                    return { success: false, error: "Authentication session is missing. Your invitation link may have expired or was opened in a different browser session. Please contact the administrator for a new invite." };
+                }
                 const { data: authData, error: authError } = await window.supabase.auth.updateUser({
                     password: data.password,
                     data: data.name ? { full_name: data.name } : undefined
@@ -758,6 +766,10 @@ window.apiCall = async function (action, data = null) {
             }
 
             case 'update_forgotten_password': {
+                const { data: { session } } = await window.supabase.auth.getSession();
+                if (!session) {
+                    return { success: false, error: "Authentication session is missing. Your password reset link may have expired or was opened in a different browser session. Please request a new link." };
+                }
                 const { error } = await window.supabase.auth.updateUser({
                     password: data.password
                 });
