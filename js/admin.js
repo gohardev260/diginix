@@ -1355,6 +1355,63 @@ function initCustomRichEditor() {
             }
             updateEditorWordCount();
             updateToolbarActiveStates();
+            return;
+        }
+
+        const isMod = e.ctrlKey || e.metaKey;
+        if (isMod) {
+            let command = null;
+            let customFn = null;
+            const keyLower = e.key.toLowerCase();
+
+            if (keyLower === 'b' && !e.shiftKey) {
+                e.preventDefault();
+                command = 'bold';
+            } else if (keyLower === 'i' && !e.shiftKey) {
+                e.preventDefault();
+                command = 'italic';
+            } else if (keyLower === 'u' && !e.shiftKey) {
+                e.preventDefault();
+                command = 'underline';
+            } else if (keyLower === 'x' && e.shiftKey) {
+                e.preventDefault();
+                command = 'strikeThrough';
+            } else if (keyLower === 's' && e.shiftKey) {
+                e.preventDefault();
+                command = 'subscript';
+            } else if (keyLower === 'p' && e.shiftKey) {
+                e.preventDefault();
+                command = 'superscript';
+            } else if (keyLower === 'k' && !e.shiftKey) {
+                e.preventDefault();
+                customFn = window.editorPromptLink;
+            } else if (keyLower === 'i' && e.shiftKey) {
+                e.preventDefault();
+                customFn = window.editorPromptImage;
+            } else if (keyLower === 't' && e.shiftKey) {
+                e.preventDefault();
+                customFn = window.editorPromptTable;
+            } else if (keyLower === 'q' && e.shiftKey) {
+                e.preventDefault();
+                customFn = window.editorInsertBlockquote;
+            } else if (keyLower === 'l' && e.shiftKey) {
+                e.preventDefault();
+                command = 'insertUnorderedList';
+            } else if (keyLower === 'n' && e.shiftKey) {
+                e.preventDefault();
+                customFn = window.editorInsertOrderedList;
+            } else if (keyLower === 'b' && e.shiftKey) {
+                e.preventDefault();
+                customFn = window.editorToggleBorder;
+            }
+
+            if (command) {
+                document.execCommand(command, false, null);
+                updateEditorWordCount();
+                updateToolbarActiveStates();
+            } else if (customFn) {
+                customFn();
+            }
         }
     });
 
@@ -1491,7 +1548,7 @@ window.editorInsertCodeBlock = function () {
     updateToolbarActiveStates();
 };
 
-window.editorInsertAccordion = function () {
+window.editorInsertAccordion = async function () {
     const editorArea = document.getElementById('article-editor-area');
     if (!editorArea) return;
 
@@ -1511,9 +1568,9 @@ window.editorInsertAccordion = function () {
     }
 
     // Toggle ON
-    const question = prompt('Enter Question / FAQ Title:', 'What is DiginixIT?');
+    const question = await window.showCustomPrompt('Add FAQ Block', 'Enter Question / FAQ Title:', 'What is DiginixIT?');
     if (!question || !question.trim()) return;
-    const answer = prompt('Enter Answer / Explanation:', 'DiginixIT is a leading software & technology engineering agency...');
+    const answer = await window.showCustomPrompt('Add FAQ Block', 'Enter Answer / Explanation:', 'DiginixIT is a leading software & technology engineering agency...');
     if (!answer || !answer.trim()) return;
 
     const safeQ = window.escapeHtml ? window.escapeHtml(question.trim()) : question.trim();
@@ -1526,7 +1583,7 @@ window.editorInsertAccordion = function () {
     updateToolbarActiveStates();
 };
 
-window.editorPromptLink = function () {
+window.editorPromptLink = async function () {
     const editorArea = document.getElementById('article-editor-area');
     if (!editorArea) return;
 
@@ -1546,7 +1603,7 @@ window.editorPromptLink = function () {
     }
 
     // Toggle ON
-    const url = prompt('Enter web address for link:', 'https://');
+    const url = await window.showCustomPrompt('Insert Link', 'Enter web address for link:', 'https://');
     if (url && url.trim()) {
         document.execCommand('createLink', false, url.trim());
         editorArea.focus();
@@ -1555,14 +1612,17 @@ window.editorPromptLink = function () {
     }
 };
 
-window.editorPromptImage = function () {
-    const choice = prompt('Type 1 to insert Image URL, or Type 2 to Upload Image File:', '1');
-    if (choice === '1') {
-        const url = prompt('Enter Image URL:', 'https://');
+window.editorPromptImage = async function () {
+    const editorArea = document.getElementById('article-editor-area');
+    const choice = await window.showImageSourceDialog();
+    if (choice === 'url') {
+        const url = await window.showCustomPrompt('Insert Image', 'Enter Image URL:', 'https://');
         if (url && url.trim()) {
             document.execCommand('insertImage', false, url.trim());
+            if (editorArea) editorArea.focus();
+            updateEditorWordCount();
         }
-    } else if (choice === '2') {
+    } else if (choice === 'upload') {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
@@ -1572,6 +1632,8 @@ window.editorPromptImage = function () {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     document.execCommand('insertImage', false, event.target.result);
+                    if (editorArea) editorArea.focus();
+                    updateEditorWordCount();
                 };
                 reader.readAsDataURL(file);
             }
@@ -1580,11 +1642,12 @@ window.editorPromptImage = function () {
     }
 };
 
-window.editorPromptTable = function () {
-    const rows = parseInt(prompt('Number of table rows:', '3') || '3', 10);
-    const cols = parseInt(prompt('Number of table columns:', '3') || '3', 10);
-    if (isNaN(rows) || isNaN(cols) || rows <= 0 || cols <= 0) return;
+window.editorPromptTable = async function () {
+    const editorArea = document.getElementById('article-editor-area');
+    const dimensions = await window.showTableDialog();
+    if (!dimensions) return;
 
+    const { rows, cols } = dimensions;
     let tableHtml = '<table><thead><tr>';
     for (let c = 0; c < cols; c++) {
         tableHtml += `<th>Header ${c + 1}</th>`;
@@ -1599,6 +1662,7 @@ window.editorPromptTable = function () {
     }
     tableHtml += '</tbody></table><p></p>';
     document.execCommand('insertHTML', false, tableHtml);
+    if (editorArea) editorArea.focus();
     updateEditorWordCount();
 };
 
@@ -2277,3 +2341,323 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 });
+
+// ── Custom Prompts and Formatting Tools (shadcn / Supabase dashboard pattern) ──
+window.showCustomPrompt = function(title, subtitle, defaultValue = '', placeholder = '') {
+    return new Promise((resolve) => {
+        let modal = document.getElementById('custom-prompt-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'custom-prompt-modal';
+            modal.className = 'admin-modal-overlay';
+            modal.style.display = 'none';
+            modal.innerHTML = `
+                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                    <div class="admin-modal-header" style="margin-bottom: 12px;">
+                        <h3 class="admin-modal-title" id="custom-prompt-title" style="font-size: 16px; font-weight: 600; color: var(--color-ink);"></h3>
+                        <p class="admin-modal-subtitle" id="custom-prompt-subtitle" style="margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--color-ink-mute);"></p>
+                    </div>
+                    <div style="margin-top: 16px;">
+                        <input type="text" id="custom-prompt-input" class="ui-input" style="border-radius: var(--radius-sm);">
+                    </div>
+                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; justify-content: flex-end;">
+                        <button id="custom-prompt-cancel" class="ui-btn ui-btn-outline">Cancel</button>
+                        <button id="custom-prompt-ok" class="ui-btn ui-btn-primary">OK</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        document.getElementById('custom-prompt-title').innerText = title;
+        document.getElementById('custom-prompt-subtitle').innerText = subtitle;
+        const input = document.getElementById('custom-prompt-input');
+        input.value = defaultValue;
+        input.placeholder = placeholder;
+
+        const btnCancel = document.getElementById('custom-prompt-cancel');
+        const btnOk = document.getElementById('custom-prompt-ok');
+
+        const cleanup = (value) => {
+            modal.style.display = 'none';
+            btnCancel.onclick = null;
+            btnOk.onclick = null;
+            input.onkeydown = null;
+            resolve(value);
+        };
+
+        btnCancel.onclick = () => cleanup(null);
+        btnOk.onclick = () => cleanup(input.value);
+
+        input.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                cleanup(input.value);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cleanup(null);
+            }
+        };
+
+        modal.style.display = 'flex';
+        input.focus();
+        input.select();
+    });
+};
+
+window.showImageSourceDialog = function() {
+    return new Promise((resolve) => {
+        let modal = document.getElementById('custom-image-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'custom-image-modal';
+            modal.className = 'admin-modal-overlay';
+            modal.style.display = 'none';
+            modal.innerHTML = `
+                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                    <div class="admin-modal-header" style="margin-bottom: 12px;">
+                        <h3 class="admin-modal-title" style="font-size: 16px; font-weight: 600; color: var(--color-ink);">Insert Image</h3>
+                        <p class="admin-modal-subtitle" style="margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--color-ink-mute);">
+                            Select whether you want to provide a direct image link or upload a file from your device.
+                        </p>
+                    </div>
+                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; flex-direction: column;">
+                        <button id="image-modal-url" class="ui-btn ui-btn-primary w-full" style="justify-content: center;"><span>Provide Image URL</span></button>
+                        <button id="image-modal-upload" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Upload Image File</span></button>
+                        <button id="image-modal-cancel" class="ui-btn ui-btn-ghost w-full" style="justify-content: center; color: var(--color-ink-mute); font-size: 12px; margin-top: 4px;">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const btnUrl = document.getElementById('image-modal-url');
+        const btnUpload = document.getElementById('image-modal-upload');
+        const btnCancel = document.getElementById('image-modal-cancel');
+
+        const cleanup = (value) => {
+            modal.style.display = 'none';
+            btnUrl.onclick = null;
+            btnUpload.onclick = null;
+            btnCancel.onclick = null;
+            resolve(value);
+        };
+
+        btnUrl.onclick = () => cleanup('url');
+        btnUpload.onclick = () => cleanup('upload');
+        btnCancel.onclick = () => cleanup(null);
+
+        modal.style.display = 'flex';
+    });
+};
+
+window.showTableDialog = function() {
+    return new Promise((resolve) => {
+        let modal = document.getElementById('custom-table-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'custom-table-modal';
+            modal.className = 'admin-modal-overlay';
+            modal.style.display = 'none';
+            modal.innerHTML = `
+                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                    <div class="admin-modal-header" style="margin-bottom: 12px;">
+                        <h3 class="admin-modal-title" style="font-size: 16px; font-weight: 600; color: var(--color-ink);">Insert Table</h3>
+                        <p class="admin-modal-subtitle" style="margin-top: 6px; font-size: 13px; color: var(--color-ink-mute);">
+                            Specify the dimensions of the table you want to create.
+                        </p>
+                    </div>
+                    <div style="margin-top: 16px; display: flex; gap: 12px;">
+                        <div class="ui-form-field" style="flex: 1;">
+                            <label for="table-modal-rows" class="ui-label">Rows</label>
+                            <input type="number" id="table-modal-rows" class="ui-input" value="3" min="1" max="50">
+                        </div>
+                        <div class="ui-form-field" style="flex: 1;">
+                            <label for="table-modal-cols" class="ui-label">Columns</label>
+                            <input type="number" id="table-modal-cols" class="ui-input" value="3" min="1" max="50">
+                        </div>
+                    </div>
+                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; justify-content: flex-end;">
+                        <button id="table-modal-cancel" class="ui-btn ui-btn-outline">Cancel</button>
+                        <button id="table-modal-ok" class="ui-btn ui-btn-primary">Insert Table</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const inputRows = document.getElementById('table-modal-rows');
+        const inputCols = document.getElementById('table-modal-cols');
+        const btnCancel = document.getElementById('table-modal-cancel');
+        const btnOk = document.getElementById('table-modal-ok');
+
+        inputRows.value = "3";
+        inputCols.value = "3";
+
+        const cleanup = (value) => {
+            modal.style.display = 'none';
+            btnCancel.onclick = null;
+            btnOk.onclick = null;
+            inputRows.onkeydown = null;
+            inputCols.onkeydown = null;
+            resolve(value);
+        };
+
+        btnCancel.onclick = () => cleanup(null);
+        btnOk.onclick = () => {
+            const rows = parseInt(inputRows.value, 10);
+            const cols = parseInt(inputCols.value, 10);
+            if (isNaN(rows) || isNaN(cols) || rows <= 0 || cols <= 0) {
+                window.showToast('Please enter valid row and column counts.', 'warning');
+                return;
+            }
+            cleanup({ rows, cols });
+        };
+
+        const handleKey = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                btnOk.click();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cleanup(null);
+            }
+        };
+
+        inputRows.onkeydown = handleKey;
+        inputCols.onkeydown = handleKey;
+
+        modal.style.display = 'flex';
+        inputRows.focus();
+        inputRows.select();
+    });
+};
+
+window.showListNumberingDialog = function() {
+    return new Promise((resolve) => {
+        let modal = document.getElementById('custom-numbering-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'custom-numbering-modal';
+            modal.className = 'admin-modal-overlay';
+            modal.style.display = 'none';
+            modal.innerHTML = `
+                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                    <div class="admin-modal-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h3 class="admin-modal-title" style="font-size: 16px; font-weight: 600; color: var(--color-ink);">List Numbering Behavior</h3>
+                            <p class="admin-modal-subtitle" style="margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--color-ink-mute);">
+                                Select whether you want this list to start fresh from 1 or continue numbering from the preceding list.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; flex-direction: column;">
+                        <button id="numbering-modal-start" class="ui-btn ui-btn-primary w-full" style="justify-content: center;"><span>Start from Start (1)</span></button>
+                        <button id="numbering-modal-following" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Following (Continue numbering)</span></button>
+                        <button id="numbering-modal-cancel" class="ui-btn ui-btn-ghost w-full" style="justify-content: center; color: var(--color-ink-mute); font-size: 12px; margin-top: 4px;">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const btnStart = document.getElementById('numbering-modal-start');
+        const btnFollowing = document.getElementById('numbering-modal-following');
+        const btnCancel = document.getElementById('numbering-modal-cancel');
+
+        const cleanup = (value) => {
+            modal.style.display = 'none';
+            btnStart.onclick = null;
+            btnFollowing.onclick = null;
+            btnCancel.onclick = null;
+            resolve(value);
+        };
+
+        btnStart.onclick = () => cleanup('start');
+        btnFollowing.onclick = () => cleanup('following');
+        btnCancel.onclick = () => cleanup(null);
+
+        modal.style.display = 'flex';
+    });
+};
+
+window.editorToggleBorder = function () {
+    const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea) return;
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+        let node = sel.anchorNode;
+        if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        const block = node ? node.closest('p, h1, h2, h3, h4, blockquote, pre') : null;
+        if (block && editorArea.contains(block)) {
+            if (block.style.border) {
+                block.style.border = '';
+                block.style.padding = '';
+                block.style.borderRadius = '';
+            } else {
+                block.style.border = '1px solid var(--color-hairline)';
+                block.style.padding = '12px';
+                block.style.borderRadius = 'var(--radius-sm)';
+            }
+            updateEditorWordCount();
+            updateToolbarActiveStates();
+        }
+    }
+};
+
+window.editorInsertOrderedList = async function () {
+    const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea) return;
+
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+        let node = sel.anchorNode;
+        if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        const ol = node ? node.closest('ol') : null;
+        if (ol && editorArea.contains(ol)) {
+            document.execCommand('insertOrderedList', false, null);
+            updateEditorWordCount();
+            updateToolbarActiveStates();
+            return;
+        }
+    }
+
+    const choice = await window.showListNumberingDialog();
+    if (!choice) return;
+
+    document.execCommand('insertOrderedList', false, null);
+
+    if (choice === 'following') {
+        const selAfter = window.getSelection();
+        if (selAfter && selAfter.rangeCount > 0) {
+            let nodeAfter = selAfter.anchorNode;
+            if (nodeAfter && nodeAfter.nodeType === Node.TEXT_NODE) nodeAfter = nodeAfter.parentElement;
+            const currentOl = nodeAfter ? nodeAfter.closest('ol') : null;
+            if (currentOl && editorArea.contains(currentOl)) {
+                const allOls = Array.from(editorArea.querySelectorAll('ol'));
+                const currentIndex = allOls.indexOf(currentOl);
+                if (currentIndex > 0) {
+                    const prevOl = allOls[currentIndex - 1];
+                    const prevItemsCount = prevOl.querySelectorAll('li').length;
+                    const prevStart = parseInt(prevOl.getAttribute('start') || '1', 10);
+                    const newStart = prevStart + prevItemsCount;
+                    currentOl.setAttribute('start', newStart);
+                }
+            }
+        }
+    } else {
+        const selAfter = window.getSelection();
+        if (selAfter && selAfter.rangeCount > 0) {
+            let nodeAfter = selAfter.anchorNode;
+            if (nodeAfter && nodeAfter.nodeType === Node.TEXT_NODE) nodeAfter = nodeAfter.parentElement;
+            const currentOl = nodeAfter ? nodeAfter.closest('ol') : null;
+            if (currentOl && editorArea.contains(currentOl)) {
+                currentOl.removeAttribute('start');
+            }
+        }
+    }
+
+    editorArea.focus();
+    updateEditorWordCount();
+    updateToolbarActiveStates();
+};

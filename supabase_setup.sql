@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS public.blogs (
     summary TEXT NOT NULL,
     content TEXT NOT NULL,
     author TEXT NOT NULL,
-    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    date DATE DEFAULT NULL,
     category TEXT NOT NULL DEFAULT 'Tech',
     status TEXT NOT NULL DEFAULT 'published'
 );
@@ -129,8 +129,10 @@ ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS country TEXT DEFAULT NULL
 ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS device TEXT DEFAULT NULL;
 ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS page_url TEXT DEFAULT NULL;
 ALTER TABLE public.visit_logs ADD COLUMN IF NOT EXISTS user_agent TEXT DEFAULT NULL;
-ALTER TABLE public.blogs DROP COLUMN IF EXISTS image;
 ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'published';
+ALTER TABLE public.blogs DROP COLUMN IF EXISTS image;
+ALTER TABLE public.blogs ALTER COLUMN date DROP NOT NULL;
+ALTER TABLE public.blogs ALTER COLUMN date SET DEFAULT NULL;
 
 -- 2.6 CREATE INDEXES
 CREATE INDEX IF NOT EXISTS idx_visit_logs_visited_at ON public.visit_logs(visited_at);
@@ -655,11 +657,24 @@ BEGIN
             author = p_author,
             summary = p_summary,
             content = p_content,
-            status = COALESCE(p_status, 'published')
+            status = COALESCE(p_status, 'published'),
+            date = CASE 
+                WHEN COALESCE(p_status, 'published') = 'published' AND (status = 'draft' OR date IS NULL) THEN CURRENT_DATE
+                WHEN COALESCE(p_status, 'published') = 'draft' THEN NULL
+                ELSE date
+            END
         WHERE id = p_id;
     ELSE
         INSERT INTO public.blogs (title, category, author, summary, content, date, status)
-        VALUES (p_title, p_category, p_author, p_summary, p_content, CURRENT_DATE, COALESCE(p_status, 'published'));
+        VALUES (
+            p_title, 
+            p_category, 
+            p_author, 
+            p_summary, 
+            p_content, 
+            CASE WHEN COALESCE(p_status, 'published') = 'published' THEN CURRENT_DATE ELSE NULL END, 
+            COALESCE(p_status, 'published')
+        );
     END IF;
 
     RETURN TRUE;

@@ -439,13 +439,13 @@
                         <div class="admin-section admin-section--flush">
                             <!-- Toolbar -->
                             <div id="msword-toolbar" class="admin-editor-toolbar">
-                                <button type="button" class="toolbar-btn" data-cmd="undo" title="Undo"><i
+                                <button type="button" class="toolbar-btn" data-cmd="undo" title="Undo (Ctrl+Z)"><i
                                         data-lucide="undo" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="redo" title="Redo"><i
+                                <button type="button" class="toolbar-btn" data-cmd="redo" title="Redo (Ctrl+Y)"><i
                                         data-lucide="redo" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <select id="toolbar-block-format" class="admin-editor-block-select">
+                                <select id="toolbar-block-format" class="admin-editor-block-select" title="Paragraph Format">
                                     <option value="p">Paragraph</option>
                                     <option value="h1">Heading 1</option>
                                     <option value="h2">Heading 2</option>
@@ -454,13 +454,17 @@
                                 <span class="admin-editor-toolbar-sep"></span>
 
                                 <button type="button" class="toolbar-btn" data-cmd="bold"
-                                    title="Bold"><strong>B</strong></button>
+                                    title="Bold (Ctrl+B)"><i data-lucide="bold" class="w-4 h-4"></i></button>
                                 <button type="button" class="toolbar-btn" data-cmd="italic"
-                                    title="Italic"><em>I</em></button>
-                                <button type="button" class="toolbar-btn" data-cmd="underline" title="Underline"><span
-                                        style="text-decoration: underline;">U</span></button>
+                                    title="Italic (Ctrl+I)"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="underline" title="Underline (Ctrl+U)"><i
+                                        data-lucide="underline" class="w-4 h-4"></i></button>
                                 <button type="button" class="toolbar-btn" data-cmd="strikeThrough"
-                                    title="Strikethrough"><span style="text-decoration: line-through;">S</span></button>
+                                    title="Strikethrough (Ctrl+Shift+X)"><i data-lucide="strikethrough" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="subscript"
+                                    title="Subscript (Ctrl+Shift+S)"><i data-lucide="subscript" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="superscript"
+                                    title="Superscript (Ctrl+Shift+P)"><i data-lucide="superscript" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
                                 <label class="admin-editor-color-label" title="Text Color">
@@ -473,31 +477,37 @@
                                 </label>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <button type="button" class="toolbar-btn" data-cmd="justifyLeft" title="Left"><i
+                                <button type="button" class="toolbar-btn" data-cmd="justifyLeft" title="Align Left"><i
                                         data-lucide="align-left" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="justifyCenter" title="Center"><i
+                                <button type="button" class="toolbar-btn" data-cmd="justifyCenter" title="Align Center"><i
                                         data-lucide="align-center" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="justifyRight" title="Right"><i
+                                <button type="button" class="toolbar-btn" data-cmd="justifyRight" title="Align Right"><i
                                         data-lucide="align-right" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
                                 <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList"
-                                    title="Bullets"><i data-lucide="list" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="insertOrderedList"
-                                    title="Numbers"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="outdent" title="Outdent"><i
+                                    title="Bullets (Ctrl+Shift+L)"><i data-lucide="list" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="insertOrderedList" onclick="editorInsertOrderedList()"
+                                    title="Numbers (Ctrl+Shift+N)"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-cmd="outdent" title="Outdent (Shift+Tab)"><i
                                         data-lucide="indent-decrease" class="w-4 h-4"></i></button>
-                                <button type="button" class="toolbar-btn" data-cmd="indent" title="Indent"><i
+                                <button type="button" class="toolbar-btn" data-cmd="indent" title="Indent (Tab)"><i
                                         data-lucide="indent-increase" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
                                 <button type="button" class="toolbar-btn" data-tool="link" onclick="editorPromptLink()"
-                                    title="Link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                                    title="Link (Ctrl+K)"><i data-lucide="link" class="w-4 h-4"></i></button>
                                 <button type="button" class="toolbar-btn" data-tool="image"
-                                    onclick="editorPromptImage()" title="Image"><i data-lucide="image"
+                                    onclick="editorPromptImage()" title="Image (Ctrl+Shift+I)"><i data-lucide="image"
                                         class="w-4 h-4"></i></button>
                                 <button type="button" class="toolbar-btn" data-tool="table"
-                                    onclick="editorPromptTable()" title="Table"><i data-lucide="table"
+                                    onclick="editorPromptTable()" title="Table (Ctrl+Shift+T)"><i data-lucide="table"
+                                        class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="blockquote"
+                                    onclick="editorInsertBlockquote()" title="Blockquote (Ctrl+Shift+Q)"><i data-lucide="quote"
+                                        class="w-4 h-4"></i></button>
+                                <button type="button" class="toolbar-btn" data-tool="borders"
+                                    onclick="editorToggleBorder()" title="Borders (Ctrl+Shift+B)"><i data-lucide="square"
                                         class="w-4 h-4"></i></button>
                                 <button type="button" class="toolbar-btn" data-tool="diagram"
                                     onclick="openDiagramModal()" title="Diagram"><i data-lucide="workflow"
@@ -505,7 +515,7 @@
                                 <span class="admin-editor-toolbar-sep"></span>
 
                                 <button type="button" class="toolbar-btn" id="toggle-source-mode-btn"
-                                    onclick="toggleEditorSourceMode()" title="Source"><i data-lucide="code-2"
+                                    onclick="toggleEditorSourceMode()" title="Toggle HTML Source"><i data-lucide="code-2"
                                         class="w-4 h-4"></i></button>
                             </div>
 

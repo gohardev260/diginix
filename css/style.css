@@ -390,28 +390,81 @@ html.lenis {
 }
 
 /* --- Premium Input Styles (design.md text-input) --- */
-.premium-input {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+select,
+textarea,
+.premium-input,
+.ui-input {
     width: 100%;
-    background: var(--color-canvas);
+    background-color: var(--color-canvas);
     border: 1px solid var(--color-hairline);
     padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius-sm);
     font-family: var(--font-sans);
-    font-size: 16px;
+    font-size: 14px;
     color: var(--color-ink);
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    box-shadow: var(--shadow-1);
+    box-sizing: border-box;
 }
 
-.premium-input::placeholder {
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="search"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="url"]::placeholder,
+input[type="date"]::placeholder,
+textarea::placeholder,
+.premium-input::placeholder,
+.ui-input::placeholder {
     color: var(--color-ink-faint);
+    opacity: 1;
 }
 
-.premium-input:focus {
-    border-color: var(--color-ink);
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="number"]:hover,
+input[type="search"]:hover,
+input[type="tel"]:hover,
+input[type="url"]:hover,
+input[type="date"]:hover,
+select:hover,
+textarea:hover,
+.premium-input:hover,
+.ui-input:hover {
+    border-color: var(--color-hairline-strong);
 }
 
-textarea.premium-input {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus,
+.premium-input:focus,
+.ui-input:focus {
+    border-color: var(--color-primary-deep);
+    box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.15);
+}
+
+textarea.premium-input,
+textarea.ui-input,
+textarea {
     resize: vertical;
     min-height: 100px;
 }
@@ -1198,27 +1251,6 @@ code:not(.code-block code) {
 
 .ui-required {
     color: #ef4444;
-}
-
-.ui-input {
-    width: 100%;
-    background-color: var(--color-canvas);
-    border: 1px solid var(--color-hairline);
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-sans);
-    font-size: 14px;
-    color: var(--color-ink);
-    outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.ui-input::placeholder {
-    color: var(--color-ink-faint);
-}
-
-.ui-input:focus {
-    border-color: var(--color-ink);
 }
 
 .ui-input[data-invalid="true"] {

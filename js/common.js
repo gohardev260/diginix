@@ -889,12 +889,22 @@ function apiCallLocalStorageFallback(action, data) {
             case 'save_blog':
                 if (data.id) {
                     const idx = blogs.findIndex(b => b.id === data.id);
-                    if (idx !== -1) blogs[idx] = { ...blogs[idx], ...data };
+                    if (idx !== -1) {
+                        const oldBlog = blogs[idx];
+                        const newStatus = data.status || 'published';
+                        let newDate = oldBlog.date;
+                        if (newStatus === 'published' && (!oldBlog.date || oldBlog.status === 'draft')) {
+                            newDate = new Date().toISOString().split('T')[0];
+                        } else if (newStatus === 'draft') {
+                            newDate = null;
+                        }
+                        blogs[idx] = { ...oldBlog, ...data, date: newDate };
+                    }
                 } else {
                     const newBlog = {
                         ...data,
                         id: Date.now().toString(),
-                        date: new Date().toISOString().split('T')[0]
+                        date: (data.status || 'published') === 'published' ? new Date().toISOString().split('T')[0] : null
                     };
                     blogs.push(newBlog);
                 }
