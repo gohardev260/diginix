@@ -869,7 +869,7 @@
             if (post.content && contentsContainer) {
                 const hasHtml = /<[a-z][\s\S]*>/i.test(post.content);
                 const allowedTags = ['p', 'br', 'strong', 'em', 'u', 's', 'strike', 'sub', 'sup', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'span', 'blockquote', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'hr', 'details', 'summary'];
-                const allowedAttr = ['href', 'target', 'rel', 'style', 'class', 'start', 'src', 'alt', 'width', 'align', 'colspan', 'rowspan', 'open'];
+                const allowedAttr = ['href', 'target', 'rel', 'style', 'class', 'start', 'value', 'src', 'alt', 'width', 'align', 'colspan', 'rowspan', 'open'];
 
                 if (hasHtml) {
                     contentsContainer.innerHTML = DOMPurify.sanitize(post.content, {

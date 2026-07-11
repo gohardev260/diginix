@@ -1415,6 +1415,24 @@ function initCustomRichEditor() {
         }
     });
 
+    editorArea.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) {
+                let node = sel.anchorNode;
+                if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+                const li = node ? node.closest('li') : null;
+                if (li && li.hasAttribute('value')) {
+                    if (li.previousElementSibling && li.previousElementSibling.tagName === 'LI') {
+                        li.removeAttribute('value');
+                    }
+                }
+            }
+        }
+        updateEditorWordCount();
+        updateToolbarActiveStates();
+    });
+
     // Handle FAQ Deletion inside editor
     editorArea.addEventListener('click', (e) => {
         const delBtn = e.target.closest('.faq-delete-btn');
@@ -2581,13 +2599,26 @@ window.showListNumberingDialog = function() {
     });
 };
 
-window.editorToggleBorder = function () {
+window.editorToggleBorder = async function () {
     const editorArea = document.getElementById('article-editor-area');
     if (!editorArea) return;
     const sel = window.getSelection();
     if (sel && sel.rangeCount > 0) {
         let node = sel.anchorNode;
         if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        
+        // 1. Handle Table Borders
+        const table = node ? node.closest('table') : null;
+        if (table && editorArea.contains(table)) {
+            const choice = await window.showTableBordersDialog();
+            if (!choice) return;
+            window.editorApplyTableBorders(table, choice);
+            updateEditorWordCount();
+            updateToolbarActiveStates();
+            return;
+        }
+
+        // 2. Fallback to Paragraph/Block Borders
         const block = node ? node.closest('p, h1, h2, h3, h4, blockquote, pre') : null;
         if (block && editorArea.contains(block)) {
             if (block.style.border) {
@@ -2605,54 +2636,159 @@ window.editorToggleBorder = function () {
     }
 };
 
+window.editorApplyTableBorders = function (table, type) {
+    if (!table) return;
+
+    table.style.borderCollapse = 'collapse';
+    if (type === 'all' || type === 'outside') {
+        table.style.border = '1px solid var(--color-hairline)';
+    } else {
+        table.style.border = 'none';
+    }
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    rows.forEach((row, rowIndex) => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        cells.forEach((cell, colIndex) => {
+            cell.style.border = 'none';
+            cell.style.borderTop = '';
+            cell.style.borderBottom = '';
+            cell.style.borderLeft = '';
+            cell.style.borderRight = '';
+
+            if (type === 'all') {
+                cell.style.border = '1px solid var(--color-hairline)';
+            } else if (type === 'inside') {
+                if (rowIndex > 0) cell.style.borderTop = '1px solid var(--color-hairline)';
+                if (colIndex > 0) cell.style.borderLeft = '1px solid var(--color-hairline)';
+            } else if (type === 'horizontal') {
+                if (rowIndex < rows.length - 1) {
+                    cell.style.borderBottom = '1px solid var(--color-hairline)';
+                }
+            } else if (type === 'vertical') {
+                if (colIndex < cells.length - 1) {
+                    cell.style.borderRight = '1px solid var(--color-hairline)';
+                }
+            }
+        });
+    });
+};
+
+window.showTableBordersDialog = function() {
+    return new Promise((resolve) => {
+        let modal = document.getElementById('custom-table-borders-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'custom-table-borders-modal';
+            modal.className = 'admin-modal-overlay';
+            modal.style.display = 'none';
+            modal.innerHTML = `
+                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                    <div class="admin-modal-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h3 class="admin-modal-title" style="font-size: 16px; font-weight: 600; color: var(--color-ink);">Table Borders</h3>
+                            <p class="admin-modal-subtitle" style="margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--color-ink-mute);">
+                                Choose a border formatting option for your table.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; flex-direction: column;">
+                        <button id="table-borders-all" class="ui-btn ui-btn-primary w-full" style="justify-content: center;"><span>All Borders (Grid)</span></button>
+                        <button id="table-borders-outside" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Outside Borders Only</span></button>
+                        <button id="table-borders-inside" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Inside Borders Only</span></button>
+                        <button id="table-borders-horizontal" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Horizontal Borders Only</span></button>
+                        <button id="table-borders-vertical" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Vertical Borders Only</span></button>
+                        <button id="table-borders-none" class="ui-btn ui-btn-danger w-full" style="justify-content: center;"><span>No Borders</span></button>
+                        <button id="table-borders-cancel" class="ui-btn ui-btn-ghost w-full" style="justify-content: center; color: var(--color-ink-mute); font-size: 12px; margin-top: 4px;">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const btnAll = document.getElementById('table-borders-all');
+        const btnOutside = document.getElementById('table-borders-outside');
+        const btnInside = document.getElementById('table-borders-inside');
+        const btnHorizontal = document.getElementById('table-borders-horizontal');
+        const btnVertical = document.getElementById('table-borders-vertical');
+        const btnNone = document.getElementById('table-borders-none');
+        const btnCancel = document.getElementById('table-borders-cancel');
+
+        const cleanup = (value) => {
+            modal.style.display = 'none';
+            btnAll.onclick = null;
+            btnOutside.onclick = null;
+            btnInside.onclick = null;
+            btnHorizontal.onclick = null;
+            btnVertical.onclick = null;
+            btnNone.onclick = null;
+            btnCancel.onclick = null;
+            resolve(value);
+        };
+
+        btnAll.onclick = () => cleanup('all');
+        btnOutside.onclick = () => cleanup('outside');
+        btnInside.onclick = () => cleanup('inside');
+        btnHorizontal.onclick = () => cleanup('horizontal');
+        btnVertical.onclick = () => cleanup('vertical');
+        btnNone.onclick = () => cleanup('none');
+        btnCancel.onclick = () => cleanup(null);
+
+        modal.style.display = 'flex';
+    });
+};
+
 window.editorInsertOrderedList = async function () {
     const editorArea = document.getElementById('article-editor-area');
     if (!editorArea) return;
 
     const sel = window.getSelection();
+    let existingOl = null;
     if (sel && sel.rangeCount > 0) {
         let node = sel.anchorNode;
         if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
-        const ol = node ? node.closest('ol') : null;
-        if (ol && editorArea.contains(ol)) {
+        existingOl = node ? node.closest('ol') : null;
+    }
+
+    let choice;
+    if (existingOl && editorArea.contains(existingOl)) {
+        choice = await window.showListOptionsDialog();
+        if (!choice) return;
+        
+        if (choice === 'off') {
             document.execCommand('insertOrderedList', false, null);
             updateEditorWordCount();
             updateToolbarActiveStates();
             return;
         }
+    } else {
+        choice = await window.showListNumberingDialog();
+        if (!choice) return;
+        document.execCommand('insertOrderedList', false, null);
     }
 
-    const choice = await window.showListNumberingDialog();
-    if (!choice) return;
-
-    document.execCommand('insertOrderedList', false, null);
-
-    if (choice === 'following') {
-        const selAfter = window.getSelection();
-        if (selAfter && selAfter.rangeCount > 0) {
-            let nodeAfter = selAfter.anchorNode;
-            if (nodeAfter && nodeAfter.nodeType === Node.TEXT_NODE) nodeAfter = nodeAfter.parentElement;
-            const currentOl = nodeAfter ? nodeAfter.closest('ol') : null;
-            if (currentOl && editorArea.contains(currentOl)) {
+    const selAfter = window.getSelection();
+    if (selAfter && selAfter.rangeCount > 0) {
+        let nodeAfter = selAfter.anchorNode;
+        if (nodeAfter && nodeAfter.nodeType === Node.TEXT_NODE) nodeAfter = nodeAfter.parentElement;
+        const currentLi = nodeAfter ? nodeAfter.closest('li') : null;
+        const currentOl = nodeAfter ? nodeAfter.closest('ol') : null;
+        if (currentOl && editorArea.contains(currentOl)) {
+            if (choice === 'following') {
+                if (currentLi) currentLi.removeAttribute('value');
                 const allOls = Array.from(editorArea.querySelectorAll('ol'));
                 const currentIndex = allOls.indexOf(currentOl);
                 if (currentIndex > 0) {
                     const prevOl = allOls[currentIndex - 1];
-                    const prevItemsCount = prevOl.querySelectorAll('li').length;
+                    const directLis = Array.from(prevOl.childNodes).filter(n => n.nodeName === 'LI');
+                    const prevItemsCount = directLis.length;
                     const prevStart = parseInt(prevOl.getAttribute('start') || '1', 10);
                     const newStart = prevStart + prevItemsCount;
                     currentOl.setAttribute('start', newStart);
                 }
-            }
-        }
-    } else {
-        const selAfter = window.getSelection();
-        if (selAfter && selAfter.rangeCount > 0) {
-            let nodeAfter = selAfter.anchorNode;
-            if (nodeAfter && nodeAfter.nodeType === Node.TEXT_NODE) nodeAfter = nodeAfter.parentElement;
-            const currentOl = nodeAfter ? nodeAfter.closest('ol') : null;
-            if (currentOl && editorArea.contains(currentOl)) {
-                currentOl.removeAttribute('start');
+            } else if (choice === 'start') {
+                if (currentLi) currentLi.setAttribute('value', '1');
+                currentOl.setAttribute('start', '1');
             }
         }
     }
@@ -2660,4 +2796,56 @@ window.editorInsertOrderedList = async function () {
     editorArea.focus();
     updateEditorWordCount();
     updateToolbarActiveStates();
+};
+
+window.showListOptionsDialog = function() {
+    return new Promise((resolve) => {
+        let modal = document.getElementById('custom-list-options-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'custom-list-options-modal';
+            modal.className = 'admin-modal-overlay';
+            modal.style.display = 'none';
+            modal.innerHTML = `
+                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                    <div class="admin-modal-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h3 class="admin-modal-title" style="font-size: 16px; font-weight: 600; color: var(--color-ink);">List Options</h3>
+                            <p class="admin-modal-subtitle" style="margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--color-ink-mute);">
+                                Configure the numbering behavior or remove the list.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; flex-direction: column;">
+                        <button id="list-options-start" class="ui-btn ui-btn-primary w-full" style="justify-content: center;"><span>Start from Start (1)</span></button>
+                        <button id="list-options-following" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Following (Continue numbering)</span></button>
+                        <button id="list-options-off" class="ui-btn ui-btn-danger w-full" style="justify-content: center;"><span>Turn off numbering (Remove list)</span></button>
+                        <button id="list-options-cancel" class="ui-btn ui-btn-ghost w-full" style="justify-content: center; color: var(--color-ink-mute); font-size: 12px; margin-top: 4px;">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const btnStart = document.getElementById('list-options-start');
+        const btnFollowing = document.getElementById('list-options-following');
+        const btnOff = document.getElementById('list-options-off');
+        const btnCancel = document.getElementById('list-options-cancel');
+
+        const cleanup = (value) => {
+            modal.style.display = 'none';
+            btnStart.onclick = null;
+            btnFollowing.onclick = null;
+            btnOff.onclick = null;
+            btnCancel.onclick = null;
+            resolve(value);
+        };
+
+        btnStart.onclick = () => cleanup('start');
+        btnFollowing.onclick = () => cleanup('following');
+        btnOff.onclick = () => cleanup('off');
+        btnCancel.onclick = () => cleanup(null);
+
+        modal.style.display = 'flex';
+    });
 };

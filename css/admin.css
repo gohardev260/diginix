@@ -901,6 +901,33 @@
     margin: 1.25rem 0;
 }
 
+.article-writer-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+
+.article-writer-content th,
+.article-writer-content td {
+    border: 1px solid var(--color-hairline, #e5e5e5);
+    padding: 0.65rem 0.85rem;
+    text-align: left;
+    min-width: 50px;
+}
+
+.article-writer-content th {
+    background-color: var(--color-canvas-soft, #f9f9f9);
+    font-weight: 600;
+}
+
+.article-writer-content blockquote {
+    border-left: 3px solid var(--color-primary);
+    padding-left: 1.5rem;
+    font-style: italic;
+    color: var(--color-ink-mute);
+    margin: 2rem 0;
+}
+
 /* --- Guard screen --- */
 .admin-guard {
     display: flex;

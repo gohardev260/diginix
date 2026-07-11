@@ -380,22 +380,24 @@
                  TAB 3: ARTICLE EDITOR
                  ========================================== -->
             <div id="tab-article-editor" class="admin-tab-content">
-                <div class="admin-content-inner" style="max-width:800px;">
+                <div class="admin-content-inner">
 
-                    <div class="admin-page-header" style="flex-direction: column; align-items: flex-start; gap: 16px;">
-                        <div>
-                            <h1 id="article-editor-page-title" class="admin-page-title">New Article</h1>
-                            <p class="admin-page-subtitle">Rich text editor</p>
+                    <div class="admin-page-header admin-page-header--inline" style="align-items: center; display: flex; justify-content: space-between; margin-bottom: 24px;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <button type="button" onclick="closeArticleEditor()" class="ui-btn ui-btn-outline ui-btn-sm" style="padding: 0; min-width: auto; height: 32px; width: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);" aria-label="Back" title="Back">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            </button>
+                            <div>
+                                <h1 id="article-editor-page-title" class="admin-page-title" style="margin: 0; font-size: 24px; line-height: 1.2;">New Article</h1>
+                                <p class="admin-page-subtitle" style="margin-top: 2px;">Rich text editor</p>
+                            </div>
                         </div>
-                        <div class="admin-page-actions" style="display: flex; flex-direction: row; align-items: center; gap: 8px; width: 100%; justify-content: flex-start;">
-                            <button type="button" onclick="handleBlogSaveAsDraft()" class="ui-btn ui-btn-secondary">
+                        <div class="admin-page-actions" style="display: flex; gap: 8px;">
+                            <button type="button" onclick="handleBlogSaveAsDraft()" class="ui-btn ui-btn-outline ui-btn-sm">
                                 Save Draft
                             </button>
-                            <button type="button" onclick="handleBlogSave(event)" class="ui-btn ui-btn-primary">
+                            <button type="button" onclick="handleBlogSave(event)" class="ui-btn ui-btn-primary ui-btn-sm">
                                 Publish
-                            </button>
-                            <button type="button" onclick="closeArticleEditor()" class="ui-btn ui-btn-outline" aria-label="Back" title="Back">
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
@@ -467,13 +469,15 @@
                                     title="Superscript (Ctrl+Shift+P)"><i data-lucide="superscript" class="w-4 h-4"></i></button>
                                 <span class="admin-editor-toolbar-sep"></span>
 
-                                <label class="admin-editor-color-label" title="Text Color">
-                                    Text: <input type="color" id="toolbar-forecolor" value="#000000"
-                                        class="admin-editor-color-input">
+                                <label class="toolbar-btn" title="Text Color" style="position: relative; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; transition: all 0.15s ease;">
+                                    <i data-lucide="baseline" class="w-4 h-4"></i>
+                                    <input type="color" id="toolbar-forecolor" value="#000000"
+                                        style="position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; margin: 0; padding: 0; cursor: pointer;">
                                 </label>
-                                <label class="admin-editor-color-label" title="Highlight Color">
-                                    BG: <input type="color" id="toolbar-backcolor" value="#ffff00"
-                                        class="admin-editor-color-input">
+                                <label class="toolbar-btn" title="Highlight Color" style="position: relative; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; transition: all 0.15s ease;">
+                                    <i data-lucide="highlighter" class="w-4 h-4"></i>
+                                    <input type="color" id="toolbar-backcolor" value="#ffff00"
+                                        style="position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; margin: 0; padding: 0; cursor: pointer;">
                                 </label>
                                 <span class="admin-editor-toolbar-sep"></span>
 
