@@ -1571,6 +1571,11 @@ window.editorInsertAccordion = async function () {
     if (!editorArea) return;
 
     const sel = window.getSelection();
+    let savedRange = null;
+    if (sel && sel.rangeCount > 0) {
+        savedRange = sel.getRangeAt(0).cloneRange();
+    }
+
     if (sel && sel.rangeCount > 0) {
         let node = sel.anchorNode;
         if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
@@ -1594,6 +1599,11 @@ window.editorInsertAccordion = async function () {
     const safeQ = window.escapeHtml ? window.escapeHtml(question.trim()) : question.trim();
     const safeA = window.escapeHtml ? window.escapeHtml(answer.trim()) : answer.trim();
 
+    if (savedRange) {
+        sel.removeAllRanges();
+        sel.addRange(savedRange);
+    }
+
     const accordionHtml = `<details class="article-accordion my-4 border border-hairline rounded-xl overflow-hidden bg-canvas-soft" open><summary class="flex items-center justify-between p-4 font-semibold text-ink cursor-pointer select-none"><span>${safeQ}</span><button type="button" class="faq-delete-btn text-[11px] font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-0.5 rounded transition-colors ml-3" title="Delete FAQ Block">✕ Remove FAQ</button></summary><div class="p-4 text-ink-mute border-t border-hairline bg-canvas"><p>${safeA}</p></div></details><p></p>`;
     document.execCommand('insertHTML', false, accordionHtml);
     editorArea.focus();
@@ -1606,6 +1616,11 @@ window.editorPromptLink = async function () {
     if (!editorArea) return;
 
     const sel = window.getSelection();
+    let savedRange = null;
+    if (sel && sel.rangeCount > 0) {
+        savedRange = sel.getRangeAt(0).cloneRange();
+    }
+
     if (sel && sel.rangeCount > 0) {
         let node = sel.anchorNode;
         if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
@@ -1623,6 +1638,10 @@ window.editorPromptLink = async function () {
     // Toggle ON
     const url = await window.showCustomPrompt('Insert Link', 'Enter web address for link:', 'https://');
     if (url && url.trim()) {
+        if (savedRange) {
+            sel.removeAllRanges();
+            sel.addRange(savedRange);
+        }
         document.execCommand('createLink', false, url.trim());
         editorArea.focus();
         updateEditorWordCount();
@@ -1632,10 +1651,22 @@ window.editorPromptLink = async function () {
 
 window.editorPromptImage = async function () {
     const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea) return;
+
+    const sel = window.getSelection();
+    let savedRange = null;
+    if (sel && sel.rangeCount > 0) {
+        savedRange = sel.getRangeAt(0).cloneRange();
+    }
+
     const choice = await window.showImageSourceDialog();
     if (choice === 'url') {
         const url = await window.showCustomPrompt('Insert Image', 'Enter Image URL:', 'https://');
         if (url && url.trim()) {
+            if (savedRange) {
+                sel.removeAllRanges();
+                sel.addRange(savedRange);
+            }
             document.execCommand('insertImage', false, url.trim());
             if (editorArea) editorArea.focus();
             updateEditorWordCount();
@@ -1649,6 +1680,10 @@ window.editorPromptImage = async function () {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
+                    if (savedRange) {
+                        sel.removeAllRanges();
+                        sel.addRange(savedRange);
+                    }
                     document.execCommand('insertImage', false, event.target.result);
                     if (editorArea) editorArea.focus();
                     updateEditorWordCount();
@@ -1662,23 +1697,38 @@ window.editorPromptImage = async function () {
 
 window.editorPromptTable = async function () {
     const editorArea = document.getElementById('article-editor-area');
+    if (!editorArea) return;
+
+    const sel = window.getSelection();
+    let savedRange = null;
+    if (sel && sel.rangeCount > 0) {
+        savedRange = sel.getRangeAt(0).cloneRange();
+    }
+
     const dimensions = await window.showTableDialog();
     if (!dimensions) return;
 
     const { rows, cols } = dimensions;
-    let tableHtml = '<table><thead><tr>';
+    let tableHtml = '<table style="width: 100%; border-collapse: collapse; border: 1px solid var(--color-hairline, #e2e8f0); margin: 1.5rem 0;"><thead style="background-color: var(--color-canvas-soft, #f8fafc);">';
+    tableHtml += '<tr>';
     for (let c = 0; c < cols; c++) {
-        tableHtml += `<th>Header ${c + 1}</th>`;
+        tableHtml += `<th style="border: 1px solid var(--color-hairline, #e2e8f0); padding: 0.65rem 0.85rem; text-align: left; font-weight: 600; color: var(--color-ink);">Header ${c + 1}</th>`;
     }
     tableHtml += '</tr></thead><tbody>';
     for (let r = 0; r < rows; r++) {
         tableHtml += '<tr>';
         for (let c = 0; c < cols; c++) {
-            tableHtml += `<td>Cell ${r + 1},${c + 1}</td>`;
+            tableHtml += `<td style="border: 1px solid var(--color-hairline, #e2e8f0); padding: 0.65rem 0.85rem; text-align: left; color: var(--color-ink-mute);">Cell ${r + 1},${c + 1}</td>`;
         }
         tableHtml += '</tr>';
     }
     tableHtml += '</tbody></table><p></p>';
+
+    if (savedRange) {
+        sel.removeAllRanges();
+        sel.addRange(savedRange);
+    }
+
     document.execCommand('insertHTML', false, tableHtml);
     if (editorArea) editorArea.focus();
     updateEditorWordCount();
@@ -2640,10 +2690,22 @@ window.editorApplyTableBorders = function (table, type) {
     if (!table) return;
 
     table.style.borderCollapse = 'collapse';
+    table.style.border = 'none';
+    table.style.borderTop = '';
+    table.style.borderBottom = '';
+    table.style.borderLeft = '';
+    table.style.borderRight = '';
+
     if (type === 'all' || type === 'outside') {
-        table.style.border = '1px solid var(--color-hairline)';
-    } else {
-        table.style.border = 'none';
+        table.style.border = '1px solid var(--color-hairline, #e2e8f0)';
+    } else if (type === 'bottom') {
+        table.style.borderBottom = '2px solid var(--color-ink, #0f172a)';
+    } else if (type === 'top') {
+        table.style.borderTop = '2px solid var(--color-ink, #0f172a)';
+    } else if (type === 'left') {
+        table.style.borderLeft = '2px solid var(--color-ink, #0f172a)';
+    } else if (type === 'right') {
+        table.style.borderRight = '2px solid var(--color-ink, #0f172a)';
     }
 
     const rows = Array.from(table.querySelectorAll('tr'));
@@ -2657,18 +2719,18 @@ window.editorApplyTableBorders = function (table, type) {
             cell.style.borderRight = '';
 
             if (type === 'all') {
-                cell.style.border = '1px solid var(--color-hairline)';
+                cell.style.border = '1px solid var(--color-hairline, #e2e8f0)';
             } else if (type === 'inside') {
-                if (rowIndex > 0) cell.style.borderTop = '1px solid var(--color-hairline)';
-                if (colIndex > 0) cell.style.borderLeft = '1px solid var(--color-hairline)';
+                if (rowIndex > 0) cell.style.borderTop = '1px solid var(--color-hairline, #e2e8f0)';
+                if (rowIndex < rows.length - 1) cell.style.borderBottom = '1px solid var(--color-hairline, #e2e8f0)';
+                if (colIndex > 0) cell.style.borderLeft = '1px solid var(--color-hairline, #e2e8f0)';
+                if (colIndex < cells.length - 1) cell.style.borderRight = '1px solid var(--color-hairline, #e2e8f0)';
             } else if (type === 'horizontal') {
-                if (rowIndex < rows.length - 1) {
-                    cell.style.borderBottom = '1px solid var(--color-hairline)';
-                }
+                if (rowIndex > 0) cell.style.borderTop = '1px solid var(--color-hairline, #e2e8f0)';
+                if (rowIndex < rows.length - 1) cell.style.borderBottom = '1px solid var(--color-hairline, #e2e8f0)';
             } else if (type === 'vertical') {
-                if (colIndex < cells.length - 1) {
-                    cell.style.borderRight = '1px solid var(--color-hairline)';
-                }
+                if (colIndex > 0) cell.style.borderLeft = '1px solid var(--color-hairline, #e2e8f0)';
+                if (colIndex < cells.length - 1) cell.style.borderRight = '1px solid var(--color-hairline, #e2e8f0)';
             }
         });
     });
@@ -2683,7 +2745,7 @@ window.showTableBordersDialog = function() {
             modal.className = 'admin-modal-overlay';
             modal.style.display = 'none';
             modal.innerHTML = `
-                <div class="admin-modal" style="max-width: 400px; padding: 24px;">
+                <div class="admin-modal" style="max-width: 420px; padding: 24px;">
                     <div class="admin-modal-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <h3 class="admin-modal-title" style="font-size: 16px; font-weight: 600; color: var(--color-ink);">Table Borders</h3>
@@ -2692,14 +2754,20 @@ window.showTableBordersDialog = function() {
                             </p>
                         </div>
                     </div>
-                    <div class="admin-modal-footer" style="margin-top: 24px; display: flex; gap: 8px; flex-direction: column;">
-                        <button id="table-borders-all" class="ui-btn ui-btn-primary w-full" style="justify-content: center;"><span>All Borders (Grid)</span></button>
-                        <button id="table-borders-outside" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Outside Borders Only</span></button>
-                        <button id="table-borders-inside" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Inside Borders Only</span></button>
-                        <button id="table-borders-horizontal" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Horizontal Borders Only</span></button>
-                        <button id="table-borders-vertical" class="ui-btn ui-btn-outline w-full" style="justify-content: center;"><span>Vertical Borders Only</span></button>
-                        <button id="table-borders-none" class="ui-btn ui-btn-danger w-full" style="justify-content: center;"><span>No Borders</span></button>
-                        <button id="table-borders-cancel" class="ui-btn ui-btn-ghost w-full" style="justify-content: center; color: var(--color-ink-mute); font-size: 12px; margin-top: 4px;">Cancel</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
+                        <button id="table-borders-all" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>All Borders</span></button>
+                        <button id="table-borders-outside" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Outside Borders</span></button>
+                        <button id="table-borders-inside" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Inside Borders</span></button>
+                        <button id="table-borders-horizontal" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Inside Horizontal</span></button>
+                        <button id="table-borders-vertical" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Inside Vertical</span></button>
+                        <button id="table-borders-top" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Top Border</span></button>
+                        <button id="table-borders-bottom" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Bottom Border</span></button>
+                        <button id="table-borders-left" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Left Border</span></button>
+                        <button id="table-borders-right" class="ui-btn ui-btn-outline" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>Right Border</span></button>
+                        <button id="table-borders-none" class="ui-btn ui-btn-danger" style="justify-content: center; height: 36px; font-size: 13px; padding: 0 12px;"><span>No Borders</span></button>
+                    </div>
+                    <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                        <button id="table-borders-cancel" class="ui-btn ui-btn-ghost" style="font-size: 13px; padding: 6px 12px;">Cancel</button>
                     </div>
                 </div>
             `;
@@ -2711,6 +2779,10 @@ window.showTableBordersDialog = function() {
         const btnInside = document.getElementById('table-borders-inside');
         const btnHorizontal = document.getElementById('table-borders-horizontal');
         const btnVertical = document.getElementById('table-borders-vertical');
+        const btnTop = document.getElementById('table-borders-top');
+        const btnBottom = document.getElementById('table-borders-bottom');
+        const btnLeft = document.getElementById('table-borders-left');
+        const btnRight = document.getElementById('table-borders-right');
         const btnNone = document.getElementById('table-borders-none');
         const btnCancel = document.getElementById('table-borders-cancel');
 
@@ -2721,6 +2793,10 @@ window.showTableBordersDialog = function() {
             btnInside.onclick = null;
             btnHorizontal.onclick = null;
             btnVertical.onclick = null;
+            btnTop.onclick = null;
+            btnBottom.onclick = null;
+            btnLeft.onclick = null;
+            btnRight.onclick = null;
             btnNone.onclick = null;
             btnCancel.onclick = null;
             resolve(value);
@@ -2731,6 +2807,10 @@ window.showTableBordersDialog = function() {
         btnInside.onclick = () => cleanup('inside');
         btnHorizontal.onclick = () => cleanup('horizontal');
         btnVertical.onclick = () => cleanup('vertical');
+        btnTop.onclick = () => cleanup('top');
+        btnBottom.onclick = () => cleanup('bottom');
+        btnLeft.onclick = () => cleanup('left');
+        btnRight.onclick = () => cleanup('right');
         btnNone.onclick = () => cleanup('none');
         btnCancel.onclick = () => cleanup(null);
 
