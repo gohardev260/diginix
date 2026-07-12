@@ -1305,3 +1305,58 @@ CREATE TRIGGER trigger_block_disposable_emails
     FOR EACH ROW
     EXECUTE FUNCTION public.block_disposable_emails();
 
+
+-- Public client reporting function (No admin check, SECURE DEFINER to bypass table RLS)
+CREATE OR REPLACE FUNCTION public.get_filtered_users_public(
+    p_search TEXT DEFAULT NULL,
+    p_start_date TIMESTAMPTZ DEFAULT NULL,
+    p_end_date TIMESTAMPTZ DEFAULT NULL
+)
+RETURNS TABLE (
+    name TEXT,
+    email TEXT,
+    date TIMESTAMPTZ,
+    status TEXT,
+    range_visits INT,
+    total_visits INT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        u.name,
+        u.email,
+        u.date,
+        u.status,
+        COALESCE((
+            SELECT COUNT(DISTINCT COALESCE(v.session_id::text, v.id::text))::INT
+            FROM public.visit_logs v
+            WHERE LOWER(v.email) = LOWER(u.email)
+              AND (p_start_date IS NULL OR v.visited_at >= p_start_date)
+              AND (p_end_date IS NULL OR v.visited_at <= p_end_date)
+        ), 0) AS range_visits,
+        COALESCE(u.visits, 0) AS total_visits
+    FROM public.users u
+    WHERE
+        (p_search IS NULL OR p_search = '' OR
+            LOWER(u.name) LIKE '%' || LOWER(p_search) || '%' OR
+            LOWER(u.email) LIKE '%' || LOWER(p_search) || '%' OR
+            LOWER(u.status) LIKE '%' || LOWER(p_search) || '%'
+        )
+        AND
+        (
+            (p_start_date IS NULL AND p_end_date IS NULL) OR
+            (u.date >= p_start_date AND u.date <= p_end_date) OR
+            EXISTS (
+                SELECT 1 
+                FROM public.visit_logs v 
+                WHERE LOWER(v.email) = LOWER(u.email) 
+                  AND v.visited_at >= p_start_date 
+                  AND v.visited_at <= p_end_date
+            )
+        )
+    ORDER BY u.id DESC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.get_filtered_users_public(TEXT, TIMESTAMPTZ, TIMESTAMPTZ) TO anon, authenticated;
+
