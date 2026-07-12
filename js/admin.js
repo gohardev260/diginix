@@ -2220,6 +2220,40 @@ function filterAndRenderUsers() {
     }
 }
 
+function maskEmail(email) {
+    if (!email || email === 'N/A') return 'N/A';
+    const parts = email.split('@');
+    if (parts.length !== 2) return email;
+    const [local, domain] = parts;
+    
+    let maskedLocal = '';
+    if (local.length <= 2) {
+        maskedLocal = local[0] + '*';
+    } else if (local.length === 3) {
+        maskedLocal = local[0] + '*' + local[2];
+    } else {
+        maskedLocal = local.substring(0, 2) + '*'.repeat(local.length - 3) + local.slice(-1);
+    }
+    
+    const domainParts = domain.split('.');
+    let maskedDomain = domain;
+    if (domainParts.length >= 2) {
+        const domainName = domainParts[0];
+        const tld = domainParts.slice(1).join('.');
+        let maskedDomainName = '';
+        if (domainName.length <= 2) {
+            maskedDomainName = domainName[0] + '*';
+        } else if (domainName.length === 3) {
+            maskedDomainName = domainName[0] + '*' + domainName[2];
+        } else {
+            maskedDomainName = domainName.substring(0, 2) + '*'.repeat(domainName.length - 3) + domainName.slice(-1);
+        }
+        maskedDomain = `${maskedDomainName}.${tld}`;
+    }
+    
+    return `${maskedLocal}@${maskedDomain}`;
+}
+
 window.exportUsersPDF = function () {
     const { jsPDF } = window.jspdf;
     if (!jsPDF) { window.showToast('PDF library is still loading. Please try again in a moment.', 'warning'); return; }
@@ -2253,7 +2287,7 @@ window.exportUsersPDF = function () {
     doc.autoTable({
         head: [['Client Name', 'Email Address', isFiltered ? 'Visits (Range / Total)' : 'Total Visits']],
         body: filteredList.map(u => [
-            u.name || 'N/A', u.email || 'N/A',
+            u.name || 'N/A', maskEmail(u.email),
             isFiltered ? `${u.rangeVisits || 0} / ${u.totalVisits || 0}` : String(u.totalVisits || 0)
         ]),
         startY: summaryY + 7, theme: 'striped',
