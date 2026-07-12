@@ -235,6 +235,8 @@ async function loadAnalyticsData() {
         };
     }
 
+    window.adminState.currentAnalyticsData = res;
+
     // Sync Stats Row KPI UI
     const formatDuration = (s) => {
         if (s < 60) return `${s}s`;
@@ -2314,6 +2316,238 @@ window.exportUsersPDF = function () {
         filename += `_${yyyy}-${mm}-${dd}`;
     }
     filename += '.pdf';
+    doc.save(filename);
+};
+
+window.exportAnalyticsPDF = function () {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) { window.showToast('PDF library is still loading. Please try again in a moment.', 'warning'); return; }
+    
+    const res = window.adminState.currentAnalyticsData;
+    if (!res) { window.showToast('No analytics data available to export.', 'warning'); return; }
+    
+    const doc = new jsPDF();
+    
+    // Helper to add chart canvas as image
+    const addChart = (canvasId, x, y, w, h) => {
+        const canvas = document.getElementById(canvasId);
+        if (canvas) {
+            try {
+                const imgData = canvas.toDataURL('image/png');
+                doc.addImage(imgData, 'PNG', x, y, w, h);
+            } catch (e) {
+                console.error(`Error adding chart ${canvasId}:`, e);
+            }
+        }
+    };
+    
+    // --- PAGE 1 ---
+    // Header
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(17, 17, 17);
+    doc.text('DIGINIXIT.', 14, 20);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(102, 102, 102);
+    doc.text('Traffic & Performance Analytics Report', 14, 26);
+    
+    // Date ranges
+    const startDateVal = document.getElementById('analytics-start-date')?.value || '';
+    const endDateVal = document.getElementById('analytics-end-date')?.value || '';
+    const preset = window.adminState.analyticsPreset;
+    
+    let separatorY = 38, summaryY = 48;
+    if (startDateVal || endDateVal) {
+        doc.text(`Date Range: ${startDateVal || 'Beginning'} to ${endDateVal || 'End'}`, 14, 32);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 37);
+        separatorY = 42; summaryY = 51;
+    } else {
+        doc.text(`Timeline Preset: ${getPresetLabel(preset)}`, 14, 32);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 37);
+    }
+    
+    doc.setDrawColor(229, 229, 229);
+    doc.line(14, separatorY, 196, separatorY);
+    
+    // 1. KPI Summary Block (Key Metrics Table)
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Key Performance Indicators (KPIs)', 14, summaryY);
+    
+    const kpiHeaders = [['Metric', 'Value', 'Comparison vs Prior Period']];
+    
+    const getChangeText = (current, prior) => {
+        let percent = 0;
+        if (prior > 0) percent = Math.round(((current - prior) / prior) * 100);
+        else if (current > 0) percent = 100;
+        return percent > 0 ? `+${percent}%` : percent < 0 ? `${percent}%` : '0%';
+    };
+
+    const kpiBody = [
+        ['Active Users', Number(res.active_users || 0).toLocaleString(), getChangeText(res.active_users, res.prior_active_users)],
+        ['Total Visits', Number(res.total_visits || 0).toLocaleString(), getChangeText(res.total_visits, res.prior_total_visits)],
+        ['Bounce Rate', `${res.avg_session_duration || 0}%`, getChangeText(res.avg_session_duration, res.prior_avg_session_duration)],
+        ['Articles Read', Number(res.articles_read || 0).toLocaleString(), getChangeText(res.articles_read, res.prior_articles_read)]
+    ];
+    
+    doc.autoTable({
+        head: kpiHeaders,
+        body: kpiBody,
+        startY: summaryY + 4,
+        theme: 'striped',
+        headStyles: { fillColor: [17, 17, 17], textColor: [255, 255, 255], fontSize: 9, fontStyle: 'bold' },
+        bodyStyles: { fontSize: 9, textColor: [51, 51, 51] },
+        columnStyles: { 0: { cellWidth: 60 }, 1: { cellWidth: 50 }, 2: { cellWidth: 72 } },
+        margin: { left: 14, right: 14 }
+    });
+    
+    // Website Traffic Trend Section
+    const nextY = doc.lastAutoTable.finalY + 12;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Website Traffic Trend', 14, nextY);
+    addChart('adminVisitsChart', 14, nextY + 4, 182, 60);
+    
+    // User Growth
+    const userGrowthY = 175;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('User Growth Trend (New Registrations)', 14, userGrowthY);
+    addChart('adminUsersChart', 14, userGrowthY + 4, 110, 55);
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(17, 17, 17);
+    doc.text('User Growth Summary', 130, userGrowthY + 18);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(85, 85, 85);
+    doc.text(`Active Users: ${Number(res.active_users || 0).toLocaleString()}`, 130, userGrowthY + 24);
+    doc.text(`Comparison: ${getChangeText(res.active_users, res.prior_active_users)} vs prior`, 130, userGrowthY + 30);
+    
+    // --- PAGE 2 ---
+    doc.addPage();
+    
+    // Bounce Rate
+    const bounceY = 20;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Bounce Rate Trend', 14, bounceY);
+    addChart('adminBounceChart', 14, bounceY + 4, 110, 55);
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(17, 17, 17);
+    doc.text('Bounce Rate Summary', 130, bounceY + 18);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(85, 85, 85);
+    doc.text(`Average Bounce Rate: ${res.avg_session_duration || 0}%`, 130, bounceY + 24);
+    doc.text(`Comparison: ${getChangeText(res.avg_session_duration, res.prior_avg_session_duration)} vs prior`, 130, bounceY + 30);
+    
+    // Engagement
+    const engagementY = 90;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Articles Engagement Trend', 14, engagementY);
+    addChart('adminRetentionChart', 14, engagementY + 4, 110, 55);
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(17, 17, 17);
+    doc.text('Engagement Summary', 130, engagementY + 18);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(85, 85, 85);
+    doc.text(`Articles Read: ${Number(res.articles_read || 0).toLocaleString()}`, 130, engagementY + 24);
+    doc.text(`Comparison: ${getChangeText(res.articles_read, res.prior_articles_read)} vs prior`, 130, engagementY + 30);
+    
+    // Device breakdown (Donut/Doughnut)
+    const deviceY = 160;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Device Breakdown', 14, deviceY);
+    addChart('adminDeviceChart', 14, deviceY + 4, 70, 55);
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(17, 17, 17);
+    doc.text('Device Distribution', 95, deviceY + 18);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(85, 85, 85);
+    
+    const devicesMap = { Desktop: 0, Mobile: 0, Tablet: 0 };
+    (res.devices || []).forEach(d => {
+        const lbl = d.label === 'Tablet' ? 'Tablet' : d.label === 'Mobile' ? 'Mobile' : 'Desktop';
+        devicesMap[lbl] = (devicesMap[lbl] || 0) + Number(d.count);
+    });
+    const totalDevices = devicesMap.Desktop + devicesMap.Mobile + devicesMap.Tablet;
+    
+    if (totalDevices > 0) {
+        doc.text(`Desktop: ${Math.round((devicesMap.Desktop/totalDevices)*100)}% (${devicesMap.Desktop} visits)`, 95, deviceY + 24);
+        doc.text(`Mobile: ${Math.round((devicesMap.Mobile/totalDevices)*100)}% (${devicesMap.Mobile} visits)`, 95, deviceY + 30);
+        doc.text(`Tablet: ${Math.round((devicesMap.Tablet/totalDevices)*100)}% (${devicesMap.Tablet} visits)`, 95, deviceY + 36);
+    } else {
+        doc.text('Desktop: 100%', 95, deviceY + 24);
+        doc.text('Mobile: 0%', 95, deviceY + 30);
+        doc.text('Tablet: 0%', 95, deviceY + 36);
+    }
+    
+    // --- PAGE 3 ---
+    doc.addPage();
+    
+    // Top Pages
+    const pagesY = 20;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Top Visited Pages', 14, pagesY);
+    addChart('adminTopPagesChart', 14, pagesY + 4, 110, 55);
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(17, 17, 17);
+    doc.text('Top Pages Details', 130, pagesY + 12);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(85, 85, 85);
+    const topPagesList = (res.pages || []).slice(0, 5);
+    if (topPagesList.length > 0) {
+        topPagesList.forEach((p, idx) => {
+            doc.text(`${idx + 1}. ${p.label} (${p.count} visits)`, 130, pagesY + 18 + (idx * 6));
+        });
+    } else {
+        doc.text('No content data available.', 130, pagesY + 18);
+    }
+    
+    // Locations
+    const locationsY = 90;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Top Visitor Locations', 14, locationsY);
+    addChart('adminLocationsChart', 14, locationsY + 4, 110, 55);
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(17, 17, 17);
+    doc.text('Visitor Locations Details', 130, locationsY + 12);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(85, 85, 85);
+    const topCountriesList = (res.countries || []).slice(0, 5);
+    if (topCountriesList.length > 0) {
+        topCountriesList.forEach((c, idx) => {
+            doc.text(`${idx + 1}. ${c.label} (${c.count} visits)`, 130, locationsY + 18 + (idx * 6));
+        });
+    } else {
+        doc.text('No location data available.', 130, locationsY + 18);
+    }
+    
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(17, 17, 17);
+    doc.text('Data Summary Details', 14, 160);
+    
+    const deviceBreakdown = totalDevices > 0 ? 
+        `Desktop: ${Math.round((devicesMap.Desktop/totalDevices)*100)}% | Mobile: ${Math.round((devicesMap.Mobile/totalDevices)*100)}% | Tablet: ${Math.round((devicesMap.Tablet/totalDevices)*100)}%` :
+        'N/A';
+        
+    const topPagesStrList = (res.pages || []).slice(0, 5).map(p => `${p.label} (${p.count} visits)`).join('\n');
+    const topCountriesStrList = (res.countries || []).slice(0, 5).map(c => `${c.label} (${c.count} visits)`).join('\n');
+    
+    const metricHeaders = [['Dimension', 'Breakdown Details']];
+    const metricBody = [
+        ['Device Breakdown', deviceBreakdown],
+        ['Top Visited Pages', topPagesStrList || 'No data'],
+        ['Top Visitor Locations', topCountriesStrList || 'No data']
+    ];
+    
+    doc.autoTable({
+        head: metricHeaders,
+        body: metricBody,
+        startY: 164,
+        theme: 'striped',
+        headStyles: { fillColor: [68, 68, 68], textColor: [255, 255, 255], fontSize: 9, fontStyle: 'bold' },
+        bodyStyles: { fontSize: 9, textColor: [51, 51, 51], cellPadding: 6 },
+        columnStyles: { 0: { cellWidth: 50 }, 1: { cellWidth: 132 } },
+        margin: { left: 14, right: 14 }
+    });
+    
+    let filename = 'diginixit_analytics_report';
+    if (startDateVal && endDateVal) {
+        filename += `_${startDateVal}_to_${endDateVal}`;
+    } else if (startDateVal) {
+        filename += `_from_${startDateVal}`;
+    } else if (endDateVal) {
+        filename += `_until_${endDateVal}`;
+    } else {
+        filename += `_${preset}`;
+    }
+    filename += '.pdf';
+    
     doc.save(filename);
 };
 
