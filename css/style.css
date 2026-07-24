@@ -750,6 +750,19 @@ details.article-accordion div {
     border-top: 1px solid var(--color-hairline, #e5e5e5);
     background: var(--color-canvas, #fff);
 }
+details.article-accordion summary:focus,
+details.article-accordion summary:focus-visible,
+details.article-accordion summary:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+details.article-accordion:focus,
+details.article-accordion:focus-visible,
+details.article-accordion:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
 
 /* --- Table Responsive --- */
 .responsive-table-container {

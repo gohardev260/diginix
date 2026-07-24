@@ -1396,6 +1396,9 @@ function initCustomRichEditor() {
             } else if (keyLower === 'q' && e.shiftKey) {
                 e.preventDefault();
                 customFn = window.editorInsertBlockquote;
+            } else if (keyLower === 'f' && e.shiftKey) {
+                e.preventDefault();
+                customFn = window.editorInsertAccordion;
             } else if (keyLower === 'l' && e.shiftKey) {
                 e.preventDefault();
                 command = 'insertUnorderedList';
