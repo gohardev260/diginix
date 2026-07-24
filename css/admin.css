@@ -930,6 +930,17 @@
     border-radius: 0 4px 4px 0;
 }
 
+.article-writer-content details summary:focus,
+.article-writer-content details summary:focus-visible,
+.article-writer-content details summary:active,
+.article-writer-content details:focus,
+.article-writer-content details:focus-visible,
+.article-writer-content details:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
 /* --- Guard screen --- */
 .admin-guard {
     display: flex;
